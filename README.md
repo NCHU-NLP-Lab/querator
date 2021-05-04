@@ -23,8 +23,8 @@
 > 部屬階段先確定react有重新build過，再啟動server
 
 ## 其他
-### GPU支援?
-不支援。作為服務，建議不要占用寶貴的GPU資源
+### GPU支援
+**不支援**GPU。作為服務，建議不要占用寶貴的GPU資源
 
 `seq2seq lm`、`causal lm`等架構在CPU運算下的速度是可以接受的
 
@@ -37,13 +37,11 @@ allow_origins=["*"]
 ### API文件
 請將server運行起來，然後前往`/docs`
 
-### 模型檔案/Training code
+### 模型檔案
 模型檔案存放於hf model hub，目前有三種模型可供使用
 - [bart-squad-qg-hl](https://huggingface.co/p208p2002/bart-squad-qg-hl)
 - [gpt2-squad-qg-hl](https://huggingface.co/p208p2002/gpt2-squad-qg-hl)
 - [t5-squad-qg-h](https://huggingface.co/p208p2002/t5-squad-qg-hl)
-
-Training code請見: [p208p2002/Transformer-QG-on-SQuAD](https://github.com/p208p2002/Transformer-QG-on-SQuAD)
 
 ### Todos
 - 中文/多語言QG模型
