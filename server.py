@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import Optional,List
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import torch
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 # init model
 model = AutoModelForSeq2SeqLM.from_pretrained("p208p2002/bart-squad-qg-hl")
@@ -21,12 +23,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
+
+app.mount("/static", StaticFiles(directory="react/build/static"), name="static")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 # data format
@@ -57,9 +66,11 @@ class Item(BaseModel):
         }
 
 # router
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    return {"message": "/docs"}
+    with open("react/build/index.html","r",encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=200)
 
 @app.post("/generate-question")
 async def generate_question(item:Item):
