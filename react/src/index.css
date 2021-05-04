@@ -1,0 +1,35 @@
+html{
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Noto Sans TC', sans-serif;
+  /* min-height: 100%; */
+
+  position: relative;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding-bottom: 105px; /* .footer 的高度，为 footer 占位 */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+#root{
+  min-height: 100%;
+}
+
+h1{
+  font-family: 'Vollkorn SC', serif;
+  font-size: 3.7rem;
+}
+
+

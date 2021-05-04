@@ -1,0 +1,45 @@
+#Login{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    top:0;
+    z-index: 1;
+    margin:auto;
+}
+#Login .login-form{
+    background:white;
+    max-width: 420px;
+    max-height: 470px;
+	position:absolute;					
+    top:10%;
+    left:0; 
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+    border-radius: 8px;	
+    padding-top: 12px;
+}
+
+#Login input::placeholder{
+    text-align:center;
+    line-height:38px;
+  }
+
+#Login #Footer{
+    background-color: white;
+    color: white;
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    color: #808080;
+    font-size:16px;
+    font-family: 'Vollkorn SC', serif;
+}
+
+#Login #Footer hr{
+    height: 0px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
