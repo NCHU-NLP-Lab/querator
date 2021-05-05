@@ -28,7 +28,7 @@ origins = [
     "localhost:3000"
 ]
 
-app.mount("/static", StaticFiles(directory="react/build/static"), name="static")
+app.mount("/react", StaticFiles(directory="react/build"), name="react")
 
 app.add_middleware(
     CORSMiddleware,

@@ -184,7 +184,7 @@ class View extends Component {
                 var sq = ''
                 selectRadios.forEach((rs) => {
                     if (parseInt(rs.k1) === parseInt(index)) {
-                        sq = selectWords[rs.k1].question[rs.k2]
+                        sq = selectWords[rs.k1].questions[rs.k2]
                     }
                 })
                 return sq
@@ -194,7 +194,7 @@ class View extends Component {
             let newSw = { ...sw }
             return Object.assign(newSw, {
                 context: pickAnsRaw[index].context,
-                question: selectQ,
+                questions: selectQ,
                 tag_padding: pickAnsRaw[index].tag_padding
             })
         })
@@ -244,7 +244,7 @@ class View extends Component {
                 var sq = ''
                 selectRadios.forEach((rs) => {
                     if (parseInt(rs.k1) === parseInt(index)) {
-                        sq = selectWords[rs.k1].question[rs.k2]
+                        sq = selectWords[rs.k1].questions[rs.k2]
                     }
                 })
                 return sq
