@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from model import QuestionAndAnswer,EnItem,ZhItem
+import os
 
 # init nlp_model
 en_model = AutoModelForSeq2SeqLM.from_pretrained("p208p2002/bart-squad-qg-hl")
@@ -27,11 +28,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-origins = [
-    "http://localhost:3000",
-    "localhost:3000"
-]
-
+origins = os.getenv("allow_origins","http://localhost:8000 http://localhost:3000").split()
 app.mount("/react", StaticFiles(directory="react/build"), name="react")
 
 app.add_middleware(

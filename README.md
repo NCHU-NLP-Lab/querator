@@ -7,6 +7,14 @@
 - react
 - transformers
 
+## 服務部屬
+```sh
+docker-compose up -d --build
+```
+> 加入參數 `-e allow_origins="*"` 允許全部CORS，或用空白分隔多個
+
+> 預設運行在 port:22500
+
 ## 前端
 請先確定在`react/`底下
 > `cd react`
@@ -61,11 +69,11 @@ Content type: application/json
 `seq2seq lm`、`causal lm`等架構在CPU運算下的速度是可以接受的
 
 ### CORS安全性
-預設不開啟，如果有打API需求手動更改
-```python
-# server.py
-allow_origins=["*"]
+預設不開啟，如果有打API需求設置環境變數
+```sh
+export allow_origins="*" # 允許全部
 ```
+> 可用空白分隔多個: `"http://HOST_1 http://HOST2"`
 
 ### 模型檔案
 模型檔案存放於hf model hub

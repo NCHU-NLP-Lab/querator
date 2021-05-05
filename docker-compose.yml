@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+    querator:
+        build: "."
+        container_name: "querator"
+        restart: always
+        ports:
+        - "22500:8000"
