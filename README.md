@@ -40,7 +40,7 @@ allow_origins=["*"]
 展示/前端首頁
 #### GET: /docs
 Querator API文件檔案，可線上測試
-#### Post: /en/generate-question
+#### POST: /en/generate-question
 Content type: application/json
 ```json
 {
@@ -53,7 +53,7 @@ Content type: application/json
 }
 ```
 
-#### Post: /zh/generate-question
+#### POST: /zh/generate-question
 Content type: application/json
 ```json
 {
