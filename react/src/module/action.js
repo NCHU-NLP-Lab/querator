@@ -7,8 +7,8 @@ if (process.env.NODE_ENV === "development") {
 }
 
 let {
-    REACT_APP_CH_API_SERVER: API_ZH_TW = '',
-    REACT_APP_EN_API_SERVER: API_EN_US = '',
+    REACT_APP_CH_API_SERVER: API_ZH_TW = '/zh',
+    REACT_APP_EN_API_SERVER: API_EN_US = '/en',
     REACT_APP_USER_AUTH_SERVER: UDIC_SERVICES_SERVER = '',
     REACT_APP_USER_AUTH = 'FALSE'
 } = process.env

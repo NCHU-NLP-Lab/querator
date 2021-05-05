@@ -1,20 +1,24 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
-from typing import Optional,List
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, BertTokenizerFast, AutoModelForCausalLM
 import torch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from loguru import logger
+from model import QuestionAndAnswer,EnItem,ZhItem
 
-# init model
-model = AutoModelForSeq2SeqLM.from_pretrained("p208p2002/bart-squad-qg-hl")
-tokenizer = AutoTokenizer.from_pretrained("p208p2002/bart-squad-qg-hl")
+# init nlp_model
+en_model = AutoModelForSeq2SeqLM.from_pretrained("p208p2002/bart-squad-qg-hl")
+en_tokenizer = AutoTokenizer.from_pretrained("p208p2002/bart-squad-qg-hl")
+
+zh_model = AutoModelForCausalLM.from_pretrained("p208p2002/gpt2-drcd-qg-hl")
+zh_tokenizer = BertTokenizerFast.from_pretrained("p208p2002/gpt2-drcd-qg-hl")
 
 # config
 max_length = 512
+max_question_length = 30
 hl_token = '[HL]'
-hl_token_id = tokenizer.convert_tokens_to_ids([hl_token])[0]
+hl_token_id = en_tokenizer.convert_tokens_to_ids([hl_token])[0]
 
 # 
 app = FastAPI(
@@ -38,47 +42,9 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-# data format
-class QuestionAndAnswer(BaseModel):
-    tag: str
-    start_at: int
-    end_at: int
-    questions: List[str] = []
-
-class Answer(BaseModel):
-    tag: str
-    start_at: int
-    end_at: int
-
-class Item(BaseModel):
-    article:str
-    answer:Answer
-    class Config:
-        schema_extra = {
-            "example": {
-                "article": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.",
-                "answer":  {
-                    "tag": "J. K. Rowling",
-                    "start_at": 76,
-                    "end_at": 88
-                }
-            }
-        }
-
-# router
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    with open("react/build/index.html","r",encoding="utf-8") as f:
-        html_content = f.read()
-    return HTMLResponse(content=html_content, status_code=200)
-
-@app.post("/generate-question")
-async def generate_question(item:Item):
-    article = item.article
-    start_at = item.answer.start_at
-    end_at = item.answer.end_at + 1
+def prepare_model_input_ids(article,start_at,end_at,tokenizer):
     hl_context = f"{article[:start_at]}{hl_token}{article[start_at:end_at]}{hl_token}{article[end_at:]}"
-    print(hl_context)
+    logger.info(hl_context)
     model_input = tokenizer(
         hl_context,
         return_length=True
@@ -88,12 +54,27 @@ async def generate_question(item:Item):
     if input_length > max_length:
         slice_length = int(max_length/2)
         mid_index = model_input['input_ids'].index(hl_token_id)
-        new_input_ids = model_input['input_ids'][mid_index-slice_length:mid_index+slice_length+1]
+        new_input_ids = model_input['input_ids'][mid_index-slice_length:mid_index+slice_length]
         model_input['input_ids'] = new_input_ids
+    return torch.LongTensor([model_input['input_ids']]), input_length
 
-    outputs = model.generate(
-        input_ids=torch.LongTensor([model_input['input_ids']]),
-        max_length=30,
+# router
+@app.get("/", response_class=HTMLResponse)
+async def root():
+    with open("react/build/index.html","r",encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=200)
+
+@app.post("/en/generate-question")
+async def generate_en_question(item:EnItem):
+    article = item.article
+    start_at = item.answer.start_at
+    end_at = item.answer.end_at + 1
+    
+    input_ids,input_length = prepare_model_input_ids(article,start_at,end_at,en_tokenizer)
+    outputs = en_model.generate(
+        input_ids=input_ids,
+        max_length=max_question_length,
         early_stopping=True,
         do_sample=False,
         num_beams=10,
@@ -105,7 +86,34 @@ async def generate_question(item:Item):
 
     decode_questions = []
     for output in outputs:
-        decode_question = tokenizer.decode(output, skip_special_tokens=True)
+        decode_question = en_tokenizer.decode(output, skip_special_tokens=True)
+        decode_questions.append(decode_question)
+    return QuestionAndAnswer(tag=item.answer.tag,start_at=item.answer.start_at,end_at=item.answer.end_at,questions=decode_questions)
+
+@app.post("/zh/generate-question")
+async def generate_zh_question(item:ZhItem):
+    article = item.article
+    start_at = item.answer.start_at
+    end_at = item.answer.end_at + 1
+    
+    input_ids,input_length = prepare_model_input_ids(article,start_at,end_at,zh_tokenizer)
+    outputs = zh_model.generate(
+        input_ids=input_ids,
+        max_length=max_length+max_question_length,
+        early_stopping=True,
+        do_sample=False,
+        num_beams=10,
+        num_beam_groups=5,
+        diversity_penalty=0.5,
+        no_repeat_ngram_size=2,
+        num_return_sequences=5,
+        eos_token_id=zh_tokenizer.eos_token_id
+    )
+
+    decode_questions = []
+    for output in outputs:
+        decode_question = zh_tokenizer.decode(output[input_length:], skip_special_tokens=True)
+        decode_question = decode_question.replace(" ","")
         decode_questions.append(decode_question)
     return QuestionAndAnswer(tag=item.answer.tag,start_at=item.answer.start_at,end_at=item.answer.end_at,questions=decode_questions)
     

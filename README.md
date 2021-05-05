@@ -42,7 +42,3 @@ allow_origins=["*"]
 - [bart-squad-qg-hl](https://huggingface.co/p208p2002/bart-squad-qg-hl)
 - [gpt2-squad-qg-hl](https://huggingface.co/p208p2002/gpt2-squad-qg-hl)
 - [t5-squad-qg-h](https://huggingface.co/p208p2002/t5-squad-qg-hl)
-
-### Todos
-- 中文/多語言QG模型
-- dockerize
