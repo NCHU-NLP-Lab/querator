@@ -35,10 +35,38 @@
 allow_origins=["*"]
 ```
 ### API文件
-請將server運行起來，然後前往`/docs`
+請將server運行起來，然後前往`/docs`查閱完整文檔
+#### GET: /
+展示/前端首頁
+#### GET: /docs
+Querator API文件檔案，可線上測試
+#### Post: /en/generate-question
+Content type: application/json
+```json
+{
+  "article": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.",
+  "answer": {
+    "tag": "J. K. Rowling",
+    "start_at": 76,
+    "end_at": 88
+  }
+}
+```
+
+#### Post: /zh/generate-question
+Content type: application/json
+```json
+{
+  "article": "英國作家J·K·羅琳的兒童奇幻文學系列小說，描寫主角哈利波特在霍格華茲魔法學校7年學習生活中的冒險故事；該系列被翻譯成75種語言",
+  "answer": {
+    "tag": "冒險故事",
+    "start_at": 47,
+    "end_at": 50
+  }
+}
+```
 
 ### 模型檔案
-模型檔案存放於hf model hub，目前有三種模型可供使用
-- [bart-squad-qg-hl](https://huggingface.co/p208p2002/bart-squad-qg-hl)
-- [gpt2-squad-qg-hl](https://huggingface.co/p208p2002/gpt2-squad-qg-hl)
+模型檔案存放於hf model hub
 - [t5-squad-qg-h](https://huggingface.co/p208p2002/t5-squad-qg-hl)
+- [gpt2-drcd-qg-hl](https://huggingface.co/p208p2002/gpt2-drcd-qg-hl)
