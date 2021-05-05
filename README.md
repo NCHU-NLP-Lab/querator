@@ -68,5 +68,5 @@ Content type: application/json
 
 ### 模型檔案
 模型檔案存放於hf model hub
-- [t5-squad-qg-h](https://huggingface.co/p208p2002/t5-squad-qg-hl)
+- [t5-squad-qg-hl](https://huggingface.co/p208p2002/t5-squad-qg-hl)
 - [gpt2-drcd-qg-hl](https://huggingface.co/p208p2002/gpt2-drcd-qg-hl)
