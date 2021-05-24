@@ -1,4 +1,3 @@
-
 FROM tensorflow/tensorflow:2.3.0
 RUN mkdir /app
 WORKDIR /app
