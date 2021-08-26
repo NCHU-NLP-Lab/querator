@@ -23,6 +23,19 @@ docker-compose up -d --build
 - 啟動開發環境: `npm run start`
 - 編譯APP: `npm run build`
 
+### 開發與維護
+前端開發時有一個獨立的開發服務器，因此需要指定前端開發時有一個獨立的開發服務器，因此需要指定API。
+這些操作都透過環境變數來完成
+- `REACT_APP_EN_API_SERVER`
+- `REACT_APP_CH_API_SERVER`
+
+有時候也需要指定開發服務器的指定開發服務器的PROT
+- `PORT`
+
+```sh
+PORT=16004 REACT_APP_EN_API_SERVER=http://140.120.13.253:16005/en npm start
+```
+
 ## 後端
 ### 指令
 - 安裝相依套件(僅第一次需要): `pip install -r requirements.txt`
@@ -31,6 +44,12 @@ docker-compose up -d --build
 - 部署: `cd react && npm run build && cd .. && uvicorn server:app`
 > 部屬階段先確定react有重新build過，再啟動server
 
+### 開發與維護
+後端開發時可以設定允許設定允許CORS，並且指定port與host
+> `host`設定為`0.0.0.0`即可
+```sh
+allow_origins="*" uvicorn server:app --port 16005 --host 0.0.0.0
+```
 ### 路由/API文件
 請將server運行起來，然後前往`/docs`查閱完整文檔
 #### GET: /
