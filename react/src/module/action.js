@@ -13,6 +13,8 @@ let {
     REACT_APP_USER_AUTH = 'FALSE'
 } = process.env
 
+console.log(process.env)
+
 if (API_ZH_TW === '' || API_EN_US === '') {
     console.warn('API_SERVER not set')
 }
