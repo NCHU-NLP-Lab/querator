@@ -48,7 +48,7 @@ PORT=16004 REACT_APP_EN_API_SERVER=http://140.120.13.253:16005/en npm start
 後端開發時可以設定允許設定允許CORS，並且指定port與host
 > `host`設定為`0.0.0.0`即可
 ```sh
-allow_origins="*" uvicorn server:app --port 16005 --host 0.0.0.0
+allow_origins="*" uvicorn server:app --port 16005 --host 0.0.0.0 --reload
 ```
 ### 路由/API文件
 請將server運行起來，然後前往`/docs`查閱完整文檔
