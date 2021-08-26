@@ -5,7 +5,7 @@ import torch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
-from model import QuestionAndAnswer,EnItem,ZhItem
+from model import QuestionAndAnswer,EnQGItem,ZhQGItem
 import os
 
 # init nlp_model
@@ -63,7 +63,7 @@ async def root():
     return HTMLResponse(content=html_content, status_code=200)
 
 @app.post("/en/generate-question")
-async def generate_en_question(item:EnItem):
+async def generate_en_question(item:EnQGItem):
     article = item.article
     start_at = item.answer.start_at
     end_at = item.answer.end_at + 1
@@ -87,8 +87,11 @@ async def generate_en_question(item:EnItem):
         decode_questions.append(decode_question)
     return QuestionAndAnswer(tag=item.answer.tag,start_at=item.answer.start_at,end_at=item.answer.end_at,questions=decode_questions)
 
+# @app.post("/en/generate-question")
+
+
 @app.post("/zh/generate-question")
-async def generate_zh_question(item:ZhItem):
+async def generate_zh_question(item:ZhQGItem):
     article = item.article
     start_at = item.answer.start_at
     end_at = item.answer.end_at + 1

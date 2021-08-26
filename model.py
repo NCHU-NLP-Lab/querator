@@ -12,11 +12,11 @@ class Answer(BaseModel):
     start_at: int
     end_at: int
 
-class Item(BaseModel):
+class QGItem(BaseModel):
     article:str
     answer:Answer
 
-class EnItem(Item):
+class EnQGItem(QGItem):
      class Config:
         schema_extra = {
             "example": {
@@ -29,7 +29,7 @@ class EnItem(Item):
             }
         }
 
-class ZhItem(Item):
+class ZhQGItem(QGItem):
      class Config:
         schema_extra = {
             "example":{
