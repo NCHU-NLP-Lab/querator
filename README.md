@@ -25,7 +25,7 @@ docker-compose up -d --build
 
 ## 後端
 ### 指令
-- 安裝相依套件(僅第一次需要): `pip install -r requirements`
+- 安裝相依套件(僅第一次需要): `pip install -r requirements.txt`
 - 啟動開發環境: `uvicorn server:app --reload`
 - 部署: `cd react && npm run build && cd .. && uvicorn server:app`
 > 部屬階段先確定react有重新build過，再啟動server
