@@ -41,3 +41,28 @@ class ZhQGItem(QGItem):
                 }
             }
         }
+
+class DisItem(BaseModel):
+    article:str
+    answer:str
+    question:str
+
+class EnDisItem(DisItem):
+    class Config:
+        schema_extra = {
+            "example":{
+                "article": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.",
+                "answer": "J. K. Rowling",
+                "question:": "Who wrote Harry Potter?"
+            }
+        }
+
+class ZhDisItem(DisItem):
+    class Config:
+        schema_extra = {
+            "example":{
+                "article": "英國作家J·K·羅琳的兒童奇幻文學系列小說，描寫主角哈利波特在霍格華茲魔法學校7年學習生活中的冒險故事；該系列被翻譯成75種語言",
+                "answer": "冒險故事",
+                "question": "哈利波特是一本怎麼樣的小說"
+            }
+        }        
