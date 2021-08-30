@@ -100,6 +100,38 @@ export const settingLngAndModel = (lng = 'NULL', model = 'NULL') => {
     })
 }
 
+export const cleanDistractor = (save_index)=>{
+    return {
+        type:'CLEAN_DISTRACTORS',
+        save_index
+    }
+}
+
+export const genDistractors = (article,answer,answer_start,answer_end,question, gen_quantity,lng = 'zh-TW',save_index=0)=>{
+    let apiHost = getApiHost(lng)
+    return (dispatch)=>{
+        axios.post(apiHost+'/generate-distractor',{
+            article,
+            answer:{
+                tag: answer,
+                start_at:answer_start,
+                end_at:answer_end
+            },
+            question,
+            gen_quantity
+        }) 
+        .then((reqData)=>{
+            console.log(reqData)
+            let {distractors=[]} = reqData.data
+            dispatch({
+                type:'SAVE_DISTRACTORS',
+                save_index,
+                distractors
+            })
+        })
+    }
+}
+
 export const submitQs = (q, fullContext, lng = 'zh-TW') => {
     let apiHost = getApiHost(lng)
 

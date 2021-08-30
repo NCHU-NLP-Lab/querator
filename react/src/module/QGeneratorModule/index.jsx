@@ -9,6 +9,7 @@ import { delAnswer } from '../action'
 import { MdClose, MdReplay } from "react-icons/md";
 import firebase from '../firebase'
 import ReactTooltip from 'react-tooltip'
+import Distractor from './distractor'
 
 class View extends Component {
     constructor(props) {
@@ -37,11 +38,11 @@ class View extends Component {
         }
     }
 
-    saveUserData(){
+    saveUserData() {
         // 上傳紀錄資料到server
-        let { appState={} } = this.props,
-        { selectWordsRaw:selectWords, selectWords:afterEditSelectWords ,
-            pickAnsRaw, fullContext, model } = appState
+        let { appState = {} } = this.props,
+            { selectWordsRaw: selectWords, selectWords: afterEditSelectWords,
+                pickAnsRaw, fullContext, model } = appState
         let { selectRadios } = this.state
 
         //
@@ -58,39 +59,39 @@ class View extends Component {
                         sq = selectWords[rs.k1].question[rs.k2]
                         sq2 = afterEditSelectWords[rs.k1].question[rs.k2]
                         pickQuestionIndex = rs.k2
-                        if(sq !== sq2){
+                        if (sq !== sq2) {
                             sqIsEdit = true
                         }
                     }
                 })
-                return [sq2,sqIsEdit]
+                return [sq2, sqIsEdit]
             }
             var selectQ = getSelectQ(index)
-            
-            let newSw = { ...sw }            
+
+            let newSw = { ...sw }
             return Object.assign(newSw, {
                 fullContext,
                 contextForGenerate: pickAnsRaw[index].context,
                 pickQuestion: selectQ[0],
-                pickQuestionIsEdit:selectQ[1], //是否被編輯過
+                pickQuestionIsEdit: selectQ[1], //是否被編輯過
                 pickQuestionIndex,
-                generateQuestions:newSw.question,
-                tagStartAt:newSw.start_at,
-                tagEndAt:newSw.end_at,
+                generateQuestions: newSw.question,
+                tagStartAt: newSw.start_at,
+                tagEndAt: newSw.end_at,
                 tagPadding: pickAnsRaw[index].tag_padding,
-                timestamp:this.getDateTime(),
-                generatorModel:model
+                timestamp: this.getDateTime(),
+                generatorModel: model
             })
         })
 
-        for(var i=0; i<newSelectWords.length; i++){
+        for (var i = 0; i < newSelectWords.length; i++) {
             delete newSelectWords[i]['question']
             delete newSelectWords[i]['start_at']
             delete newSelectWords[i]['end_at']
         }
 
         function writeUserData(saveId = Date.now().toString()) {
-                firebase.database().ref('user_operate_rec/' + saveId).set(newSelectWords);
+            firebase.database().ref('user_operate_rec/' + saveId).set(newSelectWords);
         }
         writeUserData()
     }
@@ -221,10 +222,10 @@ class View extends Component {
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
 
-        if (newSelectWords.length === selectRadios.length){
+        if (newSelectWords.length === selectRadios.length) {
             linkElement.click();
             this.saveUserData();
-        }            
+        }
         else {
             showToastInfo(t('You have to pick the question what you want to export'), 'error')
         }
@@ -250,10 +251,10 @@ class View extends Component {
                 return sq
             }
             var selectQ = getSelectQ(index)
-            if(sw.softDel !== true){
+            if (sw.softDel !== true) {
                 outPair = outPair + selectQ + ' ' + sw.tag + '\n'
-                selectCount+=1
-            }                
+                selectCount += 1
+            }
         })
 
         let dataStr = outPair;
@@ -262,10 +263,10 @@ class View extends Component {
         let linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
-        if (selectCount === selectRadios.length){
+        if (selectCount === selectRadios.length) {
             linkElement.click();
             this.saveUserData();
-        }            
+        }
         else {
             showToastInfo(t('You have to pick the question what you want to export'), 'error')
         }
@@ -276,16 +277,36 @@ class View extends Component {
         window.scrollTo(0, ref.current.offsetTop)
     }
 
+    getSelectQuestion = (k1, k2) => {
+        let { selectWords } = this.props.appState
+        try {
+            return selectWords[k1].questions[k2]
+        } catch (error) {
+            return ''
+        }
+    }
+
+    getK2UnderK1 = (k1) => {
+        let current_block = {}
+        this.state.selectRadios.forEach((radio) => {
+            if (radio.k1 === k1) {
+                current_block = radio
+            }
+        })
+        // console.log(current_block.k2)
+        return current_block.k2
+    }
+
     render() {
         let { t } = this.props
-        let { selectWordsSubmitting, selectWords, submitCount, submitTotal,pickAnsRaw } = this.props.appState
+        let { selectWordsSubmitting, selectWords, submitCount, submitTotal, pickAnsRaw, fullContext } = this.props.appState
         let { selectRadios } = this.state
         let selectWordsAfterDel = selectWords.filter((s) => {
             let { softDel = false } = s
             return !softDel
         })
         return (
-            <div ref={this.QGBlock} id="QG-Module">                
+            <div ref={this.QGBlock} id="QG-Module">
                 <div className={selectWordsSubmitting === true ? "loading-mask" : ""} style={{ minHeight: '200px' }}>
                     {selectWordsSubmitting === true ? (
                         <h4 className="loading-text text-center">Loading...{submitCount}/{submitTotal}</h4>
@@ -296,25 +317,35 @@ class View extends Component {
                                     key={index}
                                     className="alert alert-dark"
                                     role="alert">
-                                        {/* String(dataTip).replace(/GLB/g,'<b class="text-info">GLB</b>' */}
+                                    {/* String(dataTip).replace(/GLB/g,'<b class="text-info">GLB</b>' */}
                                     <span
-                                        style={{cursor:'context-menu'}}
+                                        style={{ cursor: 'context-menu' }}
                                         data-class="tool-tip"
-                                        data-tip={(()=>{
-                                            var frontContext = pickAnsRaw[index].context.slice(0,word.start_at)
-                                            var endContext = pickAnsRaw[index].context.slice(word.end_at+1)
-                                            console.log(word.start_at,word.end_at)
+                                        data-tip={(() => {
+                                            var frontContext = pickAnsRaw[index].context.slice(0, word.start_at)
+                                            var endContext = pickAnsRaw[index].context.slice(word.end_at + 1)
+                                            console.log(word.start_at, word.end_at)
                                             console.log(frontContext)
                                             console.log(endContext)
-                                            return frontContext+`<span class="tool-tip-hl">${tag}</span>`+endContext
+                                            return frontContext + `<span class="tool-tip-hl">${tag}</span>` + endContext
                                         })()}>
-                                            <b>{index + 1}. {t('answer')}:</b>{tag}</span>
+                                        <b>{index + 1}. {t('answer')}:</b>{tag}
+                                    </span>
                                     <span
                                         className="del-answer"
                                         onClick={(e) => { this.delAnswerBlock(e, word, index) }}
                                     >
                                         <MdClose />
                                     </span>
+                                    <Distractor
+                                        key={this.getK2UnderK1(index)}
+                                        index={index}
+                                        article={fullContext}
+                                        answer={tag}
+                                        answer_start={word.start_at}
+                                        answer_end={word.end_at}
+                                        question={this.getSelectQuestion(index, this.getK2UnderK1(index))}
+                                    />
                                     <hr />
                                     {questions.map((q, i) => {
                                         return <EditableComponent
@@ -330,14 +361,14 @@ class View extends Component {
                                     className="alert alert-light"
                                     role="alert">
                                     <s><b>{index + 1}. {t('answer')}:</b>{tag}
-                                    <span
-                                        className="del-answer"
-                                        onClick={(e) => { this.delAnswerBlock(e, word, index) }}
-                                    >
-                                        <MdReplay />
-                                    </span>
+                                        <span
+                                            className="del-answer"
+                                            onClick={(e) => { this.delAnswerBlock(e, word, index) }}
+                                        >
+                                            <MdReplay />
+                                        </span>
                                     </s>
-                                    </form>)
+                                </form>)
                             })
                         )}
                 </div>
@@ -347,8 +378,8 @@ class View extends Component {
                         <ReactTooltip
                             key={JSON.stringify(this.state)}
                             place="right"
-                            getContent={(dataTip) => <div dangerouslySetInnerHTML={{__html:dataTip}} />}
-                            multiline={true}/>
+                            getContent={(dataTip) => <div dangerouslySetInnerHTML={{ __html: dataTip }} />}
+                            multiline={true} />
                         <h5>{t('Export Options')}</h5>
                         <hr />
                         <button
