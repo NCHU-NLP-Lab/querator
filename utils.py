@@ -82,7 +82,7 @@ class BartDistractorGeneration():
             self.download_model()
         
         #
-        self.dg_model = nlp2go.Model(os.path.join(self._model_save_dir,'BDG.pt'))
+        # self.dg_model = nlp2go.Model(os.path.join(self._model_save_dir,'BDG.pt'))
         self.dg_model_pm = nlp2go.Model(os.path.join(self._model_save_dir,'BDG_PM.pt'))
         self.dg_model_both = nlp2go.Model(os.path.join(self._model_save_dir,'BDG_ANPM.pt'))
 
@@ -107,10 +107,11 @@ class BartDistractorGeneration():
         d_input_ids,_ = prepare_dis_model_input_ids(context,question,answer.tag,answer.start_at,answer.end_at,self.tokenizer)  # 如果文章過長進行重新裁切與處理
         # d_input = context + '</s>' + question + '</s>' + answer.tag
         d_input = self.tokenizer.decode(d_input_ids[0])
-        choices = self.dg_model.predict(d_input, decodenum=gen_quantity)['result']
+        # choices = self.dg_model.predict(d_input, decodenum=gen_quantity)['result']
         choices_pm = self.dg_model_pm.predict(d_input, decodenum=gen_quantity)['result']
         choices_both = self.dg_model_both.predict(d_input, decodenum=gen_quantity)['result']
-        all_options = choices + choices_pm + choices_both
+        # all_options = choices + choices_pm + choices_both
+        all_options = choices_pm + choices_both
         return self._selection(context,question,answer.tag,all_options, gen_quantity)
 
     def _selection(self,context, question, answer, all_options, gen_quantity):
