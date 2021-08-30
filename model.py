@@ -59,7 +59,7 @@ class EnDisItem(DisItem):
                     "end_at": 88
                 },
                 "question": "Who wrote Harry Potter?",
-                "gen_quantity":2
+                "gen_quantity":3
             }
         }
 
@@ -74,7 +74,7 @@ class ZhDisItem(DisItem):
                     "end_at":50
                 },
                 "question": "哈利波特是一本怎麼樣的小說?",
-                "gen_quantity":2
+                "gen_quantity":3
             }
         }        
 
