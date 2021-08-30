@@ -9,6 +9,9 @@ from transformers import RobertaForMultipleChoice
 from torch.distributions import Categorical
 import itertools as it
 import nlp2go
+from functools import lru_cache
+import json
+from model import Answer
 
 def prepare_qg_model_input_ids(article,start_at,end_at,tokenizer):
     hl_context = f"{article[:start_at]}{hl_token}{article[start_at:end_at]}{hl_token}{article[end_at:]}"
@@ -97,7 +100,10 @@ class BartDistractorGeneration():
         self._download_file('https://github.com/voidful/BDG/releases/download/v2.0/BDG_PM.pt','BDG_PM.pt')
         self._download_file('https://github.com/voidful/BDG/releases/download/v2.0/BDG_ANPM.pt','BDG_ANPM.pt')
     
+    @lru_cache(maxsize=1000)
     def generate_distractor(self,context, question, answer, gen_quantity):
+        if type(answer) is str:
+            answer = Answer.parse_obj(json.loads(answer))
         d_input_ids,_ = prepare_dis_model_input_ids(context,question,answer.tag,answer.start_at,answer.end_at,self.tokenizer)  # 如果文章過長進行重新裁切與處理
         # d_input = context + '</s>' + question + '</s>' + answer.tag
         d_input = self.tokenizer.decode(d_input_ids[0])

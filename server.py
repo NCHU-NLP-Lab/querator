@@ -9,6 +9,7 @@ from model import QuestionAndAnswer,EnQGItem,EnDisItem,ZhQGItem,ZhDisItem,Distra
 import os
 from utils import prepare_qg_model_input_ids,prepare_dis_model_input_ids,BartDistractorGeneration
 from config import max_length,max_question_length
+import json
 
 # init nlp_model
 logger.info("start loading en models...")
@@ -86,7 +87,7 @@ async def generate_en_distractor(item:EnDisItem):
     answer = item.answer
     question = item.question
     gen_quantity = item.gen_quantity
-    decodes = en_dis_model.generate_distractor(article,question,answer,gen_quantity)
+    decodes = en_dis_model.generate_distractor(article,question,json.dumps(answer.dict()),gen_quantity)
     return Distractors(distractors=decodes)
 
 @app.post("/zh/generate-question")
