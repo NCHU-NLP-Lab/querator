@@ -44,16 +44,22 @@ class ZhQGItem(QGItem):
 
 class DisItem(BaseModel):
     article:str
-    answer:str
+    answer:Answer
     question:str
+    gen_quantity:int
 
 class EnDisItem(DisItem):
     class Config:
         schema_extra = {
             "example":{
                 "article": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.",
-                "answer": "J. K. Rowling",
-                "question:": "Who wrote Harry Potter?"
+                "answer":  {
+                    "tag": "J. K. Rowling",
+                    "start_at": 76,
+                    "end_at": 88
+                },
+                "question": "Who wrote Harry Potter?",
+                "gen_quantity":2
             }
         }
 
@@ -62,7 +68,15 @@ class ZhDisItem(DisItem):
         schema_extra = {
             "example":{
                 "article": "英國作家J·K·羅琳的兒童奇幻文學系列小說，描寫主角哈利波特在霍格華茲魔法學校7年學習生活中的冒險故事；該系列被翻譯成75種語言",
-                "answer": "冒險故事",
-                "question": "哈利波特是一本怎麼樣的小說"
+                "answer":{
+                    "tag":"冒險故事",
+                    "start_at":47,
+                    "end_at":50
+                },
+                "question": "哈利波特是一本怎麼樣的小說?",
+                "gen_quantity":2
             }
         }        
+
+class Distractors(BaseModel):
+    distractors: List[str]

@@ -5,21 +5,30 @@ import torch
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
-from model import QuestionAndAnswer,EnQGItem,ZhQGItem
+from model import QuestionAndAnswer,EnQGItem,EnDisItem,ZhQGItem,ZhDisItem,Distractors
 import os
+from utils import prepare_qg_model_input_ids,prepare_dis_model_input_ids,BartDistractorGeneration
+from config import max_length,max_question_length
 
 # init nlp_model
-en_model = AutoModelForSeq2SeqLM.from_pretrained("p208p2002/bart-squad-qg-hl")
-en_tokenizer = AutoTokenizer.from_pretrained("p208p2002/bart-squad-qg-hl")
+logger.info("start loading en models...")
+en_qg_path = "p208p2002/bart-squad-qg-hl"
+en_dis_path = "voidful/bart-distractor-generation"
 
-zh_model = AutoModelForCausalLM.from_pretrained("p208p2002/gpt2-drcd-qg-hl")
-zh_tokenizer = BertTokenizerFast.from_pretrained("p208p2002/gpt2-drcd-qg-hl")
+en_qg_model = AutoModelForSeq2SeqLM.from_pretrained(en_qg_path)
+en_qg_tokenizer = AutoTokenizer.from_pretrained(en_qg_path)
 
-# config
-max_length = 512
-max_question_length = 30
-hl_token = '[HL]'
-hl_token_id = en_tokenizer.convert_tokens_to_ids([hl_token])[0]
+# en_dis_model = AutoModelForSeq2SeqLM.from_pretrained("voidful/bart-distractor-generation")
+# en_dis_tokenizer = AutoTokenizer.from_pretrained("voidful/bart-distractor-generation")
+en_dis_model = BartDistractorGeneration()
+logger.info("loading en models finished !")
+
+
+logger.info("start loading zh models...")
+zh_qg_path = "p208p2002/gpt2-drcd-qg-hl"
+zh_qg_model = AutoModelForCausalLM.from_pretrained(zh_qg_path)
+zh_qg_tokenizer = BertTokenizerFast.from_pretrained(zh_qg_path)
+logger.info("loading zh models finished !")
 
 # 
 app = FastAPI(
@@ -39,22 +48,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-def prepare_model_input_ids(article,start_at,end_at,tokenizer):
-    hl_context = f"{article[:start_at]}{hl_token}{article[start_at:end_at]}{hl_token}{article[end_at:]}"
-    logger.info(hl_context)
-    model_input = tokenizer(
-        hl_context,
-        return_length=True
-        )
-
-    input_length = model_input['length'][0]
-    if input_length > max_length:
-        slice_length = int(max_length/2)
-        mid_index = model_input['input_ids'].index(hl_token_id)
-        new_input_ids = model_input['input_ids'][mid_index-slice_length:mid_index+slice_length]
-        model_input['input_ids'] = new_input_ids
-    return torch.LongTensor([model_input['input_ids']]), input_length
-
 # router
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -68,8 +61,8 @@ async def generate_en_question(item:EnQGItem):
     start_at = item.answer.start_at
     end_at = item.answer.end_at + 1
     
-    input_ids,input_length = prepare_model_input_ids(article,start_at,end_at,en_tokenizer)
-    outputs = en_model.generate(
+    input_ids,input_length = prepare_qg_model_input_ids(article,start_at,end_at,en_qg_tokenizer)
+    outputs = en_qg_model.generate(
         input_ids=input_ids,
         max_length=max_question_length,
         early_stopping=True,
@@ -83,12 +76,18 @@ async def generate_en_question(item:EnQGItem):
 
     decode_questions = []
     for output in outputs:
-        decode_question = en_tokenizer.decode(output, skip_special_tokens=True)
+        decode_question = en_qg_tokenizer.decode(output, skip_special_tokens=True)
         decode_questions.append(decode_question)
     return QuestionAndAnswer(tag=item.answer.tag,start_at=item.answer.start_at,end_at=item.answer.end_at,questions=decode_questions)
 
-# @app.post("/en/generate-question")
-
+@app.post("/en/generate-distractor")
+async def generate_en_distractor(item:EnDisItem):
+    article = item.article
+    answer = item.answer
+    question = item.question
+    gen_quantity = item.gen_quantity
+    decodes = en_dis_model.generate_distractor(article,question,answer,gen_quantity)
+    return Distractors(distractors=decodes)
 
 @app.post("/zh/generate-question")
 async def generate_zh_question(item:ZhQGItem):
@@ -96,8 +95,8 @@ async def generate_zh_question(item:ZhQGItem):
     start_at = item.answer.start_at
     end_at = item.answer.end_at + 1
     
-    input_ids,input_length = prepare_model_input_ids(article,start_at,end_at,zh_tokenizer)
-    outputs = zh_model.generate(
+    input_ids,input_length = prepare_qg_model_input_ids(article,start_at,end_at,zh_qg_tokenizer)
+    outputs = zh_qg_model.generate(
         input_ids=input_ids,
         max_length=max_length+max_question_length,
         early_stopping=True,
@@ -107,13 +106,16 @@ async def generate_zh_question(item:ZhQGItem):
         diversity_penalty=0.5,
         no_repeat_ngram_size=2,
         num_return_sequences=5,
-        eos_token_id=zh_tokenizer.eos_token_id
+        eos_token_id=zh_qg_tokenizer.eos_token_id
     )
 
     decode_questions = []
     for output in outputs:
-        decode_question = zh_tokenizer.decode(output[input_length:], skip_special_tokens=True)
+        decode_question = zh_qg_tokenizer.decode(output[input_length:], skip_special_tokens=True)
         decode_question = decode_question.replace(" ","")
         decode_questions.append(decode_question)
     return QuestionAndAnswer(tag=item.answer.tag,start_at=item.answer.start_at,end_at=item.answer.end_at,questions=decode_questions)
-    
+
+@app.post("/zh/generate-distractor")
+async def generate_zh_distractor(item:ZhDisItem):
+    pass

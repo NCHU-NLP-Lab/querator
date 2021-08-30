@@ -2,3 +2,6 @@ fastapi[all]
 transformers==4.5.1
 torch>=1.7.0,<=1.8.1
 loguru
+nlp2go
+git+https://github.com/Maluuba/nlg-eval.git@master
+wget
