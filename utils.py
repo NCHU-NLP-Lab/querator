@@ -74,7 +74,7 @@ def prepare_dis_model_input_ids(article,question,answer,ans_start,ans_end,tokeni
 
 class BartDistractorGeneration():
     def __init__(self,device='cpu'):
-        self.device = 'cpu'
+        self.device = device
         self.nlgeval = NLGEval(metrics_to_omit=['METEOR', 'EmbeddingAverageCosineSimilairty', 'SkipThoughtCS', 'VectorExtremaCosineSimilarity','GreedyMatchingScore', 'CIDEr'])
         self._model_save_dir = '.BDG'
         if not os.path.isdir(self._model_save_dir):
