@@ -113,7 +113,7 @@ class View extends Component {
     }
 
     exportAsJson() {
-        let { selectWords, pickAnsRaw, fullContext } = this.props.appState
+        let { selectWords, pickAnsRaw, fullContext, distractor } = this.props.appState
         let { selectRadios } = this.state
         let { t } = this.props
 
@@ -123,19 +123,22 @@ class View extends Component {
             let getSelectQ = (index) => {
                 /* 取得選擇的問題 */
                 var sq = ''
+                let options = []
                 selectRadios.forEach((rs) => {
                     if (parseInt(rs.k1) === parseInt(index)) {
                         sq = selectWords[rs.k1].questions[rs.k2]
+                        options = distractor[rs.k1.toString()] || []
                     }
                 })
-                return sq
+                return {question:sq,options}
             }
             var selectQ = getSelectQ(index)
 
             let newSw = { ...sw }
             return Object.assign(newSw, {
                 context: pickAnsRaw[index].context,
-                questions: selectQ,
+                select_question: selectQ.question,
+                options: selectQ.options,
                 tag_padding: pickAnsRaw[index].tag_padding
             })
         })
