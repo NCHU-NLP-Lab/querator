@@ -43,3 +43,7 @@
 .rc-loading::after{
     background-color: rgba(0, 0, 0, 0.0) !important;
 }
+
+.text-decoration{
+    text-decoration: underline;
+}
