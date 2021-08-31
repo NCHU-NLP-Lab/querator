@@ -128,6 +128,12 @@ export const genDistractors = (article,answer,answer_start,answer_end,question, 
                 save_index,
                 distractors
             })
+            if(distractors.length==0){
+                throw 'option generation fail'
+            }
+        })
+        .catch((e)=>{
+            showToastInfo(JSON.stringify(e),'error')
         })
     }
 }
