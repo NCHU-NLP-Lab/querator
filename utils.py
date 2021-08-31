@@ -123,7 +123,7 @@ class BartDistractorGeneration():
                 a = "".join([char if char.isalpha() or char == " " else " " + char + " " for char in i[0]])
                 b = "".join([char if char.isalpha() or char == " " else " " + char + " " for char in i[1]])
                 metrics_dict = self.nlgeval.compute_individual_metrics([a], b)
-                if metrics_dict['Bleu_1'] > 0.5:
+                if metrics_dict['Bleu_1'] > 0.35:
                     keep = False
                     break
             if keep:
