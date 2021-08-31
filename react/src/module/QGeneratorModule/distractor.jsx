@@ -30,7 +30,7 @@ function Distractor(props) {
     return (
         <div>
             {/* firstInit: 如果是首次初始化，則不顯示讀取遮罩 */}
-            {firstInit?<span>wait for question selection ...</span>:''}
+            {firstInit?<span className="text-secondary">wait for question select ...</span>:''}
             {(options.length === 0 && !firstInit)?
                 <LoadingMask loading={true} text={"loading..."}>
                     <div style={{ width: '100%', height: 25 }}></div>
