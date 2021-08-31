@@ -107,7 +107,7 @@ export const cleanDistractor = (save_index)=>{
     }
 }
 
-export const genDistractors = (article,answer,answer_start,answer_end,question, gen_quantity,lng = 'zh-TW',save_index=0)=>{
+export const genDistractors = (article,answer,answer_start,answer_end,question, gen_quantity,lng = 'zh-TW',save_index=0, onFailCallback=()=>{})=>{
     let apiHost = getApiHost(lng)
     return (dispatch)=>{
         axios.post(apiHost+'/generate-distractor',{
@@ -128,12 +128,14 @@ export const genDistractors = (article,answer,answer_start,answer_end,question, 
                 save_index,
                 distractors
             })
-            if(distractors.length==0){
+            if(distractors.length===0){
+                // eslint-disable-next-line
                 throw 'option generation fail'
             }
         })
         .catch((e)=>{
             showToastInfo(JSON.stringify(e),'error')
+            onFailCallback()
         })
     }
 }
