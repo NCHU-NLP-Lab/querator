@@ -7,7 +7,6 @@ import { showToastInfo } from '../toast.js'
 import EditableComponent from './editableComponent'
 import { delAnswer } from '../action'
 import { MdClose, MdReplay } from "react-icons/md";
-import firebase from '../firebase'
 import ReactTooltip from 'react-tooltip'
 import Distractor from './distractor'
 
@@ -26,7 +25,6 @@ class View extends Component {
         this.radioOnClick = this.radioOnClick.bind(this)
         this.getDateTime = this.getDateTime.bind(this)
         this.delAnswerBlock = this.delAnswerBlock.bind(this)
-        this.saveUserData = this.saveUserData.bind(this)
         // this.editableComponent = this.editableComponent.bind(this)
     }
 
@@ -36,64 +34,6 @@ class View extends Component {
         if (selectWordsSubmitting) {
             this.srollToBlock(this.QGBlock)
         }
-    }
-
-    saveUserData() {
-        // 上傳紀錄資料到server
-        let { appState = {} } = this.props,
-            { selectWordsRaw: selectWords, selectWords: afterEditSelectWords,
-                pickAnsRaw, fullContext, model } = appState
-        let { selectRadios } = this.state
-
-        //
-        let newSelectWords = [...selectWords]
-        let pickQuestionIndex = 0
-        newSelectWords = newSelectWords.map((sw, index) => {
-            let getSelectQ = (index) => {
-                /* 取得選擇的問題 */
-                var sq = '' //選擇的問題(原始)
-                var sq2 = '' //選擇的問題(編輯)
-                var sqIsEdit = false
-                selectRadios.forEach((rs) => {
-                    if (parseInt(rs.k1) === parseInt(index)) {
-                        sq = selectWords[rs.k1].question[rs.k2]
-                        sq2 = afterEditSelectWords[rs.k1].question[rs.k2]
-                        pickQuestionIndex = rs.k2
-                        if (sq !== sq2) {
-                            sqIsEdit = true
-                        }
-                    }
-                })
-                return [sq2, sqIsEdit]
-            }
-            var selectQ = getSelectQ(index)
-
-            let newSw = { ...sw }
-            return Object.assign(newSw, {
-                fullContext,
-                contextForGenerate: pickAnsRaw[index].context,
-                pickQuestion: selectQ[0],
-                pickQuestionIsEdit: selectQ[1], //是否被編輯過
-                pickQuestionIndex,
-                generateQuestions: newSw.question,
-                tagStartAt: newSw.start_at,
-                tagEndAt: newSw.end_at,
-                tagPadding: pickAnsRaw[index].tag_padding,
-                timestamp: this.getDateTime(),
-                generatorModel: model
-            })
-        })
-
-        for (var i = 0; i < newSelectWords.length; i++) {
-            delete newSelectWords[i]['question']
-            delete newSelectWords[i]['start_at']
-            delete newSelectWords[i]['end_at']
-        }
-
-        function writeUserData(saveId = Date.now().toString()) {
-            firebase.database().ref('user_operate_rec/' + saveId).set(newSelectWords);
-        }
-        writeUserData()
     }
 
     delAnswerBlock(e, word, k1Index) {
@@ -224,7 +164,6 @@ class View extends Component {
 
         if (newSelectWords.length === selectRadios.length) {
             linkElement.click();
-            this.saveUserData();
         }
         else {
             showToastInfo(t('You have to pick the question what you want to export'), 'error')
@@ -265,7 +204,6 @@ class View extends Component {
         linkElement.setAttribute('download', exportFileDefaultName);
         if (selectCount === selectRadios.length) {
             linkElement.click();
-            this.saveUserData();
         }
         else {
             showToastInfo(t('You have to pick the question what you want to export'), 'error')
