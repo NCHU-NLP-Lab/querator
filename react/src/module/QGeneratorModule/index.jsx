@@ -297,6 +297,16 @@ class View extends Component {
         return current_block.k2
     }
 
+    hasK1 = (k1)=>{
+        let flag = false
+        this.state.selectRadios.forEach((radio) => {
+            if (radio.k1 === k1) {
+                flag = true
+            }
+        })
+        return flag
+    }
+
     render() {
         let { t } = this.props
         let { selectWordsSubmitting, selectWords, submitCount, submitTotal, pickAnsRaw, fullContext } = this.props.appState
@@ -324,9 +334,9 @@ class View extends Component {
                                         data-tip={(() => {
                                             var frontContext = pickAnsRaw[index].context.slice(0, word.start_at)
                                             var endContext = pickAnsRaw[index].context.slice(word.end_at + 1)
-                                            console.log(word.start_at, word.end_at)
-                                            console.log(frontContext)
-                                            console.log(endContext)
+                                            // console.log(word.start_at, word.end_at)
+                                            // console.log(frontContext)
+                                            // console.log(endContext)
                                             return frontContext + `<span class="tool-tip-hl">${tag}</span>` + endContext
                                         })()}>
                                         <b>{index + 1}. {t('answer')}:</b>{tag}
@@ -338,6 +348,7 @@ class View extends Component {
                                         <MdClose />
                                     </span>
                                     <Distractor
+                                        firstInit={!this.hasK1(index)}
                                         key={this.getK2UnderK1(index)}
                                         index={index}
                                         article={fullContext}

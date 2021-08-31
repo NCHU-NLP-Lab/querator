@@ -39,3 +39,7 @@
     font-weight: 800 !important;
     color: #dc3545 !important;
 }
+
+.rc-loading::after{
+    background-color: rgba(0, 0, 0, 0.0) !important;
+}
