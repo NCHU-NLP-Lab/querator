@@ -13,8 +13,8 @@ RUN apt-get install -y rsyslog
 RUN pip uninstall -y  enum34
 RUN pip install gdown
 
-# nodejs 10.x
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+# nodejs 12.x
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt install -y nodejs
 
 # env setup
