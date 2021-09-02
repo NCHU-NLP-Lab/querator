@@ -1,8 +1,8 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { genDistractors, cleanDistractor } from '../action'
-import LoadingMask from "react-loadingmask";
-import "react-loadingmask/dist/react-loadingmask.css";
+// import LoadingMask from "react-loadingmask";
+// import "react-loadingmask/dist/react-loadingmask.css";
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -13,20 +13,20 @@ function shuffle(array) {
 }
 
 function uniq(a) {
-    return a.sort().filter(function(item, pos, ary) {
+    return a.sort().filter(function (item, pos, ary) {
         return !pos || item !== ary[pos - 1];
     });
 }
 
-let i2a ={
-    0:'A',1:'B',2:'C',3:'D',4:'E',5:'F'
+let i2a = {
+    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F'
 }
 
 function Distractor(props) {
     console.log(props)
     const appState = useSelector((state) => state)
     const dispatch = useDispatch()
-    const [isApiErr,setIsApiErr] = useState(false) 
+    const [isApiErr, setIsApiErr] = useState(false)
 
     useEffect(() => {
         const lng = appState.lng
@@ -37,15 +37,15 @@ function Distractor(props) {
         if (question !== undefined && question !== '') {
             dispatch(
                 genDistractors(
-                    article, 
-                    answer, 
-                    answer_start, 
-                    answer_end, 
-                    question, 
-                    3, 
-                    lng, 
-                    index, 
-                    ()=>setIsApiErr(true)
+                    article,
+                    answer,
+                    answer_start,
+                    answer_end,
+                    question,
+                    3,
+                    lng,
+                    index,
+                    () => setIsApiErr(true)
                 )
             )
         }
@@ -69,17 +69,17 @@ function Distractor(props) {
             {/* firstInit: 如果是首次初始化，則不顯示讀取遮罩 */}
             {firstInit ? <span className="text-secondary">wait for question select ...</span> : ''}
             {(options.length === 0 && !firstInit) ?
-                <LoadingMask loading={true} text={"loading..."}>
+                // <LoadingMask loading={true} text={"loading..."}>
                     <div style={{ width: '100%', height: 25 }}>
-                        {isApiErr?<span className='text-danger'>option generation fial</span>:<span>option generating ...</span>}
+                        {isApiErr ? <span className='text-danger'>option generation fial</span> : <span>option generating ...</span>}
                     </div>
-                </LoadingMask>
+                // </LoadingMask>
                 :
-                ''}
+            ''}
             {shuffle(options).map((option, i) => {
-                let isAns = option===props.answer
+                let isAns = option === props.answer
                 return (
-                    <span className={`mr-2 ${isAns?'text-decoration':''}`} key={i}><b>({i2a[i]})</b> {isAns?<b>{option}</b>:option}</span>
+                    <span className={`mr-2 ${isAns ? 'text-decoration' : ''}`} key={i}><b>({i2a[i]})</b> {isAns ? <b>{option}</b> : option}</span>
                 )
             })}
         </div>
