@@ -9,6 +9,7 @@
 
 ## 服務部屬
 ```sh
+cp example.env .env
 docker-compose up -d --build
 ```
 > 加入參數 `-e allow_origins="*"` 允許全部CORS，或用空白分隔多個
@@ -88,9 +89,9 @@ Content type: application/json
 
 ## 其他
 ### GPU支援
-**不支援**GPU。作為服務，建議不要占用寶貴的GPU資源
-
+~~**不支援**GPU。作為服務，建議不要占用寶貴的GPU資源~~
 `seq2seq lm`、`causal lm`等架構在CPU運算下的速度是可以接受的
+2021/09/05: 由於由於distractor生成緩慢，現在可以通過在`.env`設置`CUDA_VISIBLE_DEVICES=0`來啟用GPU
 
 ### CORS安全性
 預設不開啟，如果有打API需求設置環境變數

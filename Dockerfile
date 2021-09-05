@@ -5,7 +5,7 @@ COPY . /app
 
 RUN cd react&&npm install&&npm run build
 
-FROM tensorflow/tensorflow:2.3.0
+FROM tensorflow/tensorflow:2.3.1-gpu
 RUN mkdir /app
 WORKDIR /app
 COPY --from=nodejs /app /app

@@ -19,9 +19,8 @@ en_dis_path = "voidful/bart-distractor-generation"
 en_qg_model = AutoModelForSeq2SeqLM.from_pretrained(en_qg_path)
 en_qg_tokenizer = AutoTokenizer.from_pretrained(en_qg_path)
 
-# en_dis_model = AutoModelForSeq2SeqLM.from_pretrained("voidful/bart-distractor-generation")
-# en_dis_tokenizer = AutoTokenizer.from_pretrained("voidful/bart-distractor-generation")
-en_dis_model = BartDistractorGeneration()
+device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+en_dis_model = BartDistractorGeneration(device=device)
 logger.info("loading en models finished !")
 
 
