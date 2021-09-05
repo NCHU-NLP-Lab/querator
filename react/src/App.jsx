@@ -25,8 +25,10 @@ class Index extends Component {
   componentDidMount() {
     // const parsed = queryString.parse(window.location.search);
     let { i18n, dispatch } = this.props
-    let getLanguage = () => i18n.language || window.localStorage.i18nextLng
+    console.log(i18n.language,window.localStorage.i18nextLng)
+    let getLanguage = () =>  window.localStorage.i18nextLng || i18n.language
     dispatch(settingLngAndModel(getLanguage(), getLanguage()))
+    this.changeLang(getLanguage())
     let isShowTextSlider = window.localStorage.getItem('already_see_text_slider')
     if (!isShowTextSlider) {
       dispatch(showTextSlider(true))

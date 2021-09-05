@@ -19,11 +19,11 @@ if (API_ZH_TW === '' || API_EN_US === '') {
     console.warn('API_SERVER not set')
 }
 
-if (REACT_APP_USER_AUTH === 'TRUE' && UDIC_SERVICES_SERVER === ''){
+if (REACT_APP_USER_AUTH === 'TRUE' && UDIC_SERVICES_SERVER === '') {
     console.warn('AUTH_SERVER not set')
 }
 
-if (REACT_APP_USER_AUTH === 'TRUE'){
+if (REACT_APP_USER_AUTH === 'TRUE') {
     API_ZH_TW = `${UDIC_SERVICES_SERVER}/service/${API_ZH_TW}`
     API_EN_US = `${UDIC_SERVICES_SERVER}/service/${API_EN_US}`
 }
@@ -93,6 +93,11 @@ export const getToken = (account, password, callbackOnFail = () => { }, callback
 }
 
 export const settingLngAndModel = (lng = 'NULL', model = 'NULL') => {
+    if (lng !== 'NULL' && model !== 'NULL' && window) {
+        if (lng === model) {
+            window.localStorage.setItem('i18nextLng', lng)
+        }
+    }
     return ({
         type: 'SETTING_LNG_AND_MODEL',
         lng,
@@ -100,43 +105,43 @@ export const settingLngAndModel = (lng = 'NULL', model = 'NULL') => {
     })
 }
 
-export const cleanDistractor = (save_index)=>{
+export const cleanDistractor = (save_index) => {
     return {
-        type:'CLEAN_DISTRACTORS',
+        type: 'CLEAN_DISTRACTORS',
         save_index
     }
 }
 
-export const genDistractors = (article,answer,answer_start,answer_end,question, gen_quantity,lng = 'zh-TW',save_index=0, onFailCallback=()=>{})=>{
+export const genDistractors = (article, answer, answer_start, answer_end, question, gen_quantity, lng = 'zh-TW', save_index = 0, onFailCallback = () => { }) => {
     let apiHost = getApiHost(lng)
-    return (dispatch)=>{
-        axios.post(apiHost+'/generate-distractor',{
+    return (dispatch) => {
+        axios.post(apiHost + '/generate-distractor', {
             article,
-            answer:{
+            answer: {
                 tag: answer,
-                start_at:answer_start,
-                end_at:answer_end
+                start_at: answer_start,
+                end_at: answer_end
             },
             question,
             gen_quantity
-        }) 
-        .then((reqData)=>{
-            console.log(reqData)
-            let {distractors=[]} = reqData.data
-            dispatch({
-                type:'SAVE_DISTRACTORS',
-                save_index,
-                distractors
+        })
+            .then((reqData) => {
+                console.log(reqData)
+                let { distractors = [] } = reqData.data
+                dispatch({
+                    type: 'SAVE_DISTRACTORS',
+                    save_index,
+                    distractors
+                })
+                if (distractors.length === 0) {
+                    // eslint-disable-next-line
+                    throw 'option generation fail'
+                }
             })
-            if(distractors.length===0){
-                // eslint-disable-next-line
-                throw 'option generation fail'
-            }
-        })
-        .catch((e)=>{
-            showToastInfo(JSON.stringify(e),'error')
-            onFailCallback()
-        })
+            .catch((e) => {
+                showToastInfo(JSON.stringify(e), 'error')
+                onFailCallback()
+            })
     }
 }
 
@@ -148,9 +153,9 @@ export const submitQs = (q, fullContext, lng = 'zh-TW') => {
         console.log(reqData)
         return axios.post(apiHost + '/generate-question', {
             'answer': {
-                tag:reqData.tag,
-                start_at:reqData.start_at,
-                end_at:reqData.end_at
+                tag: reqData.tag,
+                start_at: reqData.start_at,
+                end_at: reqData.end_at
             },
             'article': reqData.context
         }, { headers: { 'Content-Type': 'application/json; charset=utf-8' } })
