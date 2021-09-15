@@ -71,7 +71,7 @@ function Distractor(props) {
             {(options.length === 0 && !firstInit) ?
                 // <LoadingMask loading={true} text={"loading..."}>
                     <div style={{ width: '100%', height: 25 }}>
-                        {isApiErr ? <span className='text-danger'>option generation fial</span> : <span>option generating ...</span>}
+                        {isApiErr ? <span className='text-danger'>no suitable distractor avaliable</span> : <span>option generating ...</span>}
                     </div>
                 // </LoadingMask>
                 :

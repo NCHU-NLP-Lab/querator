@@ -135,7 +135,7 @@ export const genDistractors = (article, answer, answer_start, answer_end, questi
                 })
                 if (distractors.length === 0) {
                     // eslint-disable-next-line
-                    throw 'option generation fail'
+                    throw 'no suitable distractor avaliable'
                 }
             })
             .catch((e) => {
