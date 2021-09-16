@@ -4,8 +4,8 @@ from config import max_length,hl_token
 import os
 import wget
 from nlgeval import NLGEval
-from transformers import RobertaTokenizer
-from transformers import RobertaForMultipleChoice
+from transformers import RobertaTokenizer, AutoTokenizer
+from transformers import RobertaForMultipleChoice,AutoModelForSeq2SeqLM
 from torch.distributions import Categorical
 import itertools as it
 import nlp2go
@@ -35,12 +35,14 @@ def prepare_dis_model_input_ids(article,question,answer,ans_start,ans_end,tokeni
     article_max_length = max_length - 52 # 後面會手動插入2個sep_token
     article_max_length -= 20 # 預留20個token空間
     article_input = tokenizer(
-        article,
+        tokenizer.cls_token+article,
         add_special_tokens=False,
         return_length=True
     )
     # logger.debug(article_input)
     article_length = article_input['length']
+    if type(article_length) is list:
+        article_length = article_length[0]
     
     # 當文章過長，依據答案位置重新裁切文章
     if article_length > article_max_length:
@@ -73,47 +75,53 @@ def prepare_dis_model_input_ids(article,question,answer,ans_start,ans_end,tokeni
     return torch.LongTensor([final_input_ids]), total_legnth
 
 class BartDistractorGeneration():
-    def __init__(self,device='cpu'):
-        self.device = device
+    def __init__(self):
         self.nlgeval = NLGEval(metrics_to_omit=['METEOR', 'EmbeddingAverageCosineSimilairty', 'SkipThoughtCS', 'VectorExtremaCosineSimilarity','GreedyMatchingScore', 'CIDEr'])
-        self._model_save_dir = '.BDG'
-        if not os.path.isdir(self._model_save_dir):
-            os.mkdir(self._model_save_dir)
-            self.download_model()
-        
+    
         #
         self.dg_models = [
-            nlp2go.Model(os.path.join(self._model_save_dir,'BDG.pt')),
-            nlp2go.Model(os.path.join(self._model_save_dir,'BDG_PM.pt')),
-            nlp2go.Model(os.path.join(self._model_save_dir,'BDG_ANPM.pt'))
+            AutoModelForSeq2SeqLM.from_pretrained("voidful/bart-distractor-generation"),
+            AutoModelForSeq2SeqLM.from_pretrained("voidful/bart-distractor-generation-pm"),
+            AutoModelForSeq2SeqLM.from_pretrained("voidful/bart-distractor-generation-both"),
         ]
+
+        self.dg_tokenizers = [
+            AutoTokenizer.from_pretrained("voidful/bart-distractor-generation"),
+            AutoTokenizer.from_pretrained("voidful/bart-distractor-generation-pm"),
+            AutoTokenizer.from_pretrained("voidful/bart-distractor-generation-both"),
+        ]
+
+        for dg_model in self.dg_models:
+            dg_model.to(os.environ['BDG_DEVICE'])
 
         #
         self.tokenizer = RobertaTokenizer.from_pretrained("LIAMF-USP/roberta-large-finetuned-race")
         self.model = RobertaForMultipleChoice.from_pretrained("LIAMF-USP/roberta-large-finetuned-race")
         self.model.eval()
-        self.model.to(self.device)
-
-    def _download_file(self,url,f_name):
-        wget.download(url,os.path.join(self._model_save_dir,f_name))
-
-    def download_model(self):
-        self._download_file('https://github.com/voidful/BDG/releases/download/v2.0/BDG.pt','BDG.pt')
-        self._download_file('https://github.com/voidful/BDG/releases/download/v2.0/BDG_PM.pt','BDG_PM.pt')
-        self._download_file('https://github.com/voidful/BDG/releases/download/v2.0/BDG_ANPM.pt','BDG_ANPM.pt')
+        self.model.to(os.environ['BDG_CLF_DEVICE'])
     
     @lru_cache(maxsize=1000)
     def generate_distractor(self,context, question, answer, gen_quantity):
         if type(answer) is str:
             answer = Answer.parse_obj(json.loads(answer))
-        d_input_ids,_ = prepare_dis_model_input_ids(context,question,answer.tag,answer.start_at,answer.end_at,self.tokenizer)  # 如果文章過長進行重新裁切與處理
-        # d_input = context + '</s>' + question + '</s>' + answer.tag
-        d_input = self.tokenizer.decode(d_input_ids[0])
 
         all_options = []
-        for dg_model in self.dg_models:
-            all_options += dg_model.predict(d_input, decodenum=gen_quantity)['result']
-        
+        for i,(dg_tokenizer,dg_model) in enumerate(zip(self.dg_tokenizers,self.dg_models)):
+            d_input_ids,_ = prepare_dis_model_input_ids(context,question,answer.tag,answer.start_at,answer.end_at,dg_tokenizer)  # 如果文章過長進行重新裁切與處理
+            out_ids = dg_model.generate(
+                input_ids = d_input_ids.to(dg_model.device),
+                num_beams = gen_quantity*2,
+                length_penalty=0.9,
+                repetition_penalty=0.4,
+                num_beam_groups=gen_quantity,
+                diversity_penalty=0.5,
+                num_return_sequences = gen_quantity*2
+            )
+            for out_seq_ids in out_ids:
+                option = dg_tokenizer.decode(out_seq_ids,skip_special_tokens=True)
+                # logger.debug(f"{i} {option}")
+                all_options.append(option)
+        # logger.info(all_options)
         return self._selection(context,question,answer.tag,all_options, gen_quantity)
 
     def _selection(self,context, question, answer, all_options, gen_quantity):
@@ -125,7 +133,7 @@ class BartDistractorGeneration():
                 a = "".join([char if char.isalpha() or char == " " else " " + char + " " for char in i[0]])
                 b = "".join([char if char.isalpha() or char == " " else " " + char + " " for char in i[1]])
                 metrics_dict = self.nlgeval.compute_individual_metrics([a], b)
-                if metrics_dict['Bleu_1'] > 0.35:
+                if metrics_dict['Bleu_1'] > 0.12:
                     keep = False
                     break
             if keep:
@@ -136,8 +144,8 @@ class BartDistractorGeneration():
                 encoding_input.append([prompt, answer])
                 labels = torch.tensor(len(options) - 1).unsqueeze(0)
                 encoding = self.tokenizer(encoding_input, return_tensors='pt', padding=True, truncation='only_first')
-                outputs = self.model(**{k: v.unsqueeze(0).to(self.device) for k, v in encoding.items()},
-                                labels=labels.to(self.device))  # batch size is 1
+                outputs = self.model(**{k: v.unsqueeze(0).to(self.model.device) for k, v in encoding.items()},
+                                labels=labels.to(self.model.device))  # batch size is 1
                 entropy = Categorical(probs=torch.softmax(outputs.logits, -1)).entropy().tolist()[0]
                 if entropy >= max_combin[0]:
                     max_combin = [entropy, options]
