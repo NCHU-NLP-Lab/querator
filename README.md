@@ -91,6 +91,7 @@ Content type: application/json
 ## 其他
 ### GPU支援
 QG默認使用CPU，不提選項修改
+
 Distroator可以通過修改`.env`啟用GPU
 
 ### CORS安全性
