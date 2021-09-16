@@ -46,7 +46,8 @@ cd react&&sudo PORT=16004 REACT_APP_EN_API_SERVER=http://140.120.13.253:16005/en
 > 部屬階段先確定react有重新build過，再啟動server
 
 ### 開發與維護
-後端開發時可以設定允許設定允許CORS，並且指定port與host
+1. 先參閱`example.env`設定環境變數
+2. 後端開發時可以設定允許設定允許CORS，並且指定port與host
 > `host`設定為`0.0.0.0`即可
 ```sh
 allow_origins="*" uvicorn server:app --port 16005 --host 0.0.0.0
@@ -89,9 +90,8 @@ Content type: application/json
 
 ## 其他
 ### GPU支援
-~~**不支援**GPU。作為服務，建議不要占用寶貴的GPU資源~~
-`seq2seq lm`、`causal lm`等架構在CPU運算下的速度是可以接受的
-2021/09/05: 由於由於distractor生成緩慢，現在可以通過在`.env`設置`CUDA_VISIBLE_DEVICES=0`來啟用GPU
+QG默認使用CPU，不提選項修改
+Distroator可以通過修改`.env`啟用GPU
 
 ### CORS安全性
 預設不開啟，如果有打API需求設置環境變數
