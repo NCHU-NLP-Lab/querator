@@ -34,7 +34,7 @@ i18n
   .init({
     detection:langOptions,
     resources,
-    lng:"un-US",
+    lng:"en-US",
     fallbackLng: "en-US",
     keySeparator: false, // we do not use keys in form messages.welcome
     interpolation: {
