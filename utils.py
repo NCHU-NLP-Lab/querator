@@ -112,7 +112,7 @@ class BartDistractorGeneration():
                 input_ids = d_input_ids.to(dg_model.device),
                 num_beams = gen_quantity*2,
                 length_penalty=0.9,
-                repetition_penalty=0.4,
+                # repetition_penalty=0.4,
                 num_beam_groups=gen_quantity,
                 diversity_penalty=0.5,
                 num_return_sequences = gen_quantity*2
@@ -143,7 +143,7 @@ class BartDistractorGeneration():
                     encoding_input.append([prompt, choice])
                 encoding_input.append([prompt, answer])
                 labels = torch.tensor(len(options) - 1).unsqueeze(0)
-                encoding = self.tokenizer(encoding_input, return_tensors='pt', padding=True, truncation='only_first')
+                encoding = self.tokenizer(encoding_input, return_tensors='pt', padding=True, truncation=True, max_length=max_length)
                 outputs = self.model(**{k: v.unsqueeze(0).to(self.model.device) for k, v in encoding.items()},
                                 labels=labels.to(self.model.device))  # batch size is 1
                 entropy = Categorical(probs=torch.softmax(outputs.logits, -1)).entropy().tolist()[0]
