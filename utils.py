@@ -110,16 +110,15 @@ class BartDistractorGeneration():
             d_input_ids,_ = prepare_dis_model_input_ids(context,question,answer.tag,answer.start_at,answer.end_at,dg_tokenizer)  # 如果文章過長進行重新裁切與處理
             out_ids = dg_model.generate(
                 input_ids = d_input_ids.to(dg_model.device),
-                num_beams = gen_quantity*2,
+                num_beams = gen_quantity*3,
                 length_penalty=0.9,
-                # repetition_penalty=0.4,
                 num_beam_groups=gen_quantity,
-                diversity_penalty=0.5,
+                diversity_penalty=1.0,
                 num_return_sequences = gen_quantity*2
             )
             for out_seq_ids in out_ids:
                 option = dg_tokenizer.decode(out_seq_ids,skip_special_tokens=True)
-                # logger.debug(f"{i} {option}")
+                logger.info(f"{i} {option}")
                 all_options.append(option)
         # logger.info(all_options)
         return self._selection(context,question,answer.tag,all_options, gen_quantity)
@@ -133,7 +132,7 @@ class BartDistractorGeneration():
                 a = "".join([char if char.isalpha() or char == " " else " " + char + " " for char in i[0]])
                 b = "".join([char if char.isalpha() or char == " " else " " + char + " " for char in i[1]])
                 metrics_dict = self.nlgeval.compute_individual_metrics([a], b)
-                if metrics_dict['Bleu_1'] > 0.12:
+                if metrics_dict['Bleu_1'] > 0.20:
                     keep = False
                     break
             if keep:
@@ -143,7 +142,7 @@ class BartDistractorGeneration():
                     encoding_input.append([prompt, choice])
                 encoding_input.append([prompt, answer])
                 labels = torch.tensor(len(options) - 1).unsqueeze(0)
-                encoding = self.tokenizer(encoding_input, return_tensors='pt', padding=True, truncation=True, max_length=max_length)
+                encoding = self.tokenizer(encoding_input, return_tensors='pt', padding=True, truncation='only_first', max_length=max_length)
                 outputs = self.model(**{k: v.unsqueeze(0).to(self.model.device) for k, v in encoding.items()},
                                 labels=labels.to(self.model.device))  # batch size is 1
                 entropy = Categorical(probs=torch.softmax(outputs.logits, -1)).entropy().tolist()[0]

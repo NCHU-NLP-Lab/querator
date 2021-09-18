@@ -100,7 +100,7 @@ async def generate_zh_question(item:ZhQGItem):
         do_sample=False,
         num_beams=10,
         num_beam_groups=5,
-        diversity_penalty=0.5,
+        diversity_penalty=-10,
         no_repeat_ngram_size=2,
         num_return_sequences=5,
         eos_token_id=zh_qg_tokenizer.eos_token_id
