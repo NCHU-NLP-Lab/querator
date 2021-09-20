@@ -25,7 +25,7 @@ docker-compose up -d --build
 - 編譯APP: `npm run build`
 
 ### 開發與維護
-前端開發時有一個獨立的開發服務器，因此需要指定前端開發時有一個獨立的開發服務器，因此需要指定API。
+前端開發時有一個獨立的開發服務器，需要指定API才能與後端溝通。
 這些操作都透過環境變數來完成
 - `REACT_APP_EN_API_SERVER`
 - `REACT_APP_CH_API_SERVER`
