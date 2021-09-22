@@ -8,6 +8,9 @@
     height: 105px;
     color: #808080;
     font-size:16px;
+}
+
+#Footer .footer-brand {
     font-family: 'Vollkorn SC', serif;
 }
 
@@ -16,7 +19,7 @@
     border-top: 0.8px solid #4C4C4C;    
 }
 
-#Footer .f-small{
+#Footer .footer-text {
     font-size: 12px;
 }
 
