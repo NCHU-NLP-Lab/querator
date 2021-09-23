@@ -52,6 +52,12 @@ async def root():
         html_content = f.read()
     return HTMLResponse(content=html_content, status_code=200)
 
+@app.get("/distractor-mode", response_class=HTMLResponse)
+async def distractor_mode():
+    with open("react/build/index.html","r",encoding="utf-8") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content, status_code=200)
+
 @app.post("/en/generate-question")
 async def generate_en_question(item:EnQGItem):
     article = item.article
