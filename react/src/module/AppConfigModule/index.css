@@ -1,27 +1,27 @@
-#AppConfig{
-    width:100%; 
-    height:100%; 
-    position: fixed; 
-    background-color: rgba(0, 0, 0, 0.5); 
-    top: 0;
-    left: 0;
-    z-index: 10;
+#AppConfig {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  z-index: 10;
 }
 
-#AppConfig .menu{
-    width:50%; 
-    height:50%; 
-    position: fixed; 
-    top: 10%; 
-    left: 50%;     
-    margin-left: -25%; 
+#AppConfig .menu {
+  width: 50%;
+  height: 50%;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  margin-left: -25%;
 }
 
-#AppConfig button{
-    margin-right: 3px;
+#AppConfig button {
+  margin-right: 3px;
 }
 
-#AppConfig h3{
-    height: 40px;
-    border-bottom: 0.5px solid black;
+#AppConfig h3 {
+  height: 40px;
+  border-bottom: 0.5px solid black;
 }

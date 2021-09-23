@@ -1,33 +1,33 @@
-#Footer{
-    background-color: #333;
-    color: white;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 105px;
-    color: #808080;
-    font-size:16px;
+#Footer {
+  background-color: #333;
+  color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 105px;
+  color: #808080;
+  font-size: 16px;
 }
 
 #Footer .footer-brand {
-    font-family: 'Vollkorn SC', serif;
+  font-family: "Vollkorn SC", serif;
 }
 
-#Footer hr{
-    /* color: #808080; */
-    border-top: 0.8px solid #4C4C4C;    
+#Footer hr {
+  /* color: #808080; */
+  border-top: 0.8px solid #4c4c4c;
 }
 
 #Footer .footer-text {
-    font-size: 12px;
+  font-size: 12px;
 }
 
-#Footer a{
-    color: #808080;
+#Footer a {
+  color: #808080;
 }
 
-#Footer hr{
-    margin-top: 8px;
-    margin-bottom: 8px;
+#Footer hr {
+  margin-top: 8px;
+  margin-bottom: 8px;
 }

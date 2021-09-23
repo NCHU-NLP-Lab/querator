@@ -1,56 +1,56 @@
-#QA-context .select-margin{
-    margin-left: 2px;
-    margin-bottom: 2px;
+#QA-context .select-margin {
+  margin-left: 2px;
+  margin-bottom: 2px;
 }
 
-#QA-context .qa-context{
-    font-size: 20px;
-    min-height: 100px;
-    white-space:pre-wrap; 
+#QA-context .qa-context {
+  font-size: 20px;
+  min-height: 100px;
+  white-space: pre-wrap;
 }
 
-#QA-context .btn-group{
-    margin-bottom: 10px;
+#QA-context .btn-group {
+  margin-bottom: 10px;
 }
 
-#QA-context .help-btn{
-    font-size: 18px;
-    position: relative;
-    left: 6px;
-    top: -3px;
-    cursor: pointer;
+#QA-context .help-btn {
+  font-size: 18px;
+  position: relative;
+  left: 6px;
+  top: -3px;
+  cursor: pointer;
 }
 
-#QA-context .btn-group button{
-    margin-left: 0px;
+#QA-context .btn-group button {
+  margin-left: 0px;
 }
 
 /* #QA-context .selected-block-container{
     position: relative;
 } */
 
-#QA-context .selected-block{
-    overflow: hidden;
-    background-color: #333;
-    position: fixed;
-    bottom: 0;
-    left:0;
-    width: 100%;
-    padding-left: 5%;
-    padding-right: 5%;
-    max-height: 35%;
-    overflow-y:scroll;
-    color: white;
-    z-index: 1;
+#QA-context .selected-block {
+  overflow: hidden;
+  background-color: #333;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-left: 5%;
+  padding-right: 5%;
+  max-height: 35%;
+  overflow-y: scroll;
+  color: white;
+  z-index: 1;
 }
 
 #QA-context .center {
-    margin: auto;
-    width: 50%;
-    margin-top: -30px;
-    margin-bottom: 8px;
-  }
-  
-#QA-context .small-text{
-    padding-left: 3px;
+  margin: auto;
+  width: 50%;
+  margin-top: -30px;
+  margin-bottom: 8px;
+}
+
+#QA-context .small-text {
+  padding-left: 3px;
 }

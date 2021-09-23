@@ -1,17 +1,17 @@
-#QG-App{
+#QG-App {
   /* padding-top: 10px; */
 }
-#QG-App .small-text{
+#QG-App .small-text {
   font-size: 10px;
 }
 
-#QG-App .giticon{
+#QG-App .giticon {
   position: relative;
   top: -1px;
   right: 2px;
 }
 
-#QG-App .subtitle{
+#QG-App .subtitle {
   position: relative;
   top: -8px;
   color: #808080;
@@ -26,11 +26,11 @@
   letter-spacing: 6px;
 } */
 
-#QG-App h5 a{
+#QG-App h5 a {
   color: black;
 }
 
-#QG-App h5 a:hover{
+#QG-App h5 a:hover {
   color: black;
   text-decoration: none;
 }

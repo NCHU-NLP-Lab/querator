@@ -1,4 +1,4 @@
-html{
+html {
   height: 100%;
 }
 
@@ -9,7 +9,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Noto Sans TC', sans-serif;
+  font-family: "Noto Sans TC", sans-serif;
   /* min-height: 100%; */
 
   position: relative;
@@ -23,13 +23,11 @@ code {
     monospace;
 }
 
-#root{
+#root {
   min-height: 100%;
 }
 
-h1{
-  font-family: 'Vollkorn SC', serif;
+h1 {
+  font-family: "Vollkorn SC", serif;
   font-size: 3.7rem;
 }
-
-
