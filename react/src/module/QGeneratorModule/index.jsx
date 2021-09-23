@@ -1,14 +1,15 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { withTranslation } from "react-i18next";
 import "./index.css";
-import { showToastInfo } from "../toast.js";
-import EditableComponent from "./editableComponent";
-import { delAnswer } from "../action";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { delAnswer, updateQuestion } from "../action";
+import { IoMdAdd } from "react-icons/io";
 import { MdClose, MdReplay } from "react-icons/md";
-import ReactTooltip from "react-tooltip";
+import { showToastInfo } from "../toast.js";
+import { withTranslation } from "react-i18next";
 import Distractor from "./distractor";
+import EditableComponent from "./editableComponent";
+import React, { Component } from "react";
+import ReactTooltip from "react-tooltip";
 
 class View extends Component {
   constructor(props) {
@@ -25,6 +26,7 @@ class View extends Component {
     this.radioOnClick = this.radioOnClick.bind(this);
     this.getDateTime = this.getDateTime.bind(this);
     this.delAnswerBlock = this.delAnswerBlock.bind(this);
+    this.addEmptyQuestion = this.addEmptyQuestion.bind(this);
     // this.editableComponent = this.editableComponent.bind(this)
   }
 
@@ -119,12 +121,8 @@ class View extends Component {
   }
 
   exportAsJson() {
-    let {
-      selectWords,
-      pickAnsRaw,
-      fullContext,
-      distractor,
-    } = this.props.appState;
+    let { selectWords, pickAnsRaw, fullContext, distractor } =
+      this.props.appState;
     let { selectRadios } = this.state;
     let { t } = this.props;
 
@@ -265,6 +263,14 @@ class View extends Component {
     return flag;
   };
 
+  addEmptyQuestion = (index) => {
+    let { dispatch } = this.props;
+    let { selectWords } = this.props.appState;
+    let newSelectWords = [...selectWords];
+    newSelectWords[index].questions.push("");
+    dispatch(updateQuestion(newSelectWords));
+  };
+
   render() {
     let { t } = this.props;
     let {
@@ -351,6 +357,7 @@ class View extends Component {
                           this.radioOnClick(e, selectRadios, index, i)
                         }
                         radioOnSelect={this.radioOnselectEvent(index, i)}
+                        initEditable={false}
                         q={q}
                         key={i}
                         k1={index}
@@ -358,6 +365,15 @@ class View extends Component {
                       />
                     );
                   })}
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={() => {
+                      this.addEmptyQuestion(index);
+                    }}
+                  >
+                    <IoMdAdd />
+                  </button>
                 </form>
               ) : (
                 <form key={index} className="alert alert-light" role="alert">

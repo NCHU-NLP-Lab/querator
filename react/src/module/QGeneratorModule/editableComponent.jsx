@@ -10,11 +10,12 @@ function EComponent(props) {
     k2,
     dispatch,
     appState,
+    initEditable,
     radioOnSelect = false,
     onClick: onClickEvent,
   } = props;
   let { selectWords } = appState;
-  const [editable, setEditable] = useState(false);
+  const [editable, setEditable] = useState(initEditable);
   const [qText, setQText] = useState(q);
   const [qTextRollBack, setqTextRollBack] = useState(q);
   // const [lastClick, setLastClick] = useState('confirm') //confirm cancel
@@ -40,12 +41,6 @@ function EComponent(props) {
             }
           }}
           className="form-control"
-          onBlur={() => {
-            setTimeout(() => {
-              setEditable(false);
-              setQText(qTextRollBack);
-            }, 5);
-          }}
           value={qText}
           onChange={(e) => setQText(e.target.value)}
         />
