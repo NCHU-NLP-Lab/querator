@@ -3,6 +3,9 @@ import PA from './module/PickAnsModule'
 import QG from './module/QGeneratorModule'
 import Footer from './module/FooterModule'
 import AppSetting from './module/AppConfigModule'
+import QuestionInput from './module/Question/input'
+import QuestionDisplay from './module/Question/display'
+import AnswerInputModule from './module/AnswerInputModule/input'
 import './module/Londing/index.css'
 import { withTranslation } from 'react-i18next';
 import { MdSettings } from "react-icons/md";
@@ -13,6 +16,12 @@ import './App.css'
 import { ToastContainer } from 'react-toastify';
 import LoginForm from './module/UserModule/loginForm'
 import TextSlider from '../src/module/TextSliderModule'
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+
 class Index extends Component {
   constructor(props) {
     super(props);
@@ -50,57 +59,65 @@ class Index extends Component {
     
     let { REACT_APP_USER_AUTH = 'FALSE' } = process.env
     return (
-      <div id="QG-App">
-        {needShowTextSlider ? <TextSlider /> : ''}
-        {isShowTextSlider && appToken === '' && REACT_APP_USER_AUTH === 'TRUE'? <LoginForm /> : ''}  {/* 檢測token是否存在 */}
-        <ToastContainer
-          position="bottom-center"
-          autoClose={2000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnVisibilityChange
-          draggable
-          pauseOnHover
-        />
-        <div className="App container">
-          {appState.showSetting ? (<AppSetting />) : ('')}
-          <br/>
-          <h1 className='text-center'>
-            Querator AI
-          </h1>
-         
-
-
-          <div className="text-center" style={{
-            marginTop: '-10px'
-          }}>
-            <button className="btn btn-sm" onClick={() => changeLang('zh-TW')}>繁體中文</button>
-            <button className="btn btn-sm" onClick={() => changeLang('en-US')}>English</button>
-            <button className="btn btn-sm" onClick={() => dispatch(showTextSlider(true))}>{t('Help')}</button>
-            <button className="btn btn-sm" onClick={() => {
-              dispatch(showSetting(!appState.showSetting))
-            }}><MdSettings /></button>
-            <br />
+      <Router>
+        <div id="QG-App">
+          {needShowTextSlider ? <TextSlider /> : ''}
+          {isShowTextSlider && appToken === '' && REACT_APP_USER_AUTH === 'TRUE'? <LoginForm /> : ''}  {/* 檢測token是否存在 */}
+          <ToastContainer
+            position="bottom-center"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnVisibilityChange
+            draggable
+            pauseOnHover
+          />
+          <div className="App container">
+            {appState.showSetting ? (<AppSetting />) : ('')}
+            <br/>
+            <h1 className='text-center'>
+              Querator AI
+            </h1>
+            <Switch>
+              <Route path="/distractor-mode">
+                <QuestionInput />
+                <AnswerInputModule />
+                <QuestionDisplay question="question for what?" answer="ans1" options={["opt1", "opt2", "opt3"]}/>
+              </Route>
+              <Route path="/">
+                  <div className="text-center" style={{
+                    marginTop: '-10px'
+                  }}>
+                    <button className="btn btn-sm" onClick={() => changeLang('zh-TW')}>繁體中文</button>
+                    <button className="btn btn-sm" onClick={() => changeLang('en-US')}>English</button>
+                    <button className="btn btn-sm" onClick={() => dispatch(showTextSlider(true))}>{t('Help')}</button>
+                    <button className="btn btn-sm" onClick={() => {
+                      dispatch(showSetting(!appState.showSetting))
+                    }}><MdSettings /></button>
+                    <br />
+                  </div>
+                  <hr style={{ marginTop: '5px', marginBottom: '12px' }} />
+                  {apiErr === true ? (
+                    <div className='text-center'>
+                      <br />
+                      <p><b>{t('API error')}</b></p>
+                      <br />
+                    </div>) : (
+                      <div>
+                        <PA />
+                        <hr />
+                        <QG />
+                      </div>
+                    )}
+              </Route>
+            </Switch>
           </div>
-          <hr style={{ marginTop: '5px', marginBottom: '12px' }} />
-          {apiErr === true ? (
-            <div className='text-center'>
-              <br />
-              <p><b>{t('API error')}</b></p>
-              <br />
-            </div>) : (
-              <div>
-                <PA />
-                <hr />
-                <QG />
-              </div>
-            )}
+          <br />
+          <Footer />
         </div>
-        <br />
-        <Footer />
-      </div>
+      </Router>
     );
   }
 }
