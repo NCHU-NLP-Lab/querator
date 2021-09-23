@@ -3,7 +3,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 
-class QuestionInput extends React.Component {
+class ContextInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -17,15 +17,15 @@ class QuestionInput extends React.Component {
     let { t, appState } = this.props;
 
     return (
-      <div class="question-inputs form-group">
-        <label for={`question-input-${this.props.id}`}>Question</label>
-        <input
-          type="text"
+      <div id="context-inputs" class="form-group">
+        <label for={`context-input-${this.props.id}`}>Context</label>
+        <textarea
           class="form-control"
-          id={`question-input-${this.props.id}`}
-          value={this.props.question}
-          onChange={this.props.questionChange}
-        ></input>
+          id={`context-input-${this.props.id}`}
+          rows="4"
+          value={this.props.context}
+          onChange={this.props.contextChange}
+        ></textarea>
       </div>
     );
   }
@@ -40,4 +40,4 @@ const mapStateToProps = (state) => {
 export default compose(
   withTranslation(),
   connect(mapStateToProps)
-)(QuestionInput);
+)(ContextInput);

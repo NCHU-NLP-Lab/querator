@@ -26,7 +26,9 @@ class QuestionDisplay extends React.Component {
 
     return (
       <div class="card">
-        <div class="card-header">{this.props.question}</div>
+        <div class="card-header">
+          <p className="m-0">{this.props.question}</p>
+        </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <div class="form-check">
@@ -34,7 +36,7 @@ class QuestionDisplay extends React.Component {
                 type="checkbox"
                 class="form-check-input"
                 id={`question-display-${this.props.id}-answer`}
-                checked
+                defaultChecked
               ></input>
               <label
                 class="form-check-label"

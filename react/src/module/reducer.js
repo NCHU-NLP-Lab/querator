@@ -26,9 +26,8 @@ const AppState = (state = defaultState, action) => {
       return Object.assign({}, state);
 
     case "SAVE_DISTRACTORS":
-      state.distractor[
-        action.save_index.toString()
-      ] = action.distractors.slice(); // 將save_index轉換為字串作為key
+      state.distractor[action.save_index.toString()] =
+        action.distractors.slice(); // 將save_index轉換為字串作為key
       return Object.assign({}, state);
 
     case "SHOW_TEXT_SLIDER":
