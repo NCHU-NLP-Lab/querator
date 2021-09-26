@@ -17,14 +17,18 @@ class AnswerInputModule extends React.Component {
     let { t, appState } = this.props;
 
     return (
-      <div class="answer-inputs form-group">
-        <label for={`answer-input-${this.props.id}`}>Answer</label>
+      <div className="answer-inputs form-group row">
+        <label for={`answer-input-${this.props.id}`}>{`${t("Answer")} ${
+          this.props.index + 1
+        }`}</label>
         <input
           type="text"
-          class="form-control"
+          className="form-control"
           id={`answer-input-${this.props.id}`}
           value={this.props.answer}
-          onChange={this.props.answerChange}
+          onChange={(event) => {
+            this.props.answerChange(this.props.index, event.target.value);
+          }}
         ></input>
       </div>
     );

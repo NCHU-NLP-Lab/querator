@@ -7,7 +7,7 @@ class View extends Component {
     this.state = {};
   }
   render() {
-    return <div class="loading-mask"></div>;
+    return <div className="loading-mask"></div>;
   }
 }
 

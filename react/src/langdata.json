@@ -47,7 +47,12 @@
       "Step 3 - Review Result": "Step 3 - Review Result",
       "Next": "Next",
       "Finish": "Finish",
-      "Help": "Help"
+      "Help": "Help",
+      "Context": "Context",
+      "Question": "Question",
+      "Answer": "Answer",
+      "Add More Set": "Add More Set",
+      "Remove This Set": "Remove This Set"
     }
   },
   "zh-TW": {
@@ -61,7 +66,7 @@
       "Edit": "編輯",
       "Paste an Article here": "輸入一段中文文章於此",
       "Selected Answer": "已選擇的答案",
-      "Generate": "生成問題",
+      "Generate": "生成",
       "Input can't be null": "輸入不可為空",
       "Click block to cancel select": "點擊方塊可消除選擇",
       "Generating": "問題生成中，請稍候...",
@@ -98,7 +103,12 @@
       "Step 3 - Review Result": "步驟3 - 檢視結果",
       "Next": "下一步",
       "Finish": "完成",
-      "Help": "使用說明"
+      "Help": "使用說明",
+      "Context": "文本",
+      "Question": "問題",
+      "Answer": "答案",
+      "Add More Set": "新增更多組",
+      "Remove This Set": "移除這一組"
     }
   }
 }

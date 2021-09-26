@@ -23,23 +23,23 @@ class QuestionDisplay extends React.Component {
 
   render() {
     let { t, appState } = this.props;
-
+    console.log(this.props.options);
     return (
-      <div class="card">
-        <div class="card-header">
+      <div className="card mb-3">
+        <div className="card-header">
           <p className="m-0">{this.props.question}</p>
         </div>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <div class="form-check">
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <div className="form-check">
               <input
                 type="checkbox"
-                class="form-check-input"
+                className="form-check-input"
                 id={`question-display-${this.props.id}-answer`}
                 defaultChecked
               ></input>
               <label
-                class="form-check-label"
+                className="form-check-label"
                 for={`question-display-${this.props.id}-answer`}
               >
                 <b>{this.props.answer}</b>
@@ -48,15 +48,15 @@ class QuestionDisplay extends React.Component {
           </li>
           {this.props.options.map((option, index) => {
             return (
-              <li class="list-group-item">
-                <div class="form-check">
+              <li className="list-group-item">
+                <div className="form-check">
                   <input
                     type="checkbox"
-                    class="form-check-input"
+                    className="form-check-input"
                     id={`question-display-${this.props.id}-option-${index}`}
                   ></input>
                   <label
-                    class="form-check-label"
+                    className="form-check-label"
                     for={`question-display-${this.props.id}-option-${index}`}
                   >
                     {option}

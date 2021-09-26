@@ -43,9 +43,10 @@ class View extends Component {
     // console.log(window.pageYOffset+window.innerHeight,this.pickedBlock.current.offsetTop)
     // console.log("")
     if (
-      window.pageYOffset + window.innerHeight >
-        this.pickedBlock.current.offsetTop ===
-      false
+      !(
+        window.pageYOffset + window.innerHeight >
+        this.pickedBlock.current.offsetTop
+      )
     ) {
       this.setState({
         floatPciked: true,

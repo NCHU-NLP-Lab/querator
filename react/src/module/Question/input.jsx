@@ -17,14 +17,18 @@ class QuestionInput extends React.Component {
     let { t, appState } = this.props;
 
     return (
-      <div class="question-inputs form-group">
-        <label for={`question-input-${this.props.id}`}>Question</label>
+      <div className="question-inputs form-group row">
+        <label for={`question-input-${this.props.id}`}>{`${t("Question")} ${
+          this.props.index + 1
+        }`}</label>
         <input
           type="text"
-          class="form-control"
+          className="form-control"
           id={`question-input-${this.props.id}`}
           value={this.props.question}
-          onChange={this.props.questionChange}
+          onChange={(event) => {
+            this.props.questionChange(this.props.index, event.target.value);
+          }}
         ></input>
       </div>
     );
