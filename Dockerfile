@@ -10,14 +10,16 @@ RUN mkdir /app
 WORKDIR /app
 COPY --from=nodejs /app /app
 
-#
-RUN apt-get update && apt-get install -y git && apt-get install -y vim
-RUN apt-get install -y wget
-RUN apt-get install -y curl
-RUN apt-get install -y rsyslog
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    curl \
+    git \
+    rsyslog \
+    vim \
+    wget \
+    && rm -rf /var/lib/apt/lists
 
 # install gdown
-RUN pip uninstall -y  enum34
+RUN pip uninstall -y enum34
 RUN pip install gdown
 
 # env setup
