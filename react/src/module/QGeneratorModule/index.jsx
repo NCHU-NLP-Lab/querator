@@ -324,7 +324,7 @@ class View extends Component {
                     })()}
                   >
                     <b>
-                      {index + 1}. {t("answer")}:
+                      {index + 1}. {t("Answer")}:
                     </b>
                     {tag}
                   </span>
@@ -379,7 +379,7 @@ class View extends Component {
                 <form key={index} className="alert alert-light" role="alert">
                   <s>
                     <b>
-                      {index + 1}. {t("answer")}:
+                      {index + 1}. {t("Answer")}:
                     </b>
                     {tag}
                     <span

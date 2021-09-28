@@ -72,7 +72,7 @@ class Index extends Component {
                 }}
                 className="btn btn-primary"
               >
-                {t("Comfirm")}
+                {t("Confirm")}
               </button>
             </div>
             <button
