@@ -3,7 +3,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY . /app
 
-RUN cd react&&npm install&&npm run build
+RUN cd react && npm install && npm run build
 
 FROM tensorflow/tensorflow:2.3.1-gpu
 RUN mkdir /app
@@ -27,4 +27,3 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8000
 ENTRYPOINT uvicorn server:app --host 0.0.0.0
-
