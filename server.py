@@ -2,12 +2,11 @@ import json
 import os
 from typing import List
 
-from fastapi import BackgroundTasks, FastAPI, Request
+from fastapi import BackgroundTasks, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
-from starlette.background import BackgroundTask
 from transformers import (
     AutoModelForCausalLM,
     AutoModelForSeq2SeqLM,
@@ -29,27 +28,25 @@ from utils import (
     BartDistractorGeneration,
     delete_later,
     export_file,
-    prepare_dis_model_input_ids,
     prepare_qg_model_input_ids,
 )
 
 # init nlp_model
-# logger.info("start loading en models...")
-# en_qg_path = "p208p2002/bart-squad-qg-hl"
-# en_dis_path = "voidful/bart-distractor-generation"
+logger.info("start loading en models...")
+en_qg_path = "p208p2002/bart-squad-qg-hl"
+en_dis_path = "voidful/bart-distractor-generation"
 
-# en_qg_model = AutoModelForSeq2SeqLM.from_pretrained(en_qg_path)
-# en_qg_tokenizer = AutoTokenizer.from_pretrained(en_qg_path)
-# en_dis_model = BartDistractorGeneration()
-# logger.info("loading en models finished !")
+en_qg_model = AutoModelForSeq2SeqLM.from_pretrained(en_qg_path)
+en_qg_tokenizer = AutoTokenizer.from_pretrained(en_qg_path)
+en_dis_model = BartDistractorGeneration()
+logger.info("loading en models finished !")
 
-# logger.info("start loading zh models...")
-# zh_qg_path = "p208p2002/gpt2-drcd-qg-hl"
-# zh_qg_model = AutoModelForCausalLM.from_pretrained(zh_qg_path)
-# zh_qg_tokenizer = BertTokenizerFast.from_pretrained(zh_qg_path)
-# logger.info("loading zh models finished !")
+logger.info("start loading zh models...")
+zh_qg_path = "p208p2002/gpt2-drcd-qg-hl"
+zh_qg_model = AutoModelForCausalLM.from_pretrained(zh_qg_path)
+zh_qg_tokenizer = BertTokenizerFast.from_pretrained(zh_qg_path)
+logger.info("loading zh models finished !")
 
-#
 app = FastAPI(title="Querator", description="NCHU NLP LAB - QG AI", version="1.0.0")
 
 origins = os.getenv(
