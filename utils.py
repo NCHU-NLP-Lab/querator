@@ -1,9 +1,14 @@
+import asyncio
 import itertools as it
 import json
 import os
+from datetime import datetime
 from functools import lru_cache
+from pathlib import Path
+from typing import List
 
 import torch
+from docx import Document
 from loguru import logger
 from nlgeval import NLGEval
 from torch.distributions import Categorical
@@ -15,7 +20,7 @@ from transformers import (
 )
 
 from config import hl_token, max_length
-from model import Answer
+from model import Answer, QAExportItem
 
 
 def prepare_qg_model_input_ids(article, start_at, end_at, tokenizer):
@@ -214,3 +219,61 @@ class BartDistractorGeneration:
                 if entropy >= max_combin[0]:
                     max_combin = [entropy, options]
         return max_combin[1][:-1]
+
+
+def _export_json(qa_pairs):
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = Path(f"{now}.json")
+    with open(filename, "w") as f:
+        json.dump([qa_pair.dict() for qa_pair in qa_pairs], f)
+    return filename
+
+
+def _export_txt(qa_pairs):
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = Path(f"{now}.txt")
+    with open(filename, "w") as f:
+        for qa_pair in qa_pairs:
+            f.write(f"{qa_pair.context}\n\n")
+            f.write(f"{qa_pair.question}\n\n")
+            for option in qa_pair.options:
+                if option.is_answer:
+                    f.write(f"* {option.option}\n")
+                else:
+                    f.write(f"- {option.option}\n")
+            f.write("\n")
+    return filename
+
+
+def _export_docx(qa_pairs: List[QAExportItem]):
+    now = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = Path(f"{now}.docx")
+
+    document = Document()
+    for qa_pair in qa_pairs:
+        document.add_paragraph(f"{qa_pair.context}\n")
+        document.add_paragraph(f"{qa_pair.question}\n")
+        for option in qa_pair.options:
+            paragraph = document.add_paragraph(option.option, style="List Bullet")
+            if option.is_answer:
+                paragraph.bold = True
+
+    document.save(filename)
+
+    return filename
+
+
+def export_file(qa_pairs: List[QAExportItem], format: str):
+    if format == "json":
+        return _export_json(qa_pairs)
+    elif format == "txt":
+        return _export_txt(qa_pairs)
+    elif format == "docx":
+        return _export_docx(qa_pairs)
+    else:
+        raise ValueError(f"Unsupported format: {format}")
+
+
+async def delete_later(file_path, wait=120):
+    await asyncio.sleep(wait)
+    os.remove(file_path)

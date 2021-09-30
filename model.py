@@ -74,3 +74,34 @@ class ZhDisItem(DisItem):
 
 class Distractors(BaseModel):
     distractors: List[str]
+
+
+class QAExportOption(BaseModel):
+    option: str
+    is_answer: bool
+
+
+class QAExportItem(BaseModel):
+    context: str
+    question: str
+    options: List[QAExportOption]
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "context": 'Humanity needs to "grow up" and deal with the issue of climate change, British Prime Minister Boris Johnson told world leaders at the United Nations General Assembly in New York on Wednesday. Johnson, a last-minute addition to the speakers\' list that day, slammed the world\'s inadequate response to the climate crisis and urged humanity to "listen to the warnings of the scientists," pointing to the Covid-19 pandemic as "an example of gloomy scientists being proved right."',
+                "question": "Who is the prime minister of United Kingdom?",
+                "options": [
+                    {
+                        "option": "The United Nations General Nations president",
+                        "is_answer": False,
+                    },
+                    {
+                        "option": "British Prime Ministeroris Johnson",
+                        "is_answer": False,
+                    },
+                    {"option": "Boris Johnson", "is_answer": True},
+                    {"option": "Boris Johnson's father.", "is_answer": False},
+                ],
+            }
+        }

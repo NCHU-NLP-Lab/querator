@@ -5,6 +5,7 @@ import Footer from "./module/FooterModule";
 import AppSetting from "./module/AppConfigModule";
 import QuestionInput from "./module/Question/input";
 import ContextInput from "./module/Context/input";
+import ExportButtons from "./module/Export/buttons";
 import QuestionDisplay from "./module/Question/display";
 import AnswerInput from "./module/Answer/input";
 import { genDistractors } from "./module/action";
@@ -261,14 +262,23 @@ class Index extends Component {
                   </div>
                 </form>
                 <hr />
-                {distractors &&
-                  Object.keys(distractors).map((index) => (
-                    <QuestionDisplay
-                      question={this.state.questions[index]}
-                      answer={this.state.answers[index]}
-                      options={distractors[index]}
+                {Object.keys(distractors).length !== 0 && (
+                  <div>
+                    {Object.keys(distractors).map((index) => (
+                      <QuestionDisplay
+                        question={this.state.questions[index]}
+                        answer={this.state.answers[index]}
+                        options={distractors[index]}
+                      />
+                    ))}
+                    <ExportButtons
+                      contexts={this.state.contexts}
+                      questions={this.state.questions}
+                      answers={this.state.answers}
+                      options={distractors}
                     />
-                  ))}
+                  </div>
+                )}
               </Route>
               <Route path="/">
                 {apiErr === true ? (
