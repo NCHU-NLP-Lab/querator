@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   querator:
-    image: "ghcr.io/NCHU-NLP-Lab/querator-service:latest"
+    image: "ghcr.io/nchu-nlp-lab/querator-service:latest"
     build: "."
     env_file: .env
     container_name: "querator"

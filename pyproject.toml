@@ -11,7 +11,7 @@ fastapi = "^0.68.1"
 transformers = "4.5.1"
 torch = ">=1.7.0,<=1.8.1"
 loguru = "^0.5.3"
-uvicorn = "^0.15.0"
+uvicorn = {extras = ["standard"], version = "^0.15.0"}
 aiofiles = "^0.7.0"
 nlg-eval = {git = "https://github.com/Maluuba/nlg-eval.git"}
 python-docx = "^0.8.11"
