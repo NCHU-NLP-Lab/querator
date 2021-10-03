@@ -1,6 +1,7 @@
 # Querator
 實驗室的問句生成模型服務
 > [A Recurrent BERT-based Model for Question Generation](https://www.aclweb.org/anthology/D19-5821.pdf)
+> [A BERT-based Distractor Generation Scheme with Multi-tasking and Negative Answer Training Strategies](https://aclanthology.org/2020.findings-emnlp.393/)
 
 ## 主要套件
 - fastapi
