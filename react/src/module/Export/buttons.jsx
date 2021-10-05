@@ -3,6 +3,21 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 
+// Expected props
+// question_sets: [<set>, <set>, ...]
+// set: {
+//    context: <str>
+//    question_pairs: [<pair>, <pair>, ...]
+// }
+// pair: {
+//    question: <str>
+//    options: [<option>, <option>, ...]
+// }
+// option: {
+//   text: <str>
+//   is_answer: <bool>
+// }
+
 class ExportButtons extends React.Component {
   constructor(props) {
     super(props);
