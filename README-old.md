@@ -9,19 +9,19 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### Easy to use with only three step
 
-![qg0](<https://raw.githubusercontent.com/p208p2002/drive/master/drive/qg_doc%20(1).png>)
+![qg0](doc_asset/0.png)
 
 ### Step 1 Input any document
 
-![qg1](<https://raw.githubusercontent.com/p208p2002/drive/master/drive/qg_doc%20(1).gif>)
+![qg1](doc_asset/step1.gif)
 
 ### Step 2 Generate questions
 
-![qg2](<https://raw.githubusercontent.com/p208p2002/drive/master/drive/qg_doc%20(2).gif>)
+![qg2](doc_asset/step2.gif)
 
 ### Step 3 Review questions
 
-![qg3](<https://raw.githubusercontent.com/p208p2002/drive/master/drive/qg_doc%20(3).gif>)
+![qg3](doc_asset/step3.gif)
 
 ## Runtime require
 
@@ -52,4 +52,5 @@ export REACT_APP_USER_AUTH_SERVER=http://140.120.13.243:6500/api
 - `npm run start-lt` : 在 Port 3003 啟動開發環境
 - `npm run build` : Build
 - `npm run build4exp` Build for QG_Express
+
   > 直接 Build & 更新 QG_Express/public 資料
