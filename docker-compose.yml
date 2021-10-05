@@ -9,8 +9,3 @@ services:
     restart: always
     ports:
       - "22500:8000"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
