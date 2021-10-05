@@ -1,20 +1,15 @@
 import { showToastInfo } from "./toast";
+import config from "../config";
 let Axios = require("axios");
 let axios = undefined;
 
-if (process.env.NODE_ENV === "development") {
-  console.log(process.env);
-}
-
-let {
-  REACT_APP_API: API_ENDPOINT = "",
-  REACT_APP_CH_API_SERVER: API_ZH_TW = "/zh",
-  REACT_APP_EN_API_SERVER: API_EN_US = "/en",
-  REACT_APP_USER_AUTH_SERVER: UDIC_SERVICES_SERVER = "",
-  REACT_APP_USER_AUTH = "FALSE",
-} = process.env;
-
-console.log(process.env);
+const {
+  API_ENDPOINT,
+  API_ZH_TW,
+  API_EN_US,
+  UDIC_SERVICES_SERVER,
+  REACT_APP_USER_AUTH,
+} = config;
 
 if (API_ZH_TW === "" || API_EN_US === "") {
   console.warn("API_SERVER not set");
@@ -22,11 +17,6 @@ if (API_ZH_TW === "" || API_EN_US === "") {
 
 if (REACT_APP_USER_AUTH === "TRUE" && UDIC_SERVICES_SERVER === "") {
   console.warn("AUTH_SERVER not set");
-}
-
-if (REACT_APP_USER_AUTH === "TRUE") {
-  API_ZH_TW = `${UDIC_SERVICES_SERVER}/service/${API_ZH_TW}`;
-  API_EN_US = `${UDIC_SERVICES_SERVER}/service/${API_EN_US}`;
 }
 
 const createAxios = (token) => {

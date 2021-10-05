@@ -1,29 +1,20 @@
-FROM node:12.22.6-alpine3.13 AS nodejs
-RUN mkdir /app
+FROM node:12-alpine AS build
+
 WORKDIR /app
-COPY . /app
 
-RUN cd react && npm install && npm run build
+# Install modules
+COPY package.json .
+COPY package-lock.json .
+RUN npm install
 
-FROM tensorflow/tensorflow:2.3.1-gpu
-RUN mkdir /app
-WORKDIR /app
-COPY --from=nodejs /app /app
+# Copy and build app
+COPY . .
+RUN npm run build
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    curl \
-    git \
-    rsyslog \
-    vim \
-    wget \
-    && rm -rf /var/lib/apt/lists
+FROM nginx:stable-alpine
 
-# install gdown
-RUN pip uninstall -y enum34
-RUN pip install gdown
+COPY --from=build /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# env setup
-RUN pip install -r requirements.txt
-
-EXPOSE 8000
-ENTRYPOINT uvicorn server:app --host 0.0.0.0
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

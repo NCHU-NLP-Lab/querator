@@ -2,6 +2,7 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
+import config from "../../config";
 
 // Expected props
 // question_sets: [<set>, <set>, ...]
@@ -47,8 +48,7 @@ class ExportButtons extends React.Component {
       });
     }
 
-    let { REACT_APP_API: API_ENDPOINT = "" } = process.env;
-    fetch(`${API_ENDPOINT}/export-qa-pairs/${format}`, {
+    fetch(`${config.API_ENDPOINT}/export-qa-pairs/${format}`, {
       method: "POST",
       body: JSON.stringify(data),
       headers: new Headers({
