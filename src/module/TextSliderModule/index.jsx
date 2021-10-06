@@ -38,9 +38,9 @@ class View extends Component {
               <a
                 target="_blank"
                 rel="noopener noreferrer"
-                href="http://udiclab.cs.nchu.edu.tw/querator.html"
+                href="https://nlpnchu.org/querator"
               >
-                Learn more with Qureator AI
+                Learn more about Qureator AI
               </a>
             </div>
           </div>

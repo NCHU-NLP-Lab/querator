@@ -3,20 +3,10 @@ import config from "../config";
 let Axios = require("axios");
 let axios = undefined;
 
-const {
-  API_ENDPOINT,
-  API_ZH_TW,
-  API_EN_US,
-  UDIC_SERVICES_SERVER,
-  REACT_APP_USER_AUTH,
-} = config;
+const { API_ENDPOINT, API_ZH_TW, API_EN_US } = config;
 
 if (API_ZH_TW === "" || API_EN_US === "") {
   console.warn("API_SERVER not set");
-}
-
-if (REACT_APP_USER_AUTH === "TRUE" && UDIC_SERVICES_SERVER === "") {
-  console.warn("AUTH_SERVER not set");
 }
 
 const createAxios = (token) => {
@@ -40,50 +30,6 @@ export const showTextSlider = (show) => {
   return {
     type: "SHOW_TEXT_SLIDER",
     show,
-  };
-};
-
-export const getToken = (
-  account,
-  password,
-  callbackOnFail = () => {},
-  callbackOnSuccess = () => {}
-) => {
-  console.log(callbackOnSuccess);
-  return (dispatch) => {
-    dispatch({
-      type: "USER_LOGINING",
-      loging: true,
-    });
-    axios
-      .post(UDIC_SERVICES_SERVER + "/login", {
-        account,
-        password,
-      })
-      .then((res) => {
-        console.log(res.data);
-        let { Token = "" } = res.data;
-        callbackOnSuccess();
-        window.localStorage.setItem("appToken", Token);
-        createAxios(Token); // recreate axios
-
-        dispatch({
-          type: "USER_LOGIN",
-          token: Token,
-        });
-        dispatch({
-          type: "USER_LOGINING",
-          loging: false,
-        });
-      })
-      .catch((res) => {
-        console.log(res);
-        callbackOnFail();
-        dispatch({
-          type: "USER_LOGINING",
-          loging: false,
-        });
-      });
   };
 };
 
