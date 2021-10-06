@@ -107,20 +107,22 @@ export const cleanDistractor = (save_index) => {
   };
 };
 
-export const pureGenDistractors = ({ metadata }) => {
-  let apiHost = getApiHost("zh-TW");
-  return (dispatch) => {
-    axios.post(apiHost + "/generate-distractor", {
-      article: metadata.context,
+export const pureGenDistractors = async (params) => {
+  return await axios
+    .post(`${API_EN_US}/generate-distractor`, {
+      article: params.context,
       answer: {
-        tag: metadata.answer,
-        start_at: 0,
-        end_at: 0,
+        tag: params.answer,
+        start_at: params.answerStart,
+        end_at: params.answerEnd,
       },
-      question: metadata.question,
-      gen_quantity: metadata.quantity,
+      question: params.question,
+      gen_quantity: params.quantity,
+    })
+    .then((response) => {
+      let { distractors = [] } = response.data;
+      return distractors;
     });
-  };
 };
 
 export const genDistractors = (

@@ -22,6 +22,7 @@
       "Generating": "Generating...",
       "Help": "Help",
       "Input can't be null": "Input can't be null",
+      "JSON": "JSON",
       "Login": "Login",
       "Model-enUS": "English Model",
       "Model-zhTW": "Traditional Chinese Model",
@@ -32,6 +33,7 @@
       "Paste an Article here": "Enter an English passage here",
       "Paste an article": "Paste an article",
       "Paste from clipboard": "Paste from clipboard",
+      "Plain Text": "Plain Text",
       "QG model traget lang": "QG target Language",
       "Question Generator": "Querator",
       "Question": "Question",
@@ -49,6 +51,7 @@
       "Using QG Model": "Using QG Model",
       "Welcome to React": "Welcome to React and react-i18next",
       "Welcome to use Querator!": "Welcome to use Querator!",
+      "Word Document": "Word Document",
       "Wrong username or password": "Wrong username or password",
       "You have to pick the question what you want to export": "You have to pick the question what you want to export"
     }
@@ -76,6 +79,7 @@
       "Generating": "問題生成中，請稍候...",
       "Help": "使用說明",
       "Input can't be null": "輸入不可為空",
+      "JSON": "JSON 物件檔",
       "Login": "登入",
       "Model-enUS": "英文模型",
       "Model-zhTW": "中文模型",
@@ -86,6 +90,7 @@
       "Paste an Article here": "輸入一段中文文章於此",
       "Paste an article": "貼上一段文章",
       "Paste from clipboard": "從剪貼簿貼上",
+      "Plain Text": "純文字檔",
       "QG model traget lang": "問題產生器目標語言",
       "Question Generator": "Querator",
       "Question": "問題",
@@ -103,6 +108,7 @@
       "Using QG Model": "使用中的QG模型",
       "Welcome to React": "歡迎",
       "Welcome to use Querator!": "歡迎使用Querator!",
+      "Word Document": "Word 文件檔",
       "Wrong username or password": "錯誤的帳號或是密碼",
       "You have to pick the question what you want to export": "必須先選擇要輸出的問題"
     }

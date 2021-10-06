@@ -32,21 +32,8 @@ class ExportButtons extends React.Component {
 
   download_export(event, format) {
     event.preventDefault();
-    let data = [];
-    for (let index = 0; index < this.props.questions.length; index++) {
-      const context = this.props.contexts[index];
-      const question = this.props.questions[index];
-      let options = [];
-      for (const option of this.props.options[index]) {
-        options.push({ option: option, is_answer: false });
-      }
-      options.push({ option: this.props.answers[index], is_answer: true });
-      data.push({
-        context: context,
-        question: question,
-        options: options,
-      });
-    }
+
+    let data = this.props.getQuestionSets();
 
     fetch(`${config.API_ENDPOINT}/export-qa-pairs/${format}`, {
       method: "POST",
@@ -71,37 +58,31 @@ class ExportButtons extends React.Component {
   }
 
   render() {
-    let { t, appState } = this.props;
+    let { t } = this.props;
 
     return (
       <div className="btn-group" role="group">
-        <a
+        <button
           type="button"
           className="btn btn-secondary"
-          href="#"
-          role="button"
           onClick={(event) => this.download_export(event, "json")}
         >
-          JSON
-        </a>
-        <a
+          {t("JSON")}
+        </button>
+        <button
           type="button"
           className="btn btn-secondary"
-          href="#"
-          role="button"
           onClick={(event) => this.download_export(event, "txt")}
         >
-          Plain Text
-        </a>
-        <a
+          {t("Plain Text")}
+        </button>
+        <button
           type="button"
           className="btn btn-secondary"
-          href="#"
-          role="button"
           onClick={(event) => this.download_export(event, "docx")}
         >
-          Word (.docx)
-        </a>
+          {t("Word Document")}
+        </button>
       </div>
     );
   }

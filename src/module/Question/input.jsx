@@ -26,9 +26,7 @@ class QuestionInput extends React.Component {
           className="form-control"
           id={`question-input-${this.props.id}`}
           value={this.props.question}
-          onChange={(event) => {
-            this.props.questionChange(this.props.index, event.target.value);
-          }}
+          onChange={this.props.questionChange}
         ></input>
       </div>
     );

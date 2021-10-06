@@ -26,9 +26,7 @@ class AnswerInputModule extends React.Component {
           className="form-control"
           id={`answer-input-${this.props.id}`}
           value={this.props.answer}
-          onChange={(event) => {
-            this.props.answerChange(this.props.index, event.target.value);
-          }}
+          onChange={this.props.answerChange}
         ></input>
       </div>
     );
