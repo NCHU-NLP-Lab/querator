@@ -34,6 +34,9 @@ class ExportButtons extends React.Component {
     event.preventDefault();
 
     let data = this.props.getQuestionSets();
+    if (!Array.isArray(data) || !data.length) {
+      return;
+    }
 
     fetch(`${config.API_ENDPOINT}/export-qa-pairs/${format}`, {
       method: "POST",
@@ -61,29 +64,33 @@ class ExportButtons extends React.Component {
     let { t } = this.props;
 
     return (
-      <div className="btn-group" role="group">
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={(event) => this.download_export(event, "json")}
-        >
-          {t("JSON")}
-        </button>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={(event) => this.download_export(event, "txt")}
-        >
-          {t("Plain Text")}
-        </button>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={(event) => this.download_export(event, "docx")}
-        >
-          {t("Word Document")}
-        </button>
-      </div>
+      <>
+        <h5>{t("Export Options")}</h5>
+        <hr />
+        <div className="btn-group" role="group">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={(event) => this.download_export(event, "json")}
+          >
+            {t("JSON")}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={(event) => this.download_export(event, "txt")}
+          >
+            {t("Plain Text")}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={(event) => this.download_export(event, "docx")}
+          >
+            {t("Word Document")}
+          </button>
+        </div>
+      </>
     );
   }
 }

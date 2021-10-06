@@ -1,30 +1,15 @@
 import { showToastInfo } from "./toast";
 import config from "../config";
-let Axios = require("axios");
-let axios = undefined;
+import axios from "axios";
 
-const { API_ENDPOINT, API_ZH_TW, API_EN_US } = config;
-
-if (API_ZH_TW === "" || API_EN_US === "") {
-  console.warn("API_SERVER not set");
-}
-
-const createAxios = (token) => {
-  if (!token) {
-    token = window.localStorage.getItem("appToken");
-  }
-  axios = Axios.create({
-    headers: { AppName: "Querator", Authorization: token },
-  });
+const { API_ENDPOINT } = config;
+const LANGUAGE_CODE_MAPPING = {
+  "en-US": "en",
+  "zh-TW": "zh",
 };
-
-createAxios();
-
-const getApiHost = (lng) => {
-  if (lng === "en-US") return API_EN_US;
-  //zh-TW
-  else return API_ZH_TW;
-};
+const axios_client = axios.create({
+  headers: { AppName: "Querator" },
+});
 
 export const showTextSlider = (show) => {
   return {
@@ -54,8 +39,10 @@ export const cleanDistractor = (save_index) => {
 };
 
 export const pureGenDistractors = async (params) => {
-  return await axios
-    .post(`${API_EN_US}/generate-distractor`, {
+  let { lng } = params;
+  lng = "en-US"; // Only English is support for now
+  return await axios_client
+    .post(`${API_ENDPOINT}/${LANGUAGE_CODE_MAPPING[lng]}/generate-distractor`, {
       article: params.context,
       answer: {
         tag: params.answer,
@@ -82,19 +69,22 @@ export const genDistractors = (
   save_index = 0,
   onFailCallback = () => {}
 ) => {
-  let apiHost = getApiHost(lng);
+  lng = "en-US"; // Only English is support for now
   return (dispatch) => {
-    axios
-      .post(apiHost + "/generate-distractor", {
-        article,
-        answer: {
-          tag: answer,
-          start_at: answer_start,
-          end_at: answer_end,
-        },
-        question,
-        gen_quantity,
-      })
+    axios_client
+      .post(
+        `${API_ENDPOINT}/${LANGUAGE_CODE_MAPPING[lng]}/generate-distractor`,
+        {
+          article,
+          answer: {
+            tag: answer,
+            start_at: answer_start,
+            end_at: answer_end,
+          },
+          question,
+          gen_quantity,
+        }
+      )
       .then((reqData) => {
         console.log(reqData);
         let { distractors = [] } = reqData.data;
@@ -116,13 +106,9 @@ export const genDistractors = (
 };
 
 export const submitQs = (q, fullContext, lng = "zh-TW") => {
-  let apiHost = getApiHost(lng);
-
-  // Promise-Base Req
   let apiReq = (reqData) => {
-    console.log(reqData);
-    return axios.post(
-      apiHost + "/generate-question",
+    return axios_client.post(
+      `${API_ENDPOINT}/${LANGUAGE_CODE_MAPPING[lng]}/generate-question`,
       {
         answer: {
           tag: reqData.tag,
@@ -191,7 +177,6 @@ export const delAnswer = (targetInfo, k1Index) => {
 };
 
 export const showSetting = (show) => {
-  //show: bool
   return {
     type: "APP_SHOW_SETTING",
     show,

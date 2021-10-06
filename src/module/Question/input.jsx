@@ -14,7 +14,7 @@ class QuestionInput extends React.Component {
   componentWillUnmount() {}
 
   render() {
-    let { t, appState } = this.props;
+    let { t } = this.props;
 
     return (
       <div className="question-inputs form-group row">

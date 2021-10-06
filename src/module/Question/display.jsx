@@ -31,8 +31,6 @@ class QuestionDisplay extends React.Component {
   componentWillUnmount() {}
 
   render() {
-    let { t, appState } = this.props;
-    console.log(this.props.options);
     return (
       <div className="card mb-3">
         <div className="card-header">

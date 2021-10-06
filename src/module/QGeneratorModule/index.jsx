@@ -7,6 +7,7 @@ import { MdClose, MdReplay } from "react-icons/md";
 import { showToastInfo } from "../toast.js";
 import { withTranslation } from "react-i18next";
 import Distractor from "./distractor";
+import ExportButtons from "../Export/buttons";
 import EditableComponent from "./editableComponent";
 import React, { Component } from "react";
 import ReactTooltip from "react-tooltip";
@@ -17,17 +18,15 @@ class View extends Component {
     this.state = {
       selectRadios: [],
     };
-    this.srollToBlock = this.srollToBlock.bind(this);
     this.QGBlock = React.createRef();
-    this.exportAsJson = this.exportAsJson.bind(this);
-    this.exportAsQAPair = this.exportAsQAPair.bind(this);
+    this.srollToBlock = this.srollToBlock.bind(this);
     this.editQuestion = this.editQuestion.bind(this);
     this.radioOnselectEvent = this.radioOnselectEvent.bind(this);
     this.radioOnClick = this.radioOnClick.bind(this);
     this.getDateTime = this.getDateTime.bind(this);
     this.delAnswerBlock = this.delAnswerBlock.bind(this);
     this.addEmptyQuestion = this.addEmptyQuestion.bind(this);
-    // this.editableComponent = this.editableComponent.bind(this)
+    this.generateDataForExport = this.generateDataForExport.bind(this);
   }
 
   componentDidUpdate() {
@@ -38,7 +37,7 @@ class View extends Component {
     }
   }
 
-  delAnswerBlock(e, word, k1Index) {
+  delAnswerBlock = (e, word, k1Index) => {
     /*
      * 軟刪除
      */
@@ -53,7 +52,7 @@ class View extends Component {
     });
     dispatch(delAnswer(word, k1Index));
     e.preventDefault();
-  }
+  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let { appState } = nextProps;
@@ -65,7 +64,7 @@ class View extends Component {
     return null;
   }
 
-  radioOnselectEvent(index, i) {
+  radioOnselectEvent = (index, i) => {
     /*
      * radio選擇事件
      * 根據已選擇的物件及傳入的index返回一個falg
@@ -78,9 +77,9 @@ class View extends Component {
       }
     });
     return selectFlag;
-  }
+  };
 
-  radioOnClick(e, selectRadios, index, i) {
+  radioOnClick = (e, selectRadios, index, i) => {
     /*
      * radio點擊事件
      * 移除同樣的index(同層的點擊)，加入選擇的radio
@@ -96,14 +95,14 @@ class View extends Component {
     this.setState({
       selectRadios,
     });
-  }
+  };
 
-  editQuestion(e) {
+  editQuestion = (e) => {
     e.preventDefault();
     console.log("e");
-  }
+  };
 
-  getDateTime() {
+  getDateTime = () => {
     var currentdate = new Date();
     var datetime =
       currentdate.getFullYear() +
@@ -118,120 +117,47 @@ class View extends Component {
       ":" +
       currentdate.getSeconds();
     return datetime;
-  }
+  };
 
-  exportAsJson() {
-    let { selectWords, pickAnsRaw, fullContext, distractor } =
-      this.props.appState;
-    let { selectRadios } = this.state;
-    let { t } = this.props;
-
-    let newSelectWords = [];
-    newSelectWords = [...selectWords];
-    newSelectWords = newSelectWords.map((sw, index) => {
-      let getSelectQ = (index) => {
-        /* 取得選擇的問題 */
-        var sq = "";
-        let options = [];
-        selectRadios.forEach((rs) => {
-          if (parseInt(rs.k1) === parseInt(index)) {
-            sq = selectWords[rs.k1].questions[rs.k2];
-            options = distractor[rs.k1.toString()] || [];
-          }
-        });
-        return { question: sq, options };
-      };
-      var selectQ = getSelectQ(index);
-
-      let newSw = { ...sw };
-      return Object.assign(newSw, {
-        context: pickAnsRaw[index].context,
-        select_question: selectQ.question,
-        options: selectQ.options,
-        tag_padding: pickAnsRaw[index].tag_padding,
-      });
-    });
-
-    // 篩掉軟刪除
-    newSelectWords = newSelectWords.filter((s) => {
-      let { softDel = false } = s;
-      return !softDel;
-    });
-    //刪掉sofetDel key
-    newSelectWords = newSelectWords.map((s) => {
-      delete s["softDel"];
-      return s;
-    });
-
-    let outJson = {
-      context: fullContext,
-      question_detail: newSelectWords,
-    };
-    let dataStr = JSON.stringify(outJson);
-    let dataUri =
-      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
-    let exportFileDefaultName = this.getDateTime() + ".json";
-    let linkElement = document.createElement("a");
-    linkElement.setAttribute("href", dataUri);
-    linkElement.setAttribute("download", exportFileDefaultName);
-
-    if (newSelectWords.length === selectRadios.length) {
-      linkElement.click();
-    } else {
-      showToastInfo(
-        t("You have to pick the question what you want to export"),
-        "error"
-      );
-    }
-  }
-
-  exportAsQAPair() {
-    let { selectWords } = this.props.appState;
-    let { selectRadios } = this.state;
-    let { t } = this.props;
-    var outPair = "";
-    let newSelectWords = [...selectWords];
-
-    let selectCount = 0;
-    newSelectWords.forEach((sw, index) => {
-      let getSelectQ = (index) => {
-        /* 取得選擇的問題 */
-        var sq = "";
-        selectRadios.forEach((rs) => {
-          if (parseInt(rs.k1) === parseInt(index)) {
-            sq = selectWords[rs.k1].questions[rs.k2];
-          }
-        });
-        return sq;
-      };
-      var selectQ = getSelectQ(index);
-      if (sw.softDel !== true) {
-        outPair = outPair + selectQ + " " + sw.tag + "\n";
-        selectCount += 1;
+  generateDataForExport = () => {
+    let { fullContext, distractor, selectWordsRaw } = this.props.appState;
+    let pairs = [];
+    for (let index = 0; index < this.state.selectRadios.length; index++) {
+      const selection = this.state.selectRadios[index];
+      if (
+        selectWordsRaw[selection.k1].softDel ||
+        distractor[selection.k1].length === 0
+      ) {
+        continue;
       }
-    });
-
-    let dataStr = outPair;
-    let dataUri =
-      "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
-    let exportFileDefaultName = this.getDateTime() + ".txt";
-    let linkElement = document.createElement("a");
-    linkElement.setAttribute("href", dataUri);
-    linkElement.setAttribute("download", exportFileDefaultName);
-    if (selectCount === selectRadios.length) {
-      linkElement.click();
-    } else {
-      showToastInfo(
-        t("You have to pick the question what you want to export"),
-        "error"
-      );
+      let options = distractor[selection.k1].map((option) => {
+        return { text: option, is_answer: false };
+      });
+      options.push({
+        text: selectWordsRaw[selection.k1].tag,
+        is_answer: true,
+      });
+      pairs.push({
+        question: selectWordsRaw[selection.k1].questions[selection.k2],
+        options,
+      });
     }
-  }
+    if (!pairs.length) {
+      showToastInfo("No valid ouput group");
+      return;
+    }
+    return [
+      {
+        context: fullContext,
+        question_pairs: pairs,
+      },
+    ];
+  };
 
-  srollToBlock(ref) {
+  srollToBlock = (ref) => {
     // scorll to
     window.scrollTo(0, ref.current.offsetTop);
-  }
+  };
 
   getSelectQuestion = (k1, k2) => {
     let { selectWords } = this.props.appState;
@@ -289,10 +215,10 @@ class View extends Component {
     return (
       <div ref={this.QGBlock} id="QG-Module">
         <div
-          className={selectWordsSubmitting === true ? "loading-mask" : ""}
+          className={selectWordsSubmitting ? "loading-mask" : ""}
           style={{ minHeight: "200px" }}
         >
-          {selectWordsSubmitting === true ? (
+          {selectWordsSubmitting ? (
             <h4 className="loading-text text-center">
               Loading...{submitCount}/{submitTotal}
             </h4>
@@ -313,9 +239,6 @@ class View extends Component {
                       var endContext = pickAnsRaw[index].context.slice(
                         word.end_at + 1
                       );
-                      // console.log(word.start_at, word.end_at)
-                      // console.log(frontContext)
-                      // console.log(endContext)
                       return (
                         frontContext +
                         `<span class="tool-tip-hl">${tag}</span>` +
@@ -396,7 +319,7 @@ class View extends Component {
             })
           )}
         </div>
-        {selectWordsAfterDel.length > 0 && selectWordsSubmitting === false ? (
+        {Boolean(selectWordsAfterDel.length) && !selectWordsSubmitting && (
           <div className="text-left">
             {/* 偷渡tip組件...  */}
             <ReactTooltip
@@ -407,24 +330,8 @@ class View extends Component {
               )}
               multiline={true}
             />
-            <h5>{t("Export Options")}</h5>
-            <hr />
-            <button
-              className="btn btn-secondary btn-sm"
-              onClick={(e) => this.exportAsJson(e)}
-            >
-              JSON
-            </button>
-            <button
-              style={{ marginLeft: "5px" }}
-              className="btn btn-secondary btn-sm"
-              onClick={(e) => this.exportAsQAPair(e)}
-            >
-              QA Pair
-            </button>
+            <ExportButtons getQuestionSets={this.generateDataForExport} />
           </div>
-        ) : (
-          <div></div>
         )}
       </div>
     );
