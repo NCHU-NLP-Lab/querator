@@ -1,0 +1,28 @@
+h1 {
+  font-size: 30px;
+}
+
+.question-block {
+  border: 1px solid gray;
+  border-radius: 0.25rem;
+}
+
+.row {
+  --bs-gutter-x: 0rem;
+  /* padding-left: 2%; */
+}
+
+.btn-success {
+  border-color: #17807a;
+  background-color: #299e98;
+}
+
+.btn-success:hover {
+  background-color: #17807a;
+}
+
+.btn-success:disabled {
+  color: black;
+  background-color: #82b3b2;
+  border-color: #82b3b2;
+}

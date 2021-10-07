@@ -34,7 +34,8 @@ class QuestionDisplay extends React.Component {
     return (
       <div className="card mb-3">
         <div className="card-header">
-          <p className="m-0">{this.props.question}</p>
+          <p className="card-text">{this.props.context}</p>
+          <h5 className="card-title font-weight-bold">{this.props.question}</h5>
         </div>
         <ul className="list-group list-group-flush">
           {this.state.options.map((option, index) => {
@@ -53,7 +54,7 @@ class QuestionDisplay extends React.Component {
                   ></input>
                   <label
                     className="form-check-label"
-                    for={`question-display-${this.props.id}-option-${index}`}
+                    htmlFor={`question-display-${this.props.id}-option-${index}`}
                   >
                     {option.isAnswer ? <b>{option.option}</b> : option.option}
                   </label>

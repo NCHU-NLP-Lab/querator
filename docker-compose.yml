@@ -8,4 +8,4 @@ services:
     container_name: "querator"
     restart: always
     ports:
-      - "22500:8000"
+      - "22500:80"

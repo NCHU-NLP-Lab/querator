@@ -17,8 +17,8 @@ class AnswerInputModule extends React.Component {
     let { t } = this.props;
 
     return (
-      <div className="answer-inputs form-group row">
-        <label for={`answer-input-${this.props.id}`}>{`${t("Answer")} ${
+      <div className="answer-inputs">
+        <label htmlFor={`answer-input-${this.props.id}`}>{`${t("Answer")} ${
           this.props.index + 1
         }`}</label>
         <input

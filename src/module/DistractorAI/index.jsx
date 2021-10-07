@@ -2,11 +2,10 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
-import QuestionInput from "../Question/input";
 import ContextInput from "../Context/input";
 import ExportButtons from "../Export/buttons";
 import QuestionDisplay from "../Question/display";
-import AnswerInput from "../Answer/input";
+import QuestionAnswerPair from "../QuestionAnswerPair";
 import { pureGenDistractors } from "../action";
 
 class DistractorAI extends React.Component {
@@ -22,10 +21,26 @@ class DistractorAI extends React.Component {
               answer: "Boris Johnson",
               options: [],
             },
+            {
+              question: "Who is the prime minister of United Kingdom?",
+              answer: "Boris Johnson",
+              options: [],
+            },
+          ],
+        },
+        {
+          context:
+            "Two real-world studies published Wednesday confirm that the immune protection offered by two doses of Pfizer's Covid-19 vaccine drops off after two months or so, although protection against severe disease, hospitalization and death remains strong.\n\nThe studies, from Israel and from Qatar and published in the New England Journal of Medicine, support arguments that even fully vaccinated people need to maintain precautions against infection.\nOne study from Israel covered 4,800 health care workers a...",
+          question_pairs: [
+            {
+              question:
+                "How many doses of Pfizer's Covid-19 vaccine drops off after two months?",
+              answer: "Two doses",
+              options: [],
+            },
           ],
         },
       ],
-      set_count: 1,
       generated: false,
     };
     this.createSet = this.createSet.bind(this);
@@ -41,11 +56,15 @@ class DistractorAI extends React.Component {
   getDistractors = async (event) => {
     event.preventDefault();
     let questionSets = [...this.state.questionSets];
-    for (let index = 0; index < questionSets.length; index++) {
-      const questionSet = questionSets[index];
-      for (let pairIndex = 0; pairIndex < questionSets.length; pairIndex++) {
+    for (let setIndex = 0; setIndex < questionSets.length; setIndex++) {
+      const questionSet = questionSets[setIndex];
+      for (
+        let pairIndex = 0;
+        pairIndex < questionSet.question_pairs.length;
+        pairIndex++
+      ) {
         const pair = questionSet.question_pairs[pairIndex];
-        pair.options = await pureGenDistractors({
+        let options = await pureGenDistractors({
           context: questionSet.context,
           answer: pair.answer,
           answerStart: 0,
@@ -53,6 +72,7 @@ class DistractorAI extends React.Component {
           question: pair.question,
           quantity: 3,
         });
+        pair.options = options;
       }
     }
     this.setState({ questionSets, generated: true });
@@ -61,32 +81,40 @@ class DistractorAI extends React.Component {
   emptySet_ = () => {
     return {
       context: "",
-      question_pairs: [
-        {
-          question: "",
-          answer: "",
-        },
-      ],
+      question_pairs: [this.emptyPair_()],
     };
   };
 
-  createSet = (event) => {
-    event.preventDefault();
-    let questionSets = [...this.state.questionSets];
-    questionSets.push(this.emptySet_());
-    this.setState((prevState, props) => ({
-      questionSets,
-      set_count: prevState.set_count + 1,
-    }));
+  emptyPair_ = () => {
+    return {
+      question: "",
+      answer: "",
+      options: [],
+    };
   };
 
-  deleteSet = (index) => {
+  createSet = () => {
     let questionSets = [...this.state.questionSets];
-    questionSets.splice(index, 1);
-    this.setState((prevState, props) => ({
-      questionSets,
-      set_count: prevState.set_count - 1,
-    }));
+    questionSets.push(this.emptySet_());
+    this.setState({ questionSets });
+  };
+
+  deleteSet = (setIndex) => {
+    let questionSets = [...this.state.questionSets];
+    questionSets.splice(setIndex, 1);
+    this.setState({ questionSets });
+  };
+
+  createPair = (setIndex) => {
+    let questionSets = [...this.state.questionSets];
+    questionSets[setIndex].question_pairs.push(this.emptyPair_());
+    this.setState({ questionSets });
+  };
+
+  deletePair = (setIndex, pairIndex) => {
+    let questionSets = [...this.state.questionSets];
+    questionSets[setIndex].question_pairs.splice(pairIndex, 1);
+    this.setState({ questionSets });
   };
 
   contextChange = (index, value) => {
@@ -95,15 +123,15 @@ class DistractorAI extends React.Component {
     this.setState({ questionSets });
   };
 
-  questionChange = (setIndex, questionIndex, value) => {
+  questionChange = (setIndex, pairIndex, value) => {
     let questionSets = [...this.state.questionSets];
-    questionSets[setIndex].question_pairs[questionIndex].question = value;
+    questionSets[setIndex].question_pairs[pairIndex].question = value;
     this.setState({ questionSets });
   };
 
-  answerChange = (setIndex, answerIndex, value) => {
+  answerChange = (setIndex, pairIndex, value) => {
     let questionSets = [...this.state.questionSets];
-    questionSets[setIndex].question_pairs[answerIndex].answer = value;
+    questionSets[setIndex].question_pairs[pairIndex].answer = value;
     this.setState({ questionSets });
   };
 
@@ -129,62 +157,101 @@ class DistractorAI extends React.Component {
   render() {
     let { t } = this.props;
     return (
-      <div className="distractor-ai">
+      <div className="distractor-ai container">
         <h1 className="text-center">Distractor AI</h1>
-        <form>
-          {Array.from({ length: this.state.set_count }, (_, index) => (
-            <>
-              <ContextInput
-                index={index}
-                context={this.state.questionSets[index].context}
-                contextChange={this.contextChange}
-                key={`context-input-${index}`}
-              />
-              <QuestionInput
-                index={index}
-                question={
-                  this.state.questionSets[index].question_pairs[0].question
-                }
-                questionChange={(event) => {
-                  event.preventDefault();
-                  this.questionChange(index, 0, event.target.value);
-                }}
-                key={`question-input-${index}`}
-              />
-              <AnswerInput
-                index={index}
-                answer={this.state.questionSets[index].question_pairs[0].answer}
-                answerChange={(event) => {
-                  event.preventDefault();
-                  this.answerChange(index, 0, event.target.value);
-                }}
-                key={`answer-input-${index}`}
-              />
-              <div className="form-group row justify-content-end">
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    this.deleteSet(index);
-                  }}
-                >
-                  {t("Remove This Set")}
-                </button>
+        {[...Array(this.state.questionSets.length)].map((e, setIndex) => (
+          <>
+            <div className="row">
+              <div className="container" key={`set-container-${setIndex}`}>
+                <div className="row">
+                  <div className="col-6 p-3">
+                    <ContextInput
+                      index={setIndex}
+                      context={this.state.questionSets[setIndex].context}
+                      contextChange={this.contextChange}
+                      key={`context-input-${setIndex}`}
+                    />
+                  </div>
+                  <div className="col-6 p-3">
+                    {this.state.questionSets[setIndex].question_pairs.map(
+                      (pair, pairIndex) => (
+                        <>
+                          <QuestionAnswerPair
+                            setIndex={setIndex}
+                            pair={pair}
+                            questionChange={(event) => {
+                              event.preventDefault();
+                              this.questionChange(
+                                setIndex,
+                                pairIndex,
+                                event.target.value
+                              );
+                            }}
+                            answerChange={(event) => {
+                              event.preventDefault();
+                              this.answerChange(
+                                setIndex,
+                                pairIndex,
+                                event.target.value
+                              );
+                            }}
+                          />
+                          <div>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={(event) => {
+                                event.preventDefault();
+                                this.deletePair(setIndex, pairIndex);
+                              }}
+                            >
+                              Remove this pair
+                            </button>
+                          </div>
+                          <hr />
+                        </>
+                      )
+                    )}
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        this.createPair(setIndex);
+                      }}
+                    >
+                      Add QA Pair
+                    </button>
+                  </div>
+                </div>
+                <div className="row justify-content-end">
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      this.deleteSet(setIndex);
+                    }}
+                  >
+                    {t("Remove This Set")}
+                  </button>
+                </div>
               </div>
-              <hr />
-            </>
-          ))}
-          <div className="form-group row">
-            <button className="btn btn-sm btn-success" onClick={this.createSet}>
-              {t("Add More Set")}
-            </button>
-          </div>
-          <div className="form-group row">
-            <button className="btn btn-primary" onClick={this.getDistractors}>
-              {t("Generate")}
-            </button>
-          </div>
-        </form>
+            </div>
+            <hr key={`set-seperator-${setIndex}`} />
+          </>
+        ))}
+        <div className="row">
+          <button
+            className="btn btn-success m-2"
+            onClick={(event) => {
+              event.preventDefault();
+              this.createSet();
+            }}
+          >
+            {t("Add More Set")}
+          </button>
+          <button className="btn btn-primary m-2" onClick={this.getDistractors}>
+            {t("Generate")}
+          </button>
+        </div>
         <hr />
         {this.state.generated && (
           <div>
@@ -195,6 +262,7 @@ class DistractorAI extends React.Component {
                   let pair = questionSet.question_pairs[pairIndex];
                   return (
                     <QuestionDisplay
+                      context={questionSet.context}
                       question={pair.question}
                       answer={pair.answer}
                       options={pair.options}

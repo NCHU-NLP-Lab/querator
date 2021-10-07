@@ -17,14 +17,14 @@ class ContextInput extends React.Component {
     let { t } = this.props;
 
     return (
-      <div id="context-inputs" className="form-group row">
-        <label for={`context-input-${this.props.id}`}>{`${t("Context")} ${
+      <div className="context-inputs">
+        <label htmlFor={`context-input-${this.props.id}`}>{`${t("Context")} ${
           this.props.index + 1
         }`}</label>
         <textarea
           className="form-control"
           id={`context-input-${this.props.id}`}
-          rows="4"
+          rows="10"
           value={this.props.context}
           onChange={(event) => {
             this.props.contextChange(this.props.index, event.target.value);

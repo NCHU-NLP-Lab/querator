@@ -17,8 +17,8 @@ class QuestionInput extends React.Component {
     let { t } = this.props;
 
     return (
-      <div className="question-inputs form-group row">
-        <label for={`question-input-${this.props.id}`}>{`${t("Question")} ${
+      <div className="question-inputs">
+        <label htmlFor={`question-input-${this.props.id}`}>{`${t("Question")} ${
           this.props.index + 1
         }`}</label>
         <input
