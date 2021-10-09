@@ -4,6 +4,11 @@
 > 
 > [A BERT-based Distractor Generation Scheme with Multi-tasking and Negative Answer Training Strategies](https://aclanthology.org/2020.findings-emnlp.393/)
 
+目前三個服務所在處：
+- QueratorAI: https://app2.queratorai.com/
+- Question Group Generation: https://qgg-demo.nlpnchu.org/ 
+- DistractorAI: https://app2.queratorai.com/distractor-mode
+
 ## 主要套件
 - fastapi
 - react
