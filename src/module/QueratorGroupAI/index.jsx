@@ -1,22 +1,15 @@
 import "./index.css";
 import React, { useState } from "react";
+import config from "../../config";
 const axios = require("axios");
 
-let API_URI = "";
-if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-  // dev code
-  API_URI = process.env.REACT_APP_DEV_API_URI || "http://localhost:8000";
-} else {
-  // production code
-  API_URI = "";
-}
-
-console.log(API_URI);
+let { API_ENDPOINT } = config;
 
 // example input
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
+
 let exampleInputText1 =
   "Harry Potter is a series of seven fantasy novels written by British author J. K. Rowling. The novels chronicle the lives of a young wizard, Harry Potter, and his friends Hermione Granger and Ron Weasley, all of whom are students at Hogwarts School of Witchcraft and Wizardry. The main story arc concerns Harry's struggle against Lord Voldemort, a dark wizard who intends to become immortal, overthrow the wizard governing body known as the Ministry of Magic and subjugate all wizards and Muggles.";
 let exampleInputText2 =
@@ -31,7 +24,7 @@ let exampleInputTexts = [
 let exampleInputText =
   exampleInputTexts[getRandomInt(exampleInputTexts.length)];
 
-function App() {
+function QueratorGroupAI() {
   let [context, setContext] = useState("");
   let [questionGroupSize, setQuestionGroupSize] = useState(5);
   let [questionGroup, setQuestionGroup] = useState([]);
@@ -62,7 +55,7 @@ function App() {
     setQuestionGroup([]);
     setDisableGenBtn(true);
     axios
-      .post(API_URI + "/generate-question-group", {
+      .post(`${API_ENDPOINT}/en-US/generate-question-group`, {
         context,
         question_group_size,
         candidate_pool_size,
@@ -104,7 +97,7 @@ function App() {
     console.log(question_and_answers);
     setDisableGenBtn(true);
     axios
-      .post(API_URI + "/generate-distractor", {
+      .post(`${API_ENDPOINT}/en-US/generate-group-distractor`, {
         context,
         question_and_answers,
       })
@@ -143,7 +136,7 @@ function App() {
 
   return (
     <div className="App container pt-3 mb-5">
-      <h1 className="text-center mb-3">Question Group Generator Demo</h1>
+      <h1 className="text-center mb-3">Querator Group AI</h1>
       <textarea
         value={context}
         onChange={(e) => {
@@ -171,7 +164,7 @@ function App() {
           </h2>
           <div
             id="collapseTwo"
-            className="accordion-collapse collapse"
+            className="accordion-collapse show"
             aria-labelledby="headingTwo"
             data-bs-parent="#accordionExample"
           >
@@ -270,7 +263,7 @@ function App() {
           );
         })}
       </div>
-      {questionGroup.length && (
+      {Boolean(questionGroup.length) && (
         <button
           disabled={disableGenBtn}
           type="button"
@@ -284,4 +277,4 @@ function App() {
   );
 }
 
-export default App;
+export default QueratorGroupAI;

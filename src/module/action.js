@@ -3,10 +3,6 @@ import config from "../config";
 import axios from "axios";
 
 const { API_ENDPOINT } = config;
-const LANGUAGE_CODE_MAPPING = {
-  "en-US": "en",
-  "zh-TW": "zh",
-};
 const axios_client = axios.create({
   headers: { AppName: "Querator" },
 });

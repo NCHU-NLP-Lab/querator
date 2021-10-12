@@ -1,17 +1,18 @@
 import React, { Component } from "react";
+import { withTranslation } from "react-i18next";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import "./App.css";
+import "./module/Londing/index.css";
 import Footer from "./module/FooterModule";
 import AppSetting from "./module/AppConfigModule";
 import QueratorAI from "./module/QueratorAI";
 import DistractorAI from "./module/DistractorAI";
-import "./module/Londing/index.css";
-import { withTranslation } from "react-i18next";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { settingLngAndModel, showTextSlider } from "./module/action.js";
-import "./App.css";
-import { ToastContainer } from "react-toastify";
+import QueratorGroupAI from "./module/QueratorGroupAI";
 import TextSlider from "../src/module/TextSliderModule";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { settingLngAndModel, showTextSlider } from "./module/action.js";
 
 class Index extends Component {
   constructor(props) {
@@ -66,6 +67,9 @@ class Index extends Component {
             <Switch>
               <Route path="/distractor-mode">
                 <DistractorAI />
+              </Route>
+              <Route path="/group-mode">
+                <QueratorGroupAI />
               </Route>
               <Route path="/">
                 <QueratorAI />
