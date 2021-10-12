@@ -42,7 +42,7 @@ export const pureGenDistractors = async (params) => {
   let { lng } = params;
   lng = "en-US"; // Only English is support for now
   return await axios_client
-    .post(`${API_ENDPOINT}/${LANGUAGE_CODE_MAPPING[lng]}/generate-distractor`, {
+    .post(`${API_ENDPOINT}/${lng}/generate-distractor`, {
       article: params.context,
       answer: {
         tag: params.answer,
@@ -72,19 +72,16 @@ export const genDistractors = (
   lng = "en-US"; // Only English is support for now
   return (dispatch) => {
     axios_client
-      .post(
-        `${API_ENDPOINT}/${LANGUAGE_CODE_MAPPING[lng]}/generate-distractor`,
-        {
-          article,
-          answer: {
-            tag: answer,
-            start_at: answer_start,
-            end_at: answer_end,
-          },
-          question,
-          gen_quantity,
-        }
-      )
+      .post(`${API_ENDPOINT}/${lng}/generate-distractor`, {
+        article,
+        answer: {
+          tag: answer,
+          start_at: answer_start,
+          end_at: answer_end,
+        },
+        question,
+        gen_quantity,
+      })
       .then((reqData) => {
         console.log(reqData);
         let { distractors = [] } = reqData.data;
@@ -108,7 +105,7 @@ export const genDistractors = (
 export const submitQs = (q, fullContext, lng = "zh-TW") => {
   let apiReq = (reqData) => {
     return axios_client.post(
-      `${API_ENDPOINT}/${LANGUAGE_CODE_MAPPING[lng]}/generate-question`,
+      `${API_ENDPOINT}/${lng}/generate-question`,
       {
         answer: {
           tag: reqData.tag,
