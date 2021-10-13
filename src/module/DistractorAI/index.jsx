@@ -146,7 +146,6 @@ class DistractorAI extends React.Component {
           options.push({ text: pair.answer, is_answer: true });
           return {
             question: pair.question,
-            answer: pair.answer,
             options,
           };
         }),

@@ -1,45 +1,56 @@
 import "./index.css";
 import React, { useState } from "react";
 import config from "../../config";
+import QuestionDisplay from "../Question/display";
+import ExportButtons from "../Export/buttons";
+
 const axios = require("axios");
 
 let { API_ENDPOINT } = config;
 
-// example input
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
+function getRandomItem(array) {
+  let index = Math.floor(Math.random() * array.length);
+  return array[index];
 }
 
-let exampleInputText1 =
-  "Harry Potter is a series of seven fantasy novels written by British author J. K. Rowling. The novels chronicle the lives of a young wizard, Harry Potter, and his friends Hermione Granger and Ron Weasley, all of whom are students at Hogwarts School of Witchcraft and Wizardry. The main story arc concerns Harry's struggle against Lord Voldemort, a dark wizard who intends to become immortal, overthrow the wizard governing body known as the Ministry of Magic and subjugate all wizards and Muggles.";
-let exampleInputText2 =
-  "Game of Thrones is an American fantasy drama television series created by David Benioff and D. B. Weiss for HBO. It is an adaptation of A Song of Ice and Fire, a series of fantasy novels by George R. R. Martin, the first of which is A Game of Thrones. The show was shot in the United Kingdom, Canada, Croatia, Iceland, Malta, Morocco, and Spain. It premiered on HBO in the United States on April 17, 2011, and concluded on May 19, 2019, with 73 episodes broadcast over eight seasons.";
-let exampleInputText3 =
-  "Facebook is an American online social media and social networking service based in Menlo Park, California, and a flagship service of the namesake company Facebook, Inc. It was founded by Mark Zuckerberg, along with fellow Harvard College students and roommates Eduardo Saverin, Andrew McCollum, Dustin Moskovitz, and Chris Hughes. The founders of Facebook initially limited membership to Harvard students. Membership was expanded to Columbia, Stanford, and Yale before being expanded to the rest of the Ivy League, MIT, NYU, Boston University, then various other universities in the United States and Canada, and lastly high school students. Since 2006, anyone who claims to be at least 13 years old has been allowed to become a registered user of Facebook, though this may vary depending on local laws. The name comes from the face book directories often given to American university students.";
-let exampleInputTexts = [
-  exampleInputText1,
-  exampleInputText2,
-  exampleInputText3,
+const EXAMPLE_CONTEXTS = [
+  "Harry Potter is a series of seven fantasy novels written by British author J. K. Rowling. The novels chronicle the lives of a young wizard, Harry Potter, and his friends Hermione Granger and Ron Weasley, all of whom are students at Hogwarts School of Witchcraft and Wizardry. The main story arc concerns Harry's struggle against Lord Voldemort, a dark wizard who intends to become immortal, overthrow the wizard governing body known as the Ministry of Magic and subjugate all wizards and Muggles.",
+  "Game of Thrones is an American fantasy drama television series created by David Benioff and D. B. Weiss for HBO. It is an adaptation of A Song of Ice and Fire, a series of fantasy novels by George R. R. Martin, the first of which is A Game of Thrones. The show was shot in the United Kingdom, Canada, Croatia, Iceland, Malta, Morocco, and Spain. It premiered on HBO in the United States on April 17, 2011, and concluded on May 19, 2019, with 73 episodes broadcast over eight seasons.",
+  "Facebook is an American online social media and social networking service based in Menlo Park, California, and a flagship service of the namesake company Facebook, Inc. It was founded by Mark Zuckerberg, along with fellow Harvard College students and roommates Eduardo Saverin, Andrew McCollum, Dustin Moskovitz, and Chris Hughes. The founders of Facebook initially limited membership to Harvard students. Membership was expanded to Columbia, Stanford, and Yale before being expanded to the rest of the Ivy League, MIT, NYU, Boston University, then various other universities in the United States and Canada, and lastly high school students. Since 2006, anyone who claims to be at least 13 years old has been allowed to become a registered user of Facebook, though this may vary depending on local laws. The name comes from the face book directories often given to American university students.",
 ];
-let exampleInputText =
-  exampleInputTexts[getRandomInt(exampleInputTexts.length)];
 
 function QueratorGroupAI() {
-  let [context, setContext] = useState("");
-  let [questionGroupSize, setQuestionGroupSize] = useState(5);
-  let [questionGroup, setQuestionGroup] = useState([]);
+  let [context, setContext] = useState(getRandomItem(EXAMPLE_CONTEXTS));
+  let [questionNum, setQuestionNum] = useState(5);
+  let [questions, setQuestions] = useState([]);
   let [disableGenBtn, setDisableGenBtn] = useState(false);
-  let [answerValue, setAnswerValue] = useState({});
-  let [optionValue, setOptionValue] = useState({});
-  //answerInputOnChange
-  let answerInputOnChange = (e) => {
-    // console.log(e, e.target.id)
-    answerValue[e.target.name] = e.target.value;
-    answerValue = Object.assign({}, answerValue, {
-      [e.target.name]: e.target.value,
-    });
-    // console.log(answerValue)
-    setAnswerValue(answerValue);
+  let [answers, setAnswers] = useState([]);
+  let [options, setOptions] = useState([]);
+  let [exportChecks, setExportChecks] = useState([]);
+
+  let answerInputOnChange = (event) => {
+    let newAnswers = [...answers];
+    newAnswers[event.target.dataset.questionIndex] = event.target.value;
+    setAnswers(newAnswers);
+  };
+
+  let toggleQuestionExport = (event) => {
+    let index = event.target.dataset.questionIndex;
+    let newExportChecks = [...exportChecks];
+    newExportChecks[index] = Boolean(newExportChecks[index])
+      ? false
+      : Array(options[index].length + 1).fill(true);
+    // +1 for the answer
+    setExportChecks(newExportChecks);
+  };
+
+  let toggleOptionExport = (event) => {
+    let questionIndex = event.target.dataset.questionIndex;
+    let optionIndex = event.target.dataset.optionIndex;
+    let newExportChecks = [...exportChecks];
+    newExportChecks[questionIndex][optionIndex] =
+      !newExportChecks[questionIndex][optionIndex];
+    setExportChecks(newExportChecks);
   };
 
   let genQuestionGroup = (
@@ -47,12 +58,9 @@ function QueratorGroupAI() {
     question_group_size,
     candidate_pool_size
   ) => {
-    if (context === "") {
-      context = exampleInputText;
-    }
     console.log(context, question_group_size, candidate_pool_size);
-    setAnswerValue({}); // reset
-    setQuestionGroup([]);
+    setAnswers([]); // reset
+    setQuestions([]);
     setDisableGenBtn(true);
     axios
       .post(`${API_ENDPOINT}/en-US/generate-question-group`, {
@@ -62,7 +70,7 @@ function QueratorGroupAI() {
       })
       .then(function (response) {
         let { question_group = [] } = response.data;
-        setQuestionGroup(question_group);
+        setQuestions(question_group);
       })
       .catch(function (error) {
         console.log(error);
@@ -73,15 +81,12 @@ function QueratorGroupAI() {
   };
 
   let genOptions = () => {
-    if (context === "") {
-      context = exampleInputText;
-    }
-    console.log(questionGroup);
-    console.log(answerValue);
+    console.log(questions);
+    console.log(answers);
     // combine question and answer
     let allAnsIsNull = true;
-    let question_and_answers = questionGroup.map((question, i) => {
-      let answer = answerValue[`A${i + 1}.`] || "";
+    let question_and_answers = questions.map((question, i) => {
+      let answer = answers[i] || "";
       if (answer !== "") {
         allAnsIsNull = false;
       }
@@ -117,21 +122,63 @@ function QueratorGroupAI() {
           return qa;
         });
         // change state
+        let newOptionValue = [...options];
         question_answer_and_options.forEach((qac, i) => {
-          let options = qac.options;
-          optionValue = Object.assign({}, optionValue, {
-            [`O${i + 1}.`]: options,
-          });
+          newOptionValue[i] = qac.options;
         });
-        setOptionValue(optionValue);
+        setOptions(newOptionValue);
       })
       .catch((err) => {
         console.log(err);
       })
       .then(() => {
         setDisableGenBtn(false);
-        // setAnswerValue({}) // reset
+        // setAnswers([]) // reset
       });
+  };
+
+  let getQuestionSets = () => {
+    let data = [{ context, question_pairs: [] }];
+    for (
+      let questionIndex = 0;
+      questionIndex < questions.length;
+      questionIndex++
+    ) {
+      const question = questions[questionIndex];
+      if (!exportChecks[questionIndex]) {
+        continue;
+      }
+      let exportOptions = [{ text: answers[questionIndex], is_answer: true }];
+      for (
+        let optionIndex = 0;
+        optionIndex < options[questionIndex].length;
+        optionIndex++
+      ) {
+        // first option is answer, +1 for actual option
+        if (!exportChecks[questionIndex][optionIndex + 1]) {
+          continue;
+        }
+        const option = options[questionIndex][optionIndex];
+        exportOptions.push({ text: option, is_answer: false });
+      }
+      data[0].question_pairs.push({ question, options: exportOptions });
+    }
+    // data = [
+    //   {
+    //     context,
+    //     question_pairs: [...Array(questions.length)].map((e, questionIndex) => {
+    //       let exportOptions = options[questionIndex].map((option) => {
+    //         return { text: option, is_answer: false };
+    //       });
+    //       exportOptions.push({ text: answers[questionIndex], is_answer: true });
+    //       return {
+    //         question,
+    //         options: exportOptions,
+    //       };
+    //     }),
+    //   },
+    // ];
+    return data;
   };
 
   return (
@@ -143,7 +190,6 @@ function QueratorGroupAI() {
           setContext(e.target.value);
         }}
         className="form-control"
-        placeholder={exampleInputText}
         style={{ height: 200 }}
         id="floatingTextarea"
       ></textarea>
@@ -180,14 +226,14 @@ function QueratorGroupAI() {
                   {/* inputQuestionGroupSize */}
                   <input
                     onChange={(e) => {
-                      setQuestionGroupSize(e.target.value);
+                      setQuestionNum(e.target.value);
                       if (e.target.value > 10) {
                         setTimeout(() => {
-                          setQuestionGroupSize(10);
+                          setQuestionNum(10);
                         }, 200);
                       }
                     }}
-                    value={questionGroupSize}
+                    value={questionNum}
                     type="number"
                     className="form-control"
                     id="inputQuestionGroupSize"
@@ -203,9 +249,7 @@ function QueratorGroupAI() {
         disabled={disableGenBtn}
         type="button"
         className="mt-2 btn btn-success w-100"
-        onClick={() =>
-          genQuestionGroup(context, questionGroupSize, questionGroupSize * 2)
-        }
+        onClick={() => genQuestionGroup(context, questionNum, questionNum * 2)}
       >
         {disableGenBtn ? "Generating..." : "Generate Question Group"}
       </button>
@@ -216,54 +260,28 @@ function QueratorGroupAI() {
         className="displayQuesitonGroup"
         style={{ minHeight: 80, width: "100%" }}
       >
-        {questionGroup.map((question, i) => {
+        {questions.map((question, questionIndex) => {
           return (
-            <div className="mb-1 row question-block pb-1" key={i}>
-              <input
-                type="text"
-                readOnly
-                className="form-control"
-                id={`Q${i + 1}.`}
-                value={`Q${i + 1}. ${question}`}
-              />
-
-              <hr />
-
-              <div className="col-12 ps-2">
-                <div className="row">
-                  <div className="col-12">
-                    <span className="me-2">A{i + 1}.</span>
-                    <input
-                      // className="form-control form-control-sm"
-                      type="text"
-                      name={`A${i + 1}.`}
-                      onChange={answerInputOnChange}
-                      value={answerValue[`A${i + 1}.`]}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-12 ps-2">
-                <div className="row">
-                  <div className="col-12">
-                    {optionValue[`O${i + 1}.`] &&
-                      optionValue[`O${i + 1}.`].map((option, i) => {
-                        return (
-                          <div className="mb-1" key={i}>
-                            <span className="me-2">{`O${i + 1}.`}</span>
-                            {option}
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <QuestionDisplay
+              key={`question-display-${questionIndex}`}
+              question={question}
+              questionIndex={questionIndex}
+              questionChecked={Boolean(exportChecks[questionIndex])}
+              questionCheckboxOnChange={toggleQuestionExport}
+              answer={answers[questionIndex]}
+              answerIsInput
+              answerInputOnChange={answerInputOnChange}
+              options={options[questionIndex]}
+              optionsChecked={exportChecks[questionIndex]}
+              optionCheckboxOnChange={toggleOptionExport}
+            />
           );
         })}
       </div>
-      {Boolean(questionGroup.length) && (
+      {Boolean(options.length) && (
+        <ExportButtons getQuestionSets={getQuestionSets} />
+      )}
+      {Boolean(questions.length) && (
         <button
           disabled={disableGenBtn}
           type="button"

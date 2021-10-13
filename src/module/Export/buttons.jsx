@@ -35,6 +35,7 @@ class ExportButtons extends React.Component {
 
     let data = this.props.getQuestionSets();
     if (!Array.isArray(data) || !data.length) {
+      console.log("Exported data is not array or is empty");
       return;
     }
 
