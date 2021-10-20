@@ -2,43 +2,58 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
-import { showSetting, showTextSlider } from "../action.js";
-import { MdSettings } from "react-icons/md";
+import { settingLngAndModel, showSetting, showTextSlider } from "../action.js";
+import { MdSettings, MdRefresh } from "react-icons/md";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import ButtonToolbar from "react-bootstrap/ButtonToolbar";
 
 function Setting(props) {
   let { t, dispatch, appState } = props;
+
+  let changeLang = (lang) => {
+    props.i18n.changeLanguage(lang);
+    props.dispatch(settingLngAndModel(lang, lang));
+  };
+
   return (
-    <>
-      <div
-        className="text-center"
-        style={{
-          marginTop: "-10px",
-        }}
-      >
-        <button className="btn btn-sm" onClick={() => this.changeLang("zh-TW")}>
+    <ButtonToolbar
+      className="justify-content-center"
+      aria-label="Setting Buttons"
+    >
+      <ButtonGroup size="sm" className="m-2">
+        <Button variant="secondary" onClick={() => changeLang("zh-TW")}>
           繁體中文
-        </button>
-        <button className="btn btn-sm" onClick={() => this.changeLang("en-US")}>
+        </Button>
+        <Button variant="secondary" onClick={() => changeLang("en-US")}>
           English
-        </button>
-        <button
-          className="btn btn-sm"
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => dispatch(showTextSlider(true))}
         >
           {t("Help")}
-        </button>
-        <button
-          className="btn btn-sm"
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => {
             dispatch(showSetting(!appState.showSetting));
           }}
         >
           <MdSettings />
-        </button>
-        <br />
-      </div>
-      <hr style={{ marginTop: "5px", marginBottom: "12px" }} />
-    </>
+        </Button>
+      </ButtonGroup>
+      <ButtonGroup className="m-2">
+        <Button
+          variant="danger"
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+          {t("clear all data")} <MdRefresh />
+        </Button>
+      </ButtonGroup>
+    </ButtonToolbar>
   );
 }
 

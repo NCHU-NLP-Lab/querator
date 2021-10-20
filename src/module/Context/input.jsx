@@ -2,6 +2,7 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
+import Form from "react-bootstrap/Form";
 
 class ContextInput extends React.Component {
   constructor(props) {
@@ -17,20 +18,20 @@ class ContextInput extends React.Component {
     let { t } = this.props;
 
     return (
-      <div className="context-inputs">
-        <label htmlFor={`context-input-${this.props.id}`}>{`${t("Context")} ${
-          this.props.index + 1
-        }`}</label>
-        <textarea
-          className="form-control"
+      <Form.Group className="context-inputs mb-3">
+        <Form.Label htmlFor={`context-input-${this.props.id}`}>{`${t(
+          "Context"
+        )} ${this.props.index + 1}`}</Form.Label>
+        <Form.Control
+          as="textarea"
           id={`context-input-${this.props.id}`}
           rows="10"
           value={this.props.context}
           onChange={(event) => {
             this.props.contextChange(this.props.index, event.target.value);
           }}
-        ></textarea>
-      </div>
+        />
+      </Form.Group>
     );
   }
 }

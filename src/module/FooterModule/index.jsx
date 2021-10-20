@@ -1,37 +1,31 @@
 import React, { Component } from "react";
-import "./index.css";
-class Index extends Component {
+import "./index.scss";
+
+class Footer extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
   render() {
     return (
-      <div id="Footer">
-        <div className="text-center container">
-          <span
-            style={{
-              display: "block",
-              marginTop: "12px",
-            }}
-          ></span>
+      <footer className="footer mt-auto py-3 text-center text-muted">
+        <h3>
           <a
             rel="noopener noreferrer"
             target="_blank"
             href="https://nlpnchu.org/querator"
-            className="footer-brand"
+            className="brand"
           >
             Querator AI
           </a>
-          <hr />
-          <p className="footer-text">
-            Copyright © 2021
-            <a href="https://nlpnchu.org">NCHU NLP Lab</a>. All rights reserved.
-          </p>
-        </div>
-      </div>
+        </h3>
+        <p>
+          Copyright © 2021 <a href="https://nlpnchu.org">NCHU NLP Lab</a>. All
+          rights reserved.
+        </p>
+      </footer>
     );
   }
 }
 
-export default Index;
+export default Footer;

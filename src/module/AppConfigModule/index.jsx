@@ -5,8 +5,10 @@ import { MdClose } from "react-icons/md";
 import { showSetting, settingLngAndModel } from "../action";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
-class Index extends Component {
+class AppConfig extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -24,66 +26,70 @@ class Index extends Component {
     let { t } = this;
     let { lng, model } = appState;
     return (
-      <div id="AppConfig">
-        <div className="menu">
-          <div className="card">
-            <h3 className="text-center">{t("setting")}</h3>
-            <div className="card-body">
-              <h5 className="card-title">
-                {t("UI lang")} :<b> {lng}</b>
-              </h5>
-              <p className="card-text">{t("Select UI lang")}</p>
-              <button
-                onClick={() => this.changeLang("zh-TW")}
-                className="btn btn-primary"
-              >
-                繁體中文
-              </button>
-              <button
-                onClick={() => this.changeLang("en-US")}
-                className="btn btn-primary"
-              >
-                English
-              </button>
-              <hr />
-              <h5 className="card-title">
-                {t("QG model traget lang")}: <b>{model}</b>
-              </h5>
-              <p className="card-text">{t("Select Model lang")}</p>
-              <button
-                onClick={() => dispatch(settingLngAndModel("NULL", "zh-TW"))}
-                className="btn btn-primary"
-              >
-                {t("Chinese")}
-              </button>
-              <button
-                onClick={() => dispatch(settingLngAndModel("NULL", "en-US"))}
-                className="btn btn-primary"
-              >
-                {t("English")}
-              </button>
-              <hr />
-              <h5 className="card-title">{t("Clear data and sign out")}</h5>
-              <p className="card-text">{t("Clear data and sign out")}</p>
-              <button
-                onClick={() => {
-                  window.localStorage.clear();
-                  window.location.reload();
-                }}
-                className="btn btn-primary"
-              >
-                {t("Confirm")}
-              </button>
-            </div>
-            <button
-              onClick={() => dispatch(showSetting(false))}
-              className="btn btn-danger float-right"
-            >
-              Close <MdClose />
-            </button>
-          </div>
-        </div>
-      </div>
+      <Modal show={this.props.show} onHide={() => dispatch(showSetting(false))}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t("setting")}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Modal.Title>
+            {t("UI lang")} :<b> {lng}</b>
+          </Modal.Title>
+          <p>{t("Select UI lang")}</p>
+          <Button
+            variant="primary"
+            className="mx-2"
+            onClick={() => this.changeLang("zh-TW")}
+          >
+            繁體中文
+          </Button>
+          <Button
+            variant="primary"
+            className="mx-2"
+            onClick={() => this.changeLang("en-US")}
+          >
+            English
+          </Button>
+          <hr />
+          <Modal.Title>
+            {t("QG model traget lang")}: <b>{model}</b>
+          </Modal.Title>
+          <p>{t("Select Model lang")}</p>
+          <Button
+            variant="primary"
+            className="mx-2"
+            onClick={() => dispatch(settingLngAndModel("NULL", "zh-TW"))}
+          >
+            {t("Chinese")}
+          </Button>
+          <Button
+            variant="primary"
+            className="mx-2"
+            onClick={() => dispatch(settingLngAndModel("NULL", "en-US"))}
+          >
+            {t("English")}
+          </Button>
+          <hr />
+          <Modal.Title>{t("Clear data and sign out")}</Modal.Title>
+          <p>{t("Clear data and sign out")}</p>
+          <Button
+            variant="danger"
+            onClick={() => {
+              window.localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            {t("Confirm")}
+          </Button>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => dispatch(showSetting(false))}
+          >
+            Close <MdClose />
+          </Button>
+        </Modal.Footer>
+      </Modal>
     );
   }
 }
@@ -94,4 +100,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default compose(withTranslation(), connect(mapStateToProps))(Index);
+export default compose(withTranslation(), connect(mapStateToProps))(AppConfig);

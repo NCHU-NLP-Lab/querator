@@ -6,56 +6,24 @@ import { submitQs as SQs } from "../action.js";
 import { showToastInfo } from "../toast.js";
 import { MdHelp, MdLockOutline, MdLockOpen } from "react-icons/md";
 import { withTranslation } from "react-i18next";
-import { MdRefresh } from "react-icons/md";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
-class View extends Component {
+class PickAnswer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectWords: [],
       isEdit: true,
       inputContext: "",
-      // inputContext: 'Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.',
-      // inputContext: '韓國瑜（1957年6月17日－），中華民國政治人物，中國國民黨籍，生於今新北市中和區，現任高雄市市長，中華民國陸軍軍官學校專修學生班40期、東吳大學英國語文學系文學學士、國立政治大學東亞研究所法學碩士[12]。 曾任第12屆臺北縣議員及三屆（第2－4屆）立法委員[13]。2001年角逐不分區立委失利[14] ；2004年在閃紅燈路口未停車禮讓而過失致死一名無駕照並且超速之重機騎士，被法院判處6個月徒刑得易科罰金，緩刑2年[15]；2004年在岳家雲林縣斗六市和妻子李佳芬創辦維多利亞雙語中小學；2005年，出任臺北縣中和市副市長1年8個月；2007年曾打算再戰國會，因黨內初選中指控對手張慶忠，被黨部取消初選資格[16]。2012年被指派擔任臺北農產運銷公司總經理。2016年9月辭職未成[17]，2017年因參選於1月辭職，3月離職，參選國民黨主席落敗[18][19][20]。 2017年9月，成為國民黨高雄市黨部主委。2018年4月遷籍高雄市林園區，5月在初選勝出並代表國民黨參選高雄市長，11月24日舉行的中華民國地方首長選舉以89萬2545票[21]、15萬多票差距擊敗民主進步黨候選人陳其邁而獲勝，結束民進黨在高雄市20年及原高雄縣33年的執政[22]。 2019年6月5日，韓國瑜就任高雄巿長162天，經過和徵詢小組對談後打破曾在高雄市長選前保證不會半途離職的承諾[23]，他表態願意被動徵召角逐國民黨總統初選[24]。8日於花蓮場2020總統參選造勢大會公開宣告已登記黨內初選[25]，後於初選時中出國民黨主席而參加2020年中華民國總統選舉。',
-      floatPciked: false,
     };
-    this.t = props.t;
     this.qaContext = React.createRef();
-    this.pickedBlock = React.createRef();
-    this.pickedBlockChilds = [];
-    this.handleScroll = this.handleScroll.bind(this);
     this.showToastInfo = showToastInfo;
+    this.addWords = this.addWords.bind(this);
     this.submitBtn = React.createRef();
-  }
-
-  componentDidMount() {
-    // console.log(this.props)
-    window.addEventListener("scroll", this.handleScroll);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("scroll", this.handleScroll);
-  }
-
-  handleScroll() {
-    //已選擇答案區塊不可見
-    // console.log(((window.pageYOffset+window.innerHeight)>this.pickedBlock.current.offsetTop) === false)
-    // console.log(window.pageYOffset+window.innerHeight,this.pickedBlock.current.offsetTop)
-    // console.log("")
-    if (
-      !(
-        window.pageYOffset + window.innerHeight >
-        this.pickedBlock.current.offsetTop
-      )
-    ) {
-      this.setState({
-        floatPciked: true,
-      });
-    } else {
-      this.setState({
-        floatPciked: false,
-      });
-    }
+    this.submitQs = this.submitQs.bind(this);
   }
 
   pasteTo() {
@@ -75,22 +43,18 @@ class View extends Component {
 
   confirmContext() {
     let { isEdit, inputContext } = this.state;
-    let { t } = this;
-    if (isEdit === true) {
+    if (isEdit) {
       if (
         inputContext.length <= 0 ||
         inputContext.replace(/ /g, "").length <= 0
       ) {
-        this.showToastInfo(t("Input can't be null"), "error");
+        this.showToastInfo(this.props.t("Input can't be null"), "error");
         return;
       }
     }
     this.setState({
       isEdit: !isEdit,
     });
-    setTimeout(() => {
-      this.handleScroll();
-    }, 0);
   }
 
   cleanSelection() {
@@ -128,7 +92,7 @@ class View extends Component {
     //取前後內容
     let contextLimit = 467;
     let contextForQG = "";
-    let { inputContext, floatPciked } = this.state;
+    let { inputContext } = this.state;
     let padding = 0;
     if (start <= 233) {
       contextForQG = inputContext.slice(0, contextLimit);
@@ -148,7 +112,6 @@ class View extends Component {
     // console.log(start, end, padding,contextForQG.length);
 
     let { selectWords } = this.state;
-    let { t } = this;
 
     //檢查重複
     let isWordRepeat = false;
@@ -185,21 +148,12 @@ class View extends Component {
       });
     }
     if (selectWords.length === 1) {
-      this.showToastInfo(t("Click block to cancel select"));
+      this.showToastInfo(this.props.t("Click block to cancel select"));
     }
     this.cleanSelection();
-    if (floatPciked) {
-      console.log(this.submitBtn);
-      setTimeout(() => {
-        this.submitBtn.current.scrollIntoView({
-          block: "end",
-          behavior: "smooth",
-        });
-      }, 0);
-    }
   }
 
-  removeSelect(e, start, end, tag) {
+  removeSelect(start, end, tag) {
     /* remove word by start_at */
     let { selectWords } = this.state;
     selectWords = selectWords.filter((word) => {
@@ -213,92 +167,97 @@ class View extends Component {
   }
 
   submitQs() {
-    let { selectWords, inputContext } = this.state;
-    let { dispatch, appState } = this.props;
-    if (selectWords.length > 0) {
-      this.showToastInfo(this.t("Generating"));
-      dispatch(SQs(selectWords, inputContext, appState.model));
+    if (this.state.selectWords.length > 0) {
+      this.showToastInfo(this.props.t("Generating"));
+      this.props.dispatch(
+        SQs(
+          this.state.selectWords,
+          this.state.inputContext,
+          this.props.appState.model
+        )
+      );
     } else {
-      this.showToastInfo(this.t("No answer is selected"), "error");
+      this.showToastInfo(this.props.t("No answer is selected"), "error");
     }
   }
 
-  helpSelect() {
-    this.showToastInfo(this.t("Drag to select word"));
-  }
-
-  helpSelected() {
-    this.showToastInfo(this.t("Click block to cancel select"));
-  }
-
   render() {
-    // window.pageYOffset
     let {
       selectWords,
       isEdit,
       inputContext,
       oneClickDisable = false,
-      floatPciked,
     } = this.state;
-    let { t } = this;
+    let { t } = this.props;
     let { model, selectWordsSubmitting } = this.props.appState;
+
     return (
-      <div id="QA-context">
-        <h3 className="d-none">
-          {isEdit === true ? t("Paste an article") : t("Select some words")}
-          <span onClick={(e) => this.helpSelect(e)} className="help-btn">
-            <MdHelp />
-          </span>
-        </h3>
-        <small className="small-text">
-          <b>{model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}</b>{" "}
-        </small>
-        <div className="w-100 text-center center">
-          <button
-            style={{
-              fontSize: "10px",
-            }}
-            onClick={() => {
-              window.location.reload();
-            }}
-            className="btn btn-sm btn-outline-danger"
-          >
-            {t("clear all data")} <MdRefresh />
-          </button>
-        </div>
-        {/* <div className="btn-group">
-                    {isEdit === true ? (
-                        <button
-                            className='btn btn-sm btn-dark'
-                            onClick={e => this.pasteTo(e)}>{t('Paste from clipboard')} <MdContentCopy /></button>
-                    ) : ('')}
-                </div> */}
-        <div className="form-group" ref={this.qaContext}>
-          {isEdit === true ? (
-            <textarea
-              placeholder={t("Paste an Article here")}
-              onChange={(e) => {
-                let txt = e.target.value;
-                this.setState({
-                  inputContext: txt,
-                });
-              }}
-              value={inputContext}
-              className="form-control"
-              rows="7"
-            ></textarea>
+      <Container id="QA-context">
+        {/* Context area */}
+        <Row>
+          {isEdit ? (
+            <>
+              <h3>
+                {t("Paste an article")}
+                <span
+                  onClick={() => {
+                    showToastInfo(t("Drag to select word"));
+                  }}
+                  className="help-btn"
+                >
+                  <MdHelp />
+                </span>
+              </h3>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlTextarea1"
+              >
+                <Form.Label>
+                  {model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={7}
+                  placeholder={t("Paste an Article here")}
+                  value={inputContext}
+                  onChange={(e) => {
+                    let txt = e.target.value;
+                    this.setState({
+                      inputContext: txt,
+                    });
+                  }}
+                />
+              </Form.Group>
+            </>
           ) : (
-            <pre
-              className="qa-context"
-              onMouseUp={(e) => this.addWords(e)}
-              key={JSON.stringify(selectWords)}
-            >
-              {this.state.inputContext}
-            </pre>
+            <>
+              <h3>
+                {t("Select some words")}
+                <span
+                  onClick={() => {
+                    showToastInfo(t("Drag to select word"));
+                  }}
+                  className="help-btn"
+                >
+                  <MdHelp />
+                </span>
+              </h3>
+              <small className="small-text">
+                <b>{model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}</b>
+              </small>
+              <pre
+                className="qa-context"
+                onMouseUp={(e) => this.addWords(e)}
+                key={JSON.stringify(selectWords)}
+              >
+                {this.state.inputContext}
+              </pre>
+            </>
           )}
-        </div>
-        <div className="btn-group">
-          <button
+
+          {/* Edit / Confirm Button */}
+          <Button
+            variant={isEdit ? "success" : "secondary"}
             onClick={(e) => {
               if (!isEdit) {
                 if (!oneClickDisable) {
@@ -322,9 +281,6 @@ class View extends Component {
               });
               this.confirmContext(e);
             }}
-            className={
-              isEdit ? "btn btn-sm btn-success" : "btn btn-sm btn-secondary"
-            }
           >
             {isEdit ? (
               <span>
@@ -335,47 +291,56 @@ class View extends Component {
                 {t("Edit")} <MdLockOutline />
               </span>
             )}
-          </button>
-        </div>
-        <br />
-        <br />
-        <div ref={this.pickedBlock} className="selected-block-container">
-          <div className={floatPciked ? "selected-block" : ""}>
-            <h4>
-              {t("Selected Answer")}
-              <span className="help-btn" onClick={(e) => this.helpSelected(e)}>
-                <MdHelp />
-              </span>
-            </h4>
-            {selectWords.map((word, k) => {
-              let { tag, start_at, end_at } = word;
-              return (
-                <small
-                  ref={(ele) => {
-                    this.pickedBlockChilds[k] = ele;
+          </Button>
+        </Row>
+
+        {/* Selected Answer Block */}
+        <Row ref={this.pickedBlock} className="mt-3">
+          {!isEdit && (
+            <>
+              <h4>
+                {t("Selected Answer")}
+                <span
+                  className="help-btn"
+                  onClick={() => {
+                    showToastInfo(t("Click block to cancel select"));
                   }}
-                  className="btn btn-sm btn-danger select-margin"
-                  key={k}
-                  onClick={(e) => this.removeSelect(e, start_at, end_at, tag)}
                 >
-                  {tag}
-                </small>
-              );
-            })}
-            <br />
-            <br />
-            <button
-              ref={this.submitBtn}
-              className="btn btn-sm btn-success"
-              onClick={(e) => this.submitQs(e)}
-              disabled={selectWordsSubmitting}
-            >
-              {t("Generate")}
-            </button>
-            <br />
-          </div>
-        </div>
-      </div>
+                  <MdHelp />
+                </span>
+              </h4>
+
+              {/* Show selected answers with buttons */}
+              <div className="my-2">
+                {selectWords.map((word, k) => {
+                  return (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      className="mx-1"
+                      key={k}
+                      onClick={(event) =>
+                        this.removeSelect(word.start_at, word.end_at, word.tag)
+                      }
+                    >
+                      {word.tag}
+                    </Button>
+                  );
+                })}
+              </div>
+              <br />
+              <Button
+                variant="success"
+                ref={this.submitBtn}
+                onClick={this.submitQs}
+                disabled={selectWordsSubmitting}
+              >
+                {t("Generate")}
+              </Button>
+            </>
+          )}
+        </Row>
+      </Container>
     );
   }
 }
@@ -386,4 +351,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default compose(connect(mapStateToProps), withTranslation())(View);
+export default compose(connect(mapStateToProps), withTranslation())(PickAnswer);

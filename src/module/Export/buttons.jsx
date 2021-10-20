@@ -3,6 +3,8 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import config from "../../config";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Button from "react-bootstrap/Button";
 
 // Expected props
 // question_sets: [<set>, <set>, ...]
@@ -68,29 +70,26 @@ class ExportButtons extends React.Component {
       <>
         <h5>{t("Export Options")}</h5>
         <hr />
-        <div className="btn-group" role="group">
-          <button
-            type="button"
-            className="btn btn-secondary"
+        <ButtonGroup>
+          <Button
+            variant="secondary"
             onClick={(event) => this.download_export(event, "json")}
           >
             {t("JSON")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
+          </Button>
+          <Button
+            variant="secondary"
             onClick={(event) => this.download_export(event, "txt")}
           >
             {t("Plain Text")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
+          </Button>
+          <Button
+            variant="secondary"
             onClick={(event) => this.download_export(event, "docx")}
           >
             {t("Word Document")}
-          </button>
-        </div>
+          </Button>
+        </ButtonGroup>
       </>
     );
   }

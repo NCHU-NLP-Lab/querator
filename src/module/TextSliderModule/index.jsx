@@ -1,16 +1,17 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { withTranslation } from "react-i18next";
 import Slider from "react-animated-slider";
+import { showTextSlider } from "../action";
+import Button from "react-bootstrap/Button";
+import "./index.css";
 import p0 from "./gifs/0.png";
 import step1Gif from "./gifs/step1.gif";
 import step2Gif from "./gifs/step2.gif";
 import step3Gif from "./gifs/step3.gif";
-// import 'react-animated-slider/build/horizontal.css';
-import "./index.css";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { withTranslation } from "react-i18next";
-import { showTextSlider } from "../action";
-class View extends Component {
+
+class TutorialBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,64 +22,53 @@ class View extends Component {
     let { sliderIndex } = this.state;
     let { dispatch, t } = this.props;
 
-    let content = [
+    const content = [
       {
-        title: (
-          <h2 className="text-center">
-            {t("A Powerful AI to Assist Question Generation")}
-          </h2>
-        ),
+        title: t("A Powerful AI to Assist Question Generation"),
         description: (
-          <div className="text-center" style={{ paddingTop: "60px" }}>
+          <div>
             <img width="95%" src={p0} alt="" srcSet="" />
-            <br />
-            <br />
-            <br />
-            <div className="text-center">
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://nlpnchu.org/querator"
-              >
-                Learn more about Qureator AI
-              </a>
-            </div>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://nlpnchu.org/querator"
+            >
+              Learn more about Qureator AI
+            </a>
           </div>
         ),
       },
       {
-        title: (
-          <h2 className="text-center">{t("Step 1 - Paste an Article")}</h2>
-        ),
+        title: t("Step 1 - Paste an Article"),
         description: (
-          <div className="text-center" style={{ paddingTop: "15px" }}>
+          <div style={{ paddingTop: "15px" }}>
             <img width="90%" src={step1Gif} alt="" srcSet="" />
           </div>
         ),
       },
       {
-        title: (
-          <h2 className="text-center">{t("Step 2 - Highlight Answers")}</h2>
-        ),
+        title: t("Step 2 - Highlight Answers"),
         description: (
-          <div className="text-center" style={{ paddingTop: "15px" }}>
+          <div style={{ paddingTop: "15px" }}>
             <img width="90%" src={step2Gif} alt="" srcSet="" />
           </div>
         ),
       },
       {
-        title: <h2 className="text-center">{t("Step 3 - Review Result")}</h2>,
+        title: t("Step 3 - Review Result"),
         description: (
-          <div className="text-center" style={{ paddingTop: "15px" }}>
+          <div style={{ paddingTop: "15px" }}>
             <img width="90%" src={step3Gif} alt="" srcSet="" />
           </div>
         ),
       },
     ];
 
+    const isLast = Boolean(sliderIndex === content.length - 1);
+
     return (
       <div id="T-Slider">
-        <div className="slider-container">
+        <div className="slider-container text-center">
           <Slider
             key={sliderIndex}
             slideIndex={sliderIndex}
@@ -87,40 +77,36 @@ class View extends Component {
           >
             {content.map((article, index) => (
               <div key={index}>
-                {article.title}
+                <h2>{article.title}</h2>
                 <div>{article.description}</div>
               </div>
             ))}
           </Slider>
-          <div className="text-center btns">
-            <button
-              onClick={() => {
-                let { sliderIndex } = this.state;
-                if (sliderIndex === 3) {
-                  sliderIndex = -1;
-                  //finish
+          <Button
+            variant={isLast ? "success" : "primary"}
+            size="lg"
+            onClick={() => {
+              this.setState((state) => {
+                if (isLast) {
                   dispatch(showTextSlider(false));
                   window.localStorage.setItem(
                     "already_see_text_slider",
                     "already_see_text_slider"
                   );
+                  return { sliderIndex: 0 };
                 }
-                this.setState({
-                  sliderIndex: sliderIndex + 1,
-                });
-              }}
-              className={`btn ${
-                sliderIndex === 3 ? "btn-success" : "btn-primary"
-              } next-btn btn-block`}
-            >
-              {sliderIndex === 3 ? t("Finish") : t("Next")}&nbsp;
-              {`(${sliderIndex + 1}/4)`}
-            </button>
-          </div>
+                return { sliderIndex: sliderIndex + 1 };
+              });
+            }}
+          >
+            {isLast ? t("Finish") : t("Next")}
+            &nbsp;
+            {`(${sliderIndex + 1}/${content.length})`}
+          </Button>
         </div>
       </div>
     );
   }
 }
 
-export default compose(withTranslation(), connect())(View);
+export default compose(withTranslation(), connect())(TutorialBox);

@@ -2,6 +2,7 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
+import Form from "react-bootstrap/Form";
 
 class QuestionInput extends React.Component {
   constructor(props) {
@@ -17,18 +18,17 @@ class QuestionInput extends React.Component {
     let { t } = this.props;
 
     return (
-      <div className="question-inputs">
-        <label htmlFor={`question-input-${this.props.id}`}>{`${t("Question")} ${
-          this.props.index + 1
-        }`}</label>
-        <input
+      <Form.Group className="question-inputs mb-3">
+        <Form.Label htmlFor={`question-input-${this.props.id}`}>{`${t(
+          "Question"
+        )} ${this.props.index + 1}`}</Form.Label>
+        <Form.Control
           type="text"
-          className="form-control"
           id={`question-input-${this.props.id}`}
           value={this.props.question}
           onChange={this.props.questionChange}
-        ></input>
-      </div>
+        />
+      </Form.Group>
     );
   }
 }

@@ -2,9 +2,10 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
-import PA from "../PickAnsModule";
-import QG from "../QGeneratorModule";
-import Setting from "../Setting";
+import PA from "../../module/PickAnsModule";
+import QG from "../../module/QGeneratorModule";
+import Setting from "../../module/Setting";
+import Container from "react-bootstrap/Container";
 
 const isMobile = () => {
   var check = false;
@@ -24,7 +25,7 @@ const isMobile = () => {
 
 function QueratorAI(props) {
   return isMobile() ? (
-    <div className="container">
+    <Container>
       <h1 className="text-center">OOPS!</h1>
       <hr />
       <p>
@@ -32,15 +33,15 @@ function QueratorAI(props) {
         get the best experience
       </p>
       <p>我們還沒有支援行動裝置，請使用電腦來獲得最佳體驗</p>
-    </div>
+    </Container>
   ) : (
-    <div className="querator-ai">
+    <Container id="querator-ai">
       <h1 className="text-center">Querator AI</h1>
       <Setting />
       <PA />
       <hr />
       <QG />
-    </div>
+    </Container>
   );
 }
 

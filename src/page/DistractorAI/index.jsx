@@ -2,11 +2,16 @@ import React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
-import ContextInput from "../Context/input";
-import ExportButtons from "../Export/buttons";
-import QuestionDisplay from "../Question/display";
-import QuestionAnswerPair from "../QuestionAnswerPair";
-import { pureGenDistractors } from "../action";
+import ContextInput from "../../module/Context/input";
+import ExportButtons from "../../module/Export/buttons";
+import QuestionDisplay from "../../module/Question/display";
+import QuestionAnswerPair from "../../module/QuestionAnswerPair";
+import { pureGenDistractors } from "../../module/action";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 class DistractorAI extends React.Component {
   constructor(props) {
@@ -156,25 +161,25 @@ class DistractorAI extends React.Component {
   render() {
     let { t } = this.props;
     return (
-      <div className="distractor-ai container">
+      <Container id="distractor-ai">
         <h1 className="text-center">Distractor AI</h1>
         {[...Array(this.state.questionSets.length)].map((e, setIndex) => (
           <>
-            <div className="row">
-              <div className="container" key={`set-container-${setIndex}`}>
-                <div className="row">
-                  <div className="col-6 p-3">
+            <Row>
+              <Container key={`set-container-${setIndex}`}>
+                <Row>
+                  <Col xs={6} className="p-3">
                     <ContextInput
                       index={setIndex}
                       context={this.state.questionSets[setIndex].context}
                       contextChange={this.contextChange}
                       key={`context-input-${setIndex}`}
                     />
-                  </div>
-                  <div className="col-6 p-3">
+                  </Col>
+                  <Col xs={6} className="p-3">
                     {this.state.questionSets[setIndex].question_pairs.map(
                       (pair, pairIndex) => (
-                        <>
+                        <Form>
                           <QuestionAnswerPair
                             setIndex={setIndex}
                             pair={pair}
@@ -195,62 +200,68 @@ class DistractorAI extends React.Component {
                               );
                             }}
                           />
-                          <div>
-                            <button
-                              className="btn btn-sm btn-danger"
-                              onClick={(event) => {
-                                event.preventDefault();
-                                this.deletePair(setIndex, pairIndex);
-                              }}
-                            >
-                              Remove this pair
-                            </button>
-                          </div>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              this.deletePair(setIndex, pairIndex);
+                            }}
+                          >
+                            Remove this pair
+                          </Button>
                           <hr />
-                        </>
+                        </Form>
                       )
                     )}
-                    <button
-                      className="btn btn-sm btn-success"
+                    <Button
+                      variant="success"
+                      size="sm"
                       onClick={(event) => {
                         event.preventDefault();
                         this.createPair(setIndex);
                       }}
                     >
                       Add QA Pair
-                    </button>
-                  </div>
-                </div>
-                <div className="row justify-content-end">
-                  <button
-                    className="btn btn-sm btn-danger"
+                    </Button>
+                  </Col>
+                </Row>
+                <Row className="justify-content-end">
+                  <Button
+                    variant="danger"
+                    size="sm"
                     onClick={(event) => {
                       event.preventDefault();
                       this.deleteSet(setIndex);
                     }}
                   >
                     {t("Remove This Set")}
-                  </button>
-                </div>
-              </div>
-            </div>
+                  </Button>
+                </Row>
+              </Container>
+            </Row>
             <hr key={`set-seperator-${setIndex}`} />
           </>
         ))}
-        <div className="row">
-          <button
-            className="btn btn-success m-2"
+        <Row>
+          <Button
+            variant="success"
+            className="m-2"
             onClick={(event) => {
               event.preventDefault();
               this.createSet();
             }}
           >
             {t("Add More Set")}
-          </button>
-          <button className="btn btn-primary m-2" onClick={this.getDistractors}>
+          </Button>
+          <Button
+            variant="primary"
+            className="m-2"
+            onClick={this.getDistractors}
+          >
             {t("Generate")}
-          </button>
-        </div>
+          </Button>
+        </Row>
         <hr />
         {this.state.generated && (
           <div>
@@ -274,7 +285,7 @@ class DistractorAI extends React.Component {
             <ExportButtons getQuestionSets={this.generateDataForExport} />
           </div>
         )}
-      </div>
+      </Container>
     );
   }
 }

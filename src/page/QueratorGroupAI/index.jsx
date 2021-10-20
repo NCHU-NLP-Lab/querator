@@ -1,9 +1,14 @@
 import "./index.css";
 import React, { useState } from "react";
 import config from "../../config";
-import QuestionDisplay from "../Question/display";
-import ExportButtons from "../Export/buttons";
-
+import QuestionDisplay from "../../module/Question/display";
+import ExportButtons from "../../module/Export/buttons";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import Collapse from "react-bootstrap/Collapse";
 const axios = require("axios");
 
 let { API_ENDPOINT } = config;
@@ -20,6 +25,7 @@ const EXAMPLE_CONTEXTS = [
 ];
 
 function QueratorGroupAI() {
+  const [settingOpen, setSettingOpen] = useState(false);
   let [context, setContext] = useState(getRandomItem(EXAMPLE_CONTEXTS));
   let [questionNum, setQuestionNum] = useState(5);
   let [questions, setQuestions] = useState([]);
@@ -182,77 +188,54 @@ function QueratorGroupAI() {
   };
 
   return (
-    <div className="App container pt-3 mb-5">
+    <Container className="App pt-3 mb-5">
       <h1 className="text-center mb-3">Querator Group AI</h1>
-      <textarea
+      <Form.Control
+        as="textarea"
         value={context}
         onChange={(e) => {
           setContext(e.target.value);
         }}
-        className="form-control"
-        style={{ height: 200 }}
-        id="floatingTextarea"
-      ></textarea>
+        rows={5}
+      />
 
-      <div className="accordion" id="accordionExample">
-        <div className="accordion-item">
-          <h2 className="accordion-header" id="headingTwo">
-            <button
-              className="btn btn-sm btn-light w-100 collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#collapseTwo"
-              aria-expanded="false"
-              aria-controls="collapseTwo"
-            >
-              Generation Setting
-            </button>
-          </h2>
-          <div
-            id="collapseTwo"
-            className="accordion-collapse show"
-            aria-labelledby="headingTwo"
-            data-bs-parent="#accordionExample"
-          >
-            <div className="accordion-body">
-              <div className="mb-3 row">
-                <label
-                  htmlFor="inputQuestionGroupSize"
-                  className="col-sm-3 col-form-label"
-                >
-                  question group size
-                </label>
-                <div className="col-sm-9">
-                  {/* inputQuestionGroupSize */}
-                  <input
-                    onChange={(e) => {
-                      setQuestionNum(e.target.value);
-                      if (e.target.value > 10) {
-                        setTimeout(() => {
-                          setQuestionNum(10);
-                        }, 200);
-                      }
-                    }}
-                    value={questionNum}
-                    type="number"
-                    className="form-control"
-                    id="inputQuestionGroupSize"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Button
+        variant="light"
+        size="sm"
+        className="my-3 w-100"
+        onClick={() => setSettingOpen(!settingOpen)}
+        aria-expanded={settingOpen}
+      >
+        Generation Setting
+      </Button>
+      <Collapse in={settingOpen}>
+        <Form.Group as={Row} className="mb-3">
+          <Form.Label column>Question Group Size</Form.Label>
+          <Col>
+            <Form.Control
+              type="number"
+              onChange={(event) => {
+                setQuestionNum(event.target.value);
+                if (event.target.value > 10) {
+                  setTimeout(() => {
+                    setQuestionNum(10);
+                  }, 200);
+                }
+              }}
+              value={questionNum}
+            />
+          </Col>
+        </Form.Group>
+      </Collapse>
 
-      <button
+      <Button
+        variant="success"
         disabled={disableGenBtn}
-        type="button"
-        className="mt-2 btn btn-success w-100"
+        className="mt-2 w-100"
         onClick={() => genQuestionGroup(context, questionNum, questionNum * 2)}
       >
         {disableGenBtn ? "Generating..." : "Generate Question Group"}
-      </button>
+      </Button>
 
       <hr />
 
@@ -282,16 +265,16 @@ function QueratorGroupAI() {
         <ExportButtons getQuestionSets={getQuestionSets} />
       )}
       {Boolean(questions.length) && (
-        <button
+        <Button
+          variant="success"
           disabled={disableGenBtn}
-          type="button"
-          className="mt-2 btn btn-success w-100"
+          className="mt-2 w-100"
           onClick={genOptions}
         >
           {disableGenBtn ? "Generating..." : "Generate Distractor"}
-        </button>
+        </Button>
       )}
-    </div>
+    </Container>
   );
 }
 

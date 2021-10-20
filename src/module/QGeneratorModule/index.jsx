@@ -1,16 +1,18 @@
 import "./index.css";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { delAnswer, updateQuestion } from "../action";
-import { IoMdAdd } from "react-icons/io";
+import { delAnswer } from "../action";
 import { MdClose, MdReplay } from "react-icons/md";
-import { showToastInfo } from "../toast.js";
+import { showToastInfo } from "../toast";
 import { withTranslation } from "react-i18next";
 import Distractor from "./distractor";
 import ExportButtons from "../Export/buttons";
 import EditableComponent from "./editableComponent";
 import React, { Component } from "react";
 import ReactTooltip from "react-tooltip";
+import Alert from "react-bootstrap/Alert";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 
 class View extends Component {
   constructor(props) {
@@ -25,7 +27,6 @@ class View extends Component {
     this.radioOnClick = this.radioOnClick.bind(this);
     this.getDateTime = this.getDateTime.bind(this);
     this.delAnswerBlock = this.delAnswerBlock.bind(this);
-    this.addEmptyQuestion = this.addEmptyQuestion.bind(this);
     this.generateDataForExport = this.generateDataForExport.bind(this);
   }
 
@@ -189,14 +190,6 @@ class View extends Component {
     return flag;
   };
 
-  addEmptyQuestion = (index) => {
-    let { dispatch } = this.props;
-    let { selectWords } = this.props.appState;
-    let newSelectWords = [...selectWords];
-    newSelectWords[index].questions.push("");
-    dispatch(updateQuestion(newSelectWords));
-  };
-
   render() {
     let { t } = this.props;
     let {
@@ -212,128 +205,119 @@ class View extends Component {
       let { softDel = false } = s;
       return !softDel;
     });
+
     return (
-      <div ref={this.QGBlock} id="QG-Module">
-        <div
-          className={selectWordsSubmitting ? "loading-mask" : ""}
-          style={{ minHeight: "200px" }}
-        >
-          {selectWordsSubmitting ? (
+      <Container ref={this.QGBlock} id="QG-Module">
+        {/* Loading Mask */}
+        {selectWordsSubmitting && (
+          <Row className="loading-mask" style={{ minHeight: "200px" }}>
             <h4 className="loading-text text-center">
               Loading...{submitCount}/{submitTotal}
             </h4>
-          ) : (
-            selectWords.map((word, index) => {
-              let { tag, questions, softDel = false } = word;
-              return softDel !== true ? (
-                <form key={index} className="alert alert-dark" role="alert">
-                  {/* String(dataTip).replace(/GLB/g,'<b class="text-info">GLB</b>' */}
-                  <span
-                    style={{ cursor: "context-menu" }}
-                    data-class="tool-tip"
-                    data-tip={(() => {
-                      var frontContext = pickAnsRaw[index].context.slice(
-                        0,
-                        word.start_at
-                      );
-                      var endContext = pickAnsRaw[index].context.slice(
-                        word.end_at + 1
-                      );
-                      return (
-                        frontContext +
-                        `<span class="tool-tip-hl">${tag}</span>` +
-                        endContext
-                      );
-                    })()}
-                  >
-                    <b>
-                      {index + 1}. {t("Answer")}:
-                    </b>
-                    {tag}
-                  </span>
-                  <span
-                    className="del-answer"
-                    onClick={(e) => {
-                      this.delAnswerBlock(e, word, index);
-                    }}
-                  >
-                    <MdClose />
-                  </span>
-                  <Distractor
-                    firstInit={!this.hasK1(index)}
-                    key={this.getK2UnderK1(index)}
-                    index={index}
-                    article={fullContext}
-                    answer={tag}
-                    answer_start={word.start_at}
-                    answer_end={word.end_at}
-                    question={this.getSelectQuestion(
-                      index,
-                      this.getK2UnderK1(index)
-                    )}
-                  />
-                  <hr />
-                  {questions.map((q, i) => {
-                    return (
-                      <EditableComponent
-                        onClick={(e) =>
-                          this.radioOnClick(e, selectRadios, index, i)
-                        }
-                        radioOnSelect={this.radioOnselectEvent(index, i)}
-                        initEditable={false}
-                        q={q}
-                        key={i}
-                        k1={index}
-                        k2={i}
-                      />
-                    );
-                  })}
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary"
-                    onClick={() => {
-                      this.addEmptyQuestion(index);
-                    }}
-                  >
-                    <IoMdAdd />
-                  </button>
-                </form>
-              ) : (
-                <form key={index} className="alert alert-light" role="alert">
-                  <s>
-                    <b>
-                      {index + 1}. {t("Answer")}:
-                    </b>
-                    {tag}
-                    <span
-                      className="del-answer"
-                      onClick={(e) => {
-                        this.delAnswerBlock(e, word, index);
-                      }}
-                    >
-                      <MdReplay />
-                    </span>
-                  </s>
-                </form>
-              );
-            })
-          )}
-        </div>
-        {Boolean(selectWordsAfterDel.length) && !selectWordsSubmitting && (
-          <div className="text-left">
-            {/* 偷渡tip組件...  */}
-            <ReactTooltip
-              key={JSON.stringify(this.state)}
-              place="right"
-              getContent={(dataTip) => (
-                <div dangerouslySetInnerHTML={{ __html: dataTip }} />
-              )}
-              multiline={true}
-            />
-            <ExportButtons getQuestionSets={this.generateDataForExport} />
-          </div>
+          </Row>
         )}
-      </div>
+
+        {/* Generated question sets */}
+        <Row>
+          {selectWords.map((word, index) => {
+            let { tag, questions, softDel = false } = word;
+            return softDel ? (
+              <Alert variant="light" className="text-decoration-line-through">
+                <b>
+                  {index + 1}. {t("Answer")}:
+                </b>
+                {tag}
+                <span
+                  className="del-answer"
+                  onClick={(e) => {
+                    this.delAnswerBlock(e, word, index);
+                  }}
+                >
+                  <MdReplay />
+                </span>
+              </Alert>
+            ) : (
+              <Alert variant="dark">
+                <span
+                  style={{ cursor: "context-menu" }}
+                  data-class="tool-tip"
+                  data-tip={(() => {
+                    var frontContext = pickAnsRaw[index].context.slice(
+                      0,
+                      word.start_at
+                    );
+                    var endContext = pickAnsRaw[index].context.slice(
+                      word.end_at + 1
+                    );
+                    return (
+                      frontContext +
+                      `<span class="tool-tip-hl">${tag}</span>` +
+                      endContext
+                    );
+                  })()}
+                >
+                  <b>
+                    {index + 1}. {t("Answer")}:
+                  </b>
+                  {tag}
+                </span>
+                <ReactTooltip
+                  key={JSON.stringify(this.state)}
+                  place="right"
+                  getContent={(dataTip) => (
+                    <div dangerouslySetInnerHTML={{ __html: dataTip }} />
+                  )}
+                  multiline={true}
+                />
+                <span
+                  className="del-answer"
+                  onClick={(e) => {
+                    this.delAnswerBlock(e, word, index);
+                  }}
+                >
+                  <MdClose />
+                </span>
+                <Distractor
+                  firstInit={!this.hasK1(index)}
+                  key={this.getK2UnderK1(index)}
+                  index={index}
+                  article={fullContext}
+                  answer={tag}
+                  answer_start={word.start_at}
+                  answer_end={word.end_at}
+                  question={this.getSelectQuestion(
+                    index,
+                    this.getK2UnderK1(index)
+                  )}
+                />
+                <hr />
+                {questions.map((q, i) => {
+                  return (
+                    <EditableComponent
+                      onClick={(e) =>
+                        this.radioOnClick(e, selectRadios, index, i)
+                      }
+                      radioOnSelect={this.radioOnselectEvent(index, i)}
+                      initEditable={false}
+                      q={q}
+                      key={i}
+                      k1={index}
+                      k2={i}
+                    />
+                  );
+                })}
+              </Alert>
+            );
+          })}
+        </Row>
+
+        {/* Export Buttons */}
+        {Boolean(selectWordsAfterDel.length) && (
+          <Row>
+            <ExportButtons getQuestionSets={this.generateDataForExport} />
+          </Row>
+        )}
+      </Container>
     );
   }
 }

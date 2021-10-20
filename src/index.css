@@ -15,7 +15,6 @@ body {
   position: relative;
   min-height: 100%;
   box-sizing: border-box;
-  padding-bottom: 105px; /* .footer 的高度，为 footer 占位 */
 }
 
 code {
@@ -30,4 +29,8 @@ code {
 h1 {
   font-family: "Vollkorn SC", serif;
   font-size: 3.7rem;
+}
+
+.brand {
+  font-family: "Vollkorn SC", serif;
 }

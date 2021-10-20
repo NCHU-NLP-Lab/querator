@@ -1,15 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import "react-toastify/dist/ReactToastify.css";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
-import AppRecuder from "./module/reducer.js";
 import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import "./i18n.js";
 import logger from "redux-logger";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+import AppRecuder from "./module/reducer.js";
+import "./i18n.js";
 
 let store = createStore(AppRecuder, applyMiddleware(thunk, logger));
 

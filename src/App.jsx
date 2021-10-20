@@ -5,16 +5,16 @@ import { connect } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
-import "./module/Londing/index.css";
+import "./module/Loading/index.css";
 import Footer from "./module/FooterModule";
 import AppSetting from "./module/AppConfigModule";
-import QueratorAI from "./module/QueratorAI";
-import DistractorAI from "./module/DistractorAI";
-import QueratorGroupAI from "./module/QueratorGroupAI";
+import QueratorAI from "./page/QueratorAI";
+import DistractorAI from "./page/DistractorAI";
+import QueratorGroupAI from "./page/QueratorGroupAI";
 import TextSlider from "../src/module/TextSliderModule";
 import { settingLngAndModel, showTextSlider } from "./module/action.js";
 
-class Index extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = { apiErr: false };
@@ -22,7 +22,6 @@ class Index extends Component {
   }
 
   componentDidMount() {
-    // const parsed = queryString.parse(window.location.search);
     let { i18n, dispatch } = this.props;
     console.log(i18n.language, window.localStorage.i18nextLng);
     let getLanguage = () => window.localStorage.i18nextLng || i18n.language;
@@ -48,7 +47,7 @@ class Index extends Component {
 
     return (
       <Router>
-        <div id="QG-App">
+        <main id="QG-App" className="flex-shrink-0">
           {needShowTextSlider && <TextSlider />}
           <ToastContainer
             position="bottom-center"
@@ -61,8 +60,9 @@ class Index extends Component {
             draggable
             pauseOnHover
           />
+
           <div className="App container">
-            {appState.showSetting && <AppSetting />}
+            <AppSetting show={appState.showSetting} />
             <br />
             <Switch>
               <Route path="/distractor-mode">
@@ -76,9 +76,8 @@ class Index extends Component {
               </Route>
             </Switch>
           </div>
-          <br />
-          <Footer />
-        </div>
+        </main>
+        <Footer />
       </Router>
     );
   }
@@ -90,4 +89,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default compose(withTranslation(), connect(mapStateToProps))(Index);
+export default compose(withTranslation(), connect(mapStateToProps))(App);
