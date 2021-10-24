@@ -9,13 +9,13 @@ function QuestionAnswerPair(props) {
   return (
     <>
       <QuestionInput
-        index={props.setIndex}
+        index={props.pairIndex}
         question={props.pair.question}
         questionChange={props.questionChange}
         key={`question-input-${props.setIndex}`}
       />
       <AnswerInput
-        index={props.setIndex}
+        index={props.pairIndex}
         answer={props.pair.answer}
         answerChange={props.answerChange}
         key={`answer-input-${props.setIndex}`}

@@ -181,7 +181,7 @@ class DistractorAI extends React.Component {
                       (pair, pairIndex) => (
                         <Form>
                           <QuestionAnswerPair
-                            setIndex={setIndex}
+                            pairIndex={pairIndex}
                             pair={pair}
                             questionChange={(event) => {
                               event.preventDefault();
