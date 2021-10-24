@@ -9,6 +9,7 @@ import "./module/Loading/index.css";
 import Footer from "./module/FooterModule";
 import AppSetting from "./module/AppConfigModule";
 import QueratorAI from "./page/QueratorAI";
+import ModeNavBar from "./module/ModeNavBar";
 import DistractorAI from "./page/DistractorAI";
 import QueratorGroupAI from "./page/QueratorGroupAI";
 import TextSlider from "../src/module/TextSliderModule";
@@ -39,6 +40,7 @@ class App extends Component {
 
     return (
       <Router>
+        <ModeNavBar />
         <main id="QG-App" className="flex-shrink-0">
           {needShowTextSlider && <TextSlider />}
           <ToastContainer

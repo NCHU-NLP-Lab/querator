@@ -51,21 +51,14 @@ class QuestionDisplay extends React.Component {
             return (
               <ListGroup.Item key={`${this.props.id}-option-${index}`}>
                 {option.isAnswer && this.props.answerIsInput ? (
-                  <Form.Check
-                    type="checkbox"
-                    id={`question-display-${this.props.id}-answer-checkbox`}
-                    label={
-                      <Form.Control
-                        type="text"
-                        value={this.props.answer}
-                        onChange={this.props.answerInputOnChange}
-                        id={`question-display-${this.props.id}-answer-checkbox`}
-                        data-question-index={this.props.questionIndex}
-                      />
-                    }
-                    defaultChecked
-                    disabled
-                  />
+                  <FloatingLabel label="Answer">
+                    <Form.Control
+                      type="text"
+                      value={this.props.answer}
+                      onChange={this.props.answerInputOnChange}
+                      data-question-index={this.props.questionIndex}
+                    />
+                  </FloatingLabel>
                 ) : (
                   <Form.Check
                     type="checkbox"
