@@ -69,12 +69,7 @@ class TutorialBox extends Component {
     return (
       <div id="T-Slider">
         <div className="slider-container text-center">
-          <Slider
-            key={sliderIndex}
-            slideIndex={sliderIndex}
-            infinite={false}
-            duration={1000}
-          >
+          <Slider slideIndex={sliderIndex} infinite={false} duration={1000}>
             {content.map((article, index) => (
               <div key={index}>
                 <h2>{article.title}</h2>

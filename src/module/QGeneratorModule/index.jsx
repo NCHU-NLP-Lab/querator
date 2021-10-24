@@ -14,7 +14,7 @@ import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-class View extends Component {
+class GenerationModule extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -262,7 +262,6 @@ class View extends Component {
                   {tag}
                 </span>
                 <ReactTooltip
-                  key={JSON.stringify(this.state)}
                   place="right"
                   getContent={(dataTip) => (
                     <div dangerouslySetInnerHTML={{ __html: dataTip }} />
@@ -279,7 +278,6 @@ class View extends Component {
                 </span>
                 <Distractor
                   firstInit={!this.hasK1(index)}
-                  key={this.getK2UnderK1(index)}
                   index={index}
                   article={fullContext}
                   answer={tag}
@@ -328,4 +326,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default compose(connect(mapStateToProps), withTranslation())(View);
+export default compose(
+  connect(mapStateToProps),
+  withTranslation()
+)(GenerationModule);

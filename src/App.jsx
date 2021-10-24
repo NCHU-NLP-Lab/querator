@@ -17,28 +17,20 @@ import { settingLngAndModel, showTextSlider } from "./module/action.js";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { apiErr: false };
-    this.changeLang = this.changeLang.bind(this);
+    this.state = {};
   }
 
   componentDidMount() {
     let { i18n, dispatch } = this.props;
-    console.log(i18n.language, window.localStorage.i18nextLng);
-    let getLanguage = () => window.localStorage.i18nextLng || i18n.language;
-    dispatch(settingLngAndModel(getLanguage(), getLanguage()));
-    this.changeLang(getLanguage());
+    let language = window.localStorage.i18nextLng || i18n.language;
+    i18n.changeLanguage(language);
+    dispatch(settingLngAndModel(language, language));
     let isShowTextSlider = window.localStorage.getItem(
       "already_see_text_slider"
     );
     if (!isShowTextSlider) {
       dispatch(showTextSlider(true));
     }
-  }
-
-  changeLang(lang) {
-    let { i18n, dispatch } = this.props;
-    i18n.changeLanguage(lang);
-    dispatch(settingLngAndModel(lang, lang));
   }
 
   render() {
@@ -84,9 +76,7 @@ class App extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(withTranslation(), connect(mapStateToProps))(App);

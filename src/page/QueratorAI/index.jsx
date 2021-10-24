@@ -24,23 +24,27 @@ const isMobile = () => {
 };
 
 function QueratorAI(props) {
-  return isMobile() ? (
-    <Container>
-      <h1 className="text-center">OOPS!</h1>
-      <hr />
-      <p>
-        We do not support mobile devices yet. Please use Desktop or Laptop to
-        get the best experience
-      </p>
-      <p>我們還沒有支援行動裝置，請使用電腦來獲得最佳體驗</p>
-    </Container>
-  ) : (
+  return (
     <Container id="querator-ai">
-      <h1 className="text-center">Querator AI</h1>
-      <Setting />
-      <PA />
-      <hr />
-      <QG />
+      {isMobile() ? (
+        <>
+          <h1 className="text-center">OOPS!</h1>
+          <hr />
+          <p>
+            We do not support mobile devices yet. Please use Desktop or Laptop
+            to get the best experience
+          </p>
+          <p>我們還沒有支援行動裝置，請使用電腦來獲得最佳體驗</p>
+        </>
+      ) : (
+        <>
+          <h1 className="text-center">Querator AI</h1>
+          <Setting />
+          <PA />
+          <hr />
+          <QG />
+        </>
+      )}
     </Container>
   );
 }

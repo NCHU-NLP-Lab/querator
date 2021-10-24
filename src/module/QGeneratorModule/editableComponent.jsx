@@ -53,7 +53,6 @@ function EComponent(props) {
             name="location"
             value={qText}
             checked={radioOnSelect}
-            key={radioOnSelect}
           />{" "}
           {qText}
         </label>

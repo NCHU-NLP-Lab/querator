@@ -208,10 +208,7 @@ class PickAnswer extends Component {
                   <MdHelp />
                 </span>
               </h3>
-              <Form.Group
-                className="mb-3"
-                controlId="exampleForm.ControlTextarea1"
-              >
+              <Form.Group className="mb-3">
                 <Form.Label>
                   {model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}
                 </Form.Label>
@@ -245,11 +242,7 @@ class PickAnswer extends Component {
               <small className="small-text">
                 <b>{model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}</b>
               </small>
-              <pre
-                className="qa-context"
-                onMouseUp={(e) => this.addWords(e)}
-                key={JSON.stringify(selectWords)}
-              >
+              <pre className="qa-context" onMouseUp={(e) => this.addWords(e)}>
                 {this.state.inputContext}
               </pre>
             </>

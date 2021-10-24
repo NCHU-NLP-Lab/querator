@@ -34,7 +34,6 @@ class QuestionDisplay extends React.Component {
             <Card.Title className="font-weight-bold">
               <Form.Check
                 type="checkbox"
-                id={`question-display-${this.props.id}-question-checkbox`}
                 label={this.props.question}
                 checked={this.props.questionChecked}
                 onChange={this.props.questionCheckboxOnChange}
@@ -70,7 +69,6 @@ class QuestionDisplay extends React.Component {
                 ) : (
                   <Form.Check
                     type="checkbox"
-                    id={`question-display-${this.props.id}-option-${index}`}
                     label={
                       option.isAnswer ? <b>{option.option}</b> : option.option
                     }

@@ -173,7 +173,6 @@ class DistractorAI extends React.Component {
                       index={setIndex}
                       context={this.state.questionSets[setIndex].context}
                       contextChange={this.contextChange}
-                      key={`context-input-${setIndex}`}
                     />
                   </Col>
                   <Col xs={6} className="p-3">
