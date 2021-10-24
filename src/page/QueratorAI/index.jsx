@@ -1,11 +1,12 @@
 import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
+import Container from "react-bootstrap/Container";
 import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
 import PA from "../../module/PickAnsModule";
 import QG from "../../module/QGeneratorModule";
 import Setting from "../../module/Setting";
-import Container from "react-bootstrap/Container";
 
 const isMobile = () => {
   var check = false;

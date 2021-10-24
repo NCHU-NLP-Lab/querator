@@ -1,8 +1,8 @@
 import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { withTranslation } from "react-i18next";
 import Form from "react-bootstrap/Form";
+import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
 
 class AnswerInputModule extends React.Component {
   constructor(props) {

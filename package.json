@@ -28,6 +28,12 @@
     "redux-thunk": "^2.3.0",
     "sass": "^1.43.2"
   },
+  "devDependencies": {
+    "eslint-plugin-import": "^2.24.2",
+    "import-sort-style-module": "^6.0.0",
+    "prettier": "^2.4.1",
+    "prettier-plugin-import-sort": "0.0.7"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -52,7 +58,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "eslint-plugin-import": "^2.24.2"
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module"
+    }
   }
 }

@@ -1,11 +1,13 @@
+import "./index.css";
+
 import React, { Component } from "react";
+import Slider from "react-animated-slider";
+import Button from "react-bootstrap/Button";
+import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation } from "react-i18next";
-import Slider from "react-animated-slider";
+
 import { showTextSlider } from "../action";
-import Button from "react-bootstrap/Button";
-import "./index.css";
 import p0 from "./gifs/0.png";
 import step1Gif from "./gifs/step1.gif";
 import step2Gif from "./gifs/step2.gif";

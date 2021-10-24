@@ -1,12 +1,13 @@
 import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { withTranslation } from "react-i18next";
-import { settingLngAndModel, showSetting, showTextSlider } from "../action.js";
-import { MdSettings, MdRefresh } from "react-icons/md";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ButtonToolbar from "react-bootstrap/ButtonToolbar";
+import { withTranslation } from "react-i18next";
+import { MdRefresh, MdSettings } from "react-icons/md";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
+import { settingLngAndModel, showSetting, showTextSlider } from "../action.js";
 
 function Setting(props) {
   let { t, dispatch, appState } = props;

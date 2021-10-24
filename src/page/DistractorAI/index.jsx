@@ -1,17 +1,18 @@
 import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
+import { pureGenDistractors } from "../../module/action";
 import ContextInput from "../../module/Context/input";
 import ExportButtons from "../../module/Export/buttons";
 import QuestionDisplay from "../../module/Question/display";
 import QuestionAnswerPair from "../../module/QuestionAnswerPair";
-import { pureGenDistractors } from "../../module/action";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 
 class DistractorAI extends React.Component {
   constructor(props) {

@@ -1,18 +1,20 @@
 import "./index.css";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { delAnswer } from "../action";
-import { MdClose, MdReplay } from "react-icons/md";
-import { showToastInfo } from "../toast";
-import { withTranslation } from "react-i18next";
-import Distractor from "./distractor";
-import ExportButtons from "../Export/buttons";
-import EditableComponent from "./editableComponent";
+
 import React, { Component } from "react";
-import ReactTooltip from "react-tooltip";
 import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import { withTranslation } from "react-i18next";
+import { MdClose, MdReplay } from "react-icons/md";
+import { connect } from "react-redux";
+import ReactTooltip from "react-tooltip";
+import { compose } from "redux";
+
+import { delAnswer } from "../action";
+import ExportButtons from "../Export/buttons";
+import { showToastInfo } from "../toast";
+import Distractor from "./distractor";
+import EditableComponent from "./editableComponent";
 
 class GenerationModule extends Component {
   constructor(props) {

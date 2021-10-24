@@ -1,6 +1,7 @@
-import { showToastInfo } from "./toast";
-import config from "../config";
 import axios from "axios";
+
+import config from "../config";
+import { showToastInfo } from "./toast";
 
 const { API_ENDPOINT } = config;
 const axios_client = axios.create({

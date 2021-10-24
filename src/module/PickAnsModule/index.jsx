@@ -1,15 +1,17 @@
-import React, { Component } from "react";
 import "./index.css";
-import { compose } from "redux";
+
+import React, { Component } from "react";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import { withTranslation } from "react-i18next";
+import { MdHelp, MdLockOpen, MdLockOutline } from "react-icons/md";
 import { connect } from "react-redux";
+import { compose } from "redux";
+
 import { submitQs as SQs } from "../action.js";
 import { showToastInfo } from "../toast.js";
-import { MdHelp, MdLockOutline, MdLockOpen } from "react-icons/md";
-import { withTranslation } from "react-i18next";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 
 class PickAnswer extends Component {
   constructor(props) {

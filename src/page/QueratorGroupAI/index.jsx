@@ -1,14 +1,17 @@
 import "./index.css";
+
 import React, { useState } from "react";
-import config from "../../config";
-import QuestionDisplay from "../../module/Question/display";
-import ExportButtons from "../../module/Export/buttons";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
+import Collapse from "react-bootstrap/Collapse";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import Collapse from "react-bootstrap/Collapse";
+
+import config from "../../config";
+import ExportButtons from "../../module/Export/buttons";
+import QuestionDisplay from "../../module/Question/display";
+
 const axios = require("axios");
 
 let { API_ENDPOINT } = config;
@@ -54,8 +57,9 @@ function QueratorGroupAI() {
     let questionIndex = event.target.dataset.questionIndex;
     let optionIndex = event.target.dataset.optionIndex;
     let newExportChecks = [...exportChecks];
-    newExportChecks[questionIndex][optionIndex] =
-      !newExportChecks[questionIndex][optionIndex];
+    newExportChecks[questionIndex][optionIndex] = !newExportChecks[
+      questionIndex
+    ][optionIndex];
     setExportChecks(newExportChecks);
   };
 

@@ -1,12 +1,14 @@
-import React, { Component } from "react";
-import { withTranslation } from "react-i18next";
 import "./index.css";
-import { MdClose } from "react-icons/md";
-import { showSetting, settingLngAndModel } from "../action";
-import { compose } from "redux";
-import { connect } from "react-redux";
+
+import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { withTranslation } from "react-i18next";
+import { MdClose } from "react-icons/md";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
+import { settingLngAndModel, showSetting } from "../action";
 
 class AppConfig extends Component {
   constructor(props) {

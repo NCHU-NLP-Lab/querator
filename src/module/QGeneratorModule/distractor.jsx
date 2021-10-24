@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { genDistractors, cleanDistractor } from "../action";
+import { useDispatch, useSelector } from "react-redux";
+
+import { cleanDistractor, genDistractors } from "../action";
 // import LoadingMask from "react-loadingmask";
 // import "react-loadingmask/dist/react-loadingmask.css";
 

@@ -1,10 +1,11 @@
 import React from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { withTranslation } from "react-i18next";
-import config from "../../config";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
+import config from "../../config";
 
 // Expected props
 // question_sets: [<set>, <set>, ...]

@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
-import { MdModeEdit, MdReplay, MdCheck } from "react-icons/md";
+import React, { useRef, useState } from "react";
+import { MdCheck, MdModeEdit, MdReplay } from "react-icons/md";
 import { connect } from "react-redux";
+
 import { updateQuestion } from "../action";
 
 function EComponent(props) {
