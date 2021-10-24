@@ -1,9 +1,0 @@
-.question-block {
-  border: 1px solid gray;
-  border-radius: 0.25rem;
-}
-
-.row {
-  --bs-gutter-x: 0rem;
-  /* padding-left: 2%; */
-}

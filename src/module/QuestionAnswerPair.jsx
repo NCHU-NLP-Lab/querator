@@ -1,10 +1,10 @@
+import AnswerInput from "module/Input/Answer";
+import QuestionInput from "module/Input/Question";
+
 import React from "react";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
-import AnswerInput from "./Answer/input";
-import QuestionInput from "./Question/input";
 
 function QuestionAnswerPair(props) {
   return (

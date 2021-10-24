@@ -1,11 +1,10 @@
+import config from "config";
 import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
-import config from "../../config";
 
 // Expected props
 // question_sets: [<set>, <set>, ...]
@@ -97,9 +96,7 @@ class ExportButtons extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(

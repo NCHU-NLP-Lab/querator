@@ -1,8 +1,8 @@
+import { updateQuestion } from "module/action";
+
 import React, { useRef, useState } from "react";
 import { MdCheck, MdModeEdit, MdReplay } from "react-icons/md";
 import { connect } from "react-redux";
-
-import { updateQuestion } from "../action";
 
 function EComponent(props) {
   let {
@@ -12,8 +12,8 @@ function EComponent(props) {
     dispatch,
     appState,
     initEditable,
-    radioOnSelect = false,
-    onClick: onClickEvent,
+    checked = false,
+    onChange,
   } = props;
   let { selectWords } = appState;
   const [editable, setEditable] = useState(initEditable);
@@ -48,12 +48,10 @@ function EComponent(props) {
       ) : (
         <label className="question-label">
           <input
-            onClick={onClickEvent}
-            readOnly
+            onChange={onChange}
             type="radio"
-            name="location"
             value={qText}
-            checked={radioOnSelect}
+            checked={checked}
           />{" "}
           {qText}
         </label>

@@ -1,21 +1,20 @@
 import "./App.css";
-import "./module/Loading/index.css";
 
+import { settingLngAndModel, showTextSlider } from "module/action.js";
+import AppSetting from "module/AppConfigModule";
+import Footer from "module/FooterModule";
+import TextSlider from "module/TextSliderModule";
+
+import ModeNavBar from "component/ModeNavBar";
+import DistractorAI from "page/DistractorAI";
+import QueratorAI from "page/QueratorAI";
+import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { compose } from "redux";
-
-import TextSlider from "../src/module/TextSliderModule";
-import { settingLngAndModel, showTextSlider } from "./module/action.js";
-import AppSetting from "./module/AppConfigModule";
-import Footer from "./module/FooterModule";
-import ModeNavBar from "./module/ModeNavBar";
-import DistractorAI from "./page/DistractorAI";
-import QueratorAI from "./page/QueratorAI";
-import QueratorGroupAI from "./page/QueratorGroupAI";
 
 class App extends Component {
   constructor(props) {
@@ -43,7 +42,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <ModeNavBar />
-        <main id="QG-App" className="flex-shrink-0">
+        <main id="QG-App" className="flex-shrink-0 mb-5">
           {needShowTextSlider && <TextSlider />}
           <ToastContainer
             position="bottom-center"

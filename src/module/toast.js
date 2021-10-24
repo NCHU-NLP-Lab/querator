@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+
 export const showToastInfo = (msg, type = "info") => {
   if (type === "info") {
     toast.info(msg, {

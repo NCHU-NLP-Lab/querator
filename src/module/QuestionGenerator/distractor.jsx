@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
-import { cleanDistractor, genDistractors } from "../action";
-// import LoadingMask from "react-loadingmask";
-// import "react-loadingmask/dist/react-loadingmask.css";
+import React from "react";
+import { useSelector } from "react-redux";
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -29,36 +25,8 @@ let i2a = {
 };
 
 function Distractor(props) {
-  console.log(props);
   const appState = useSelector((state) => state);
-  const dispatch = useDispatch();
-  const [isApiErr, setIsApiErr] = useState(false);
 
-  useEffect(() => {
-    const lng = appState.lng;
-    console.log(props);
-    console.log(appState);
-    let { article, answer, answer_start, answer_end, question, index } = props;
-    dispatch(cleanDistractor(index));
-    if (question !== undefined && question !== "") {
-      dispatch(
-        genDistractors(
-          article,
-          answer,
-          answer_start,
-          answer_end,
-          question,
-          3,
-          lng,
-          index,
-          () => setIsApiErr(true)
-        )
-      );
-    } else {
-      console.log("question is null or undefined");
-    }
-    // eslint-disable-next-line
-  }, []);
   let { firstInit = false } = props;
   let { distractor = {} } = appState;
   let options = distractor[props.index.toString()] || [];
@@ -69,6 +37,7 @@ function Distractor(props) {
     options.push(props.answer);
     options = uniq(options);
   }
+
   return (
     <div>
       {/* firstInit: 如果是首次初始化，則不顯示讀取遮罩 */}
@@ -80,7 +49,7 @@ function Distractor(props) {
       {options.length === 0 && !firstInit ? (
         // <LoadingMask loading={true} text={"loading..."}>
         <div style={{ width: "100%", height: 25 }}>
-          {isApiErr ? (
+          {props.apiError ? (
             <span className="text-danger">
               no suitable distractor avaliable
             </span>

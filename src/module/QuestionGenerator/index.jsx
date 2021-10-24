@@ -1,5 +1,9 @@
 import "./index.css";
 
+import { delAnswer, genDistractors } from "module/action";
+import { showToastInfo } from "module/toast";
+
+import ExportButtons from "component/Export";
 import React, { Component } from "react";
 import Alert from "react-bootstrap/Alert";
 import Container from "react-bootstrap/Container";
@@ -10,24 +14,19 @@ import { connect } from "react-redux";
 import ReactTooltip from "react-tooltip";
 import { compose } from "redux";
 
-import { delAnswer } from "../action";
-import ExportButtons from "../Export/buttons";
-import { showToastInfo } from "../toast";
 import Distractor from "./distractor";
 import EditableComponent from "./editableComponent";
 
-class GenerationModule extends Component {
+class QuestionGenerator extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectRadios: [],
+      apiError: false,
     };
     this.QGBlock = React.createRef();
     this.srollToBlock = this.srollToBlock.bind(this);
-    this.editQuestion = this.editQuestion.bind(this);
-    this.radioOnselectEvent = this.radioOnselectEvent.bind(this);
     this.radioOnClick = this.radioOnClick.bind(this);
-    this.getDateTime = this.getDateTime.bind(this);
     this.delAnswerBlock = this.delAnswerBlock.bind(this);
     this.generateDataForExport = this.generateDataForExport.bind(this);
   }
@@ -40,108 +39,68 @@ class GenerationModule extends Component {
     }
   }
 
-  delAnswerBlock = (e, word, k1Index) => {
+  delAnswerBlock = (word, index) => {
     /*
      * 軟刪除
      */
-    let { dispatch } = this.props;
-    let { selectRadios } = this.state;
-    selectRadios = selectRadios.filter((r) => {
-      return r.k1 !== k1Index;
-    });
-    console.log(selectRadios.length, selectRadios);
-    this.setState({
-      selectRadios,
-    });
-    dispatch(delAnswer(word, k1Index));
-    e.preventDefault();
+    let selectRadios = [...this.state.selectRadios];
+    selectRadios[index] = null;
+    this.setState({ selectRadios });
+    this.props.dispatch(delAnswer(word, index));
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let { appState } = nextProps;
     if (appState.selectWordsSubmitting) {
-      return {
-        selectRadios: [],
-      };
+      return { selectRadios: [] };
     }
     return null;
   }
 
-  radioOnselectEvent = (index, i) => {
-    /*
-     * radio選擇事件
-     * 根據已選擇的物件及傳入的index返回一個falg
-     */
-    let { selectRadios } = this.state;
-    let selectFlag = false;
-    selectRadios.forEach((sr) => {
-      if (sr.k1 === index && sr.k2 === i) {
-        selectFlag = true;
-      }
-    });
-    return selectFlag;
-  };
-
-  radioOnClick = (e, selectRadios, index, i) => {
+  radioOnClick = (index, questionIndex) => {
     /*
      * radio點擊事件
      * 移除同樣的index(同層的點擊)，加入選擇的radio
      */
-    e.preventDefault();
-    selectRadios = selectRadios.filter((sw) => {
-      return !(sw.k1 === index);
-    });
-    selectRadios.push({
-      k1: index,
-      k2: i,
-    });
-    this.setState({
-      selectRadios,
-    });
-  };
-
-  editQuestion = (e) => {
-    e.preventDefault();
-    console.log("e");
-  };
-
-  getDateTime = () => {
-    var currentdate = new Date();
-    var datetime =
-      currentdate.getFullYear() +
-      "-" +
-      (currentdate.getMonth() + 1) +
-      "-" +
-      currentdate.getDate() +
-      " " +
-      currentdate.getHours() +
-      ":" +
-      currentdate.getMinutes() +
-      ":" +
-      currentdate.getSeconds();
-    return datetime;
+    let selectRadios = [...this.state.selectRadios];
+    let { appState, dispatch } = this.props;
+    let { selectWords, fullContext } = appState;
+    selectRadios[index] = questionIndex;
+    this.setState({ selectRadios });
+    dispatch(
+      genDistractors(
+        fullContext,
+        selectWords[index].tag,
+        selectWords[index].start_at,
+        selectWords[index].end_at,
+        this.getSelectQuestion(index, selectRadios[index]),
+        3,
+        appState.lng,
+        index,
+        () => {
+          this.setState({ apiError: true });
+        }
+      )
+    );
   };
 
   generateDataForExport = () => {
     let { fullContext, distractor, selectWordsRaw } = this.props.appState;
     let pairs = [];
     for (let index = 0; index < this.state.selectRadios.length; index++) {
-      const selection = this.state.selectRadios[index];
-      if (
-        selectWordsRaw[selection.k1].softDel ||
-        distractor[selection.k1].length === 0
-      ) {
+      const questionIndex = this.state.selectRadios[index];
+      if (questionIndex === null || distractor[index].length === 0) {
         continue;
       }
-      let options = distractor[selection.k1].map((option) => {
+      let options = distractor[index].map((option) => {
         return { text: option, is_answer: false };
       });
       options.push({
-        text: selectWordsRaw[selection.k1].tag,
+        text: selectWordsRaw[index].tag,
         is_answer: true,
       });
       pairs.push({
-        question: selectWordsRaw[selection.k1].questions[selection.k2],
+        question: selectWordsRaw[index].questions[questionIndex],
         options,
       });
     }
@@ -171,37 +130,13 @@ class GenerationModule extends Component {
     }
   };
 
-  getK2UnderK1 = (k1) => {
-    let current_block = {};
-    this.state.selectRadios.forEach((radio) => {
-      if (radio.k1 === k1) {
-        current_block = radio;
-      }
-    });
-    // console.log(current_block.k2)
-    return current_block.k2;
-  };
-
-  hasK1 = (k1) => {
-    let flag = false;
-    this.state.selectRadios.forEach((radio) => {
-      if (radio.k1 === k1) {
-        flag = true;
-      }
-    });
-    return flag;
+  hasK1 = (index) => {
+    return !(this.state.selectRadios[index] === null);
   };
 
   render() {
     let { t } = this.props;
-    let {
-      selectWordsSubmitting,
-      selectWords,
-      submitCount,
-      submitTotal,
-      pickAnsRaw,
-      fullContext,
-    } = this.props.appState;
+    let { selectWords, pickAnsRaw } = this.props.appState;
     let { selectRadios } = this.state;
     let selectWordsAfterDel = selectWords.filter((s) => {
       let { softDel = false } = s;
@@ -210,36 +145,32 @@ class GenerationModule extends Component {
 
     return (
       <Container ref={this.QGBlock} id="QG-Module">
-        {/* Loading Mask */}
-        {selectWordsSubmitting && (
-          <Row className="loading-mask" style={{ minHeight: "200px" }}>
-            <h4 className="loading-text text-center">
-              Loading...{submitCount}/{submitTotal}
-            </h4>
-          </Row>
-        )}
-
         {/* Generated question sets */}
         <Row>
           {selectWords.map((word, index) => {
             let { tag, questions, softDel = false } = word;
             return softDel ? (
-              <Alert variant="light" className="text-decoration-line-through">
+              <Alert
+                variant="light"
+                className="text-decoration-line-through"
+                key={`generated-question-${index}`}
+              >
                 <b>
                   {index + 1}. {t("Answer")}:
                 </b>
                 {tag}
                 <span
                   className="del-answer"
-                  onClick={(e) => {
-                    this.delAnswerBlock(e, word, index);
+                  onClick={(event) => {
+                    event.preventDefault();
+                    this.delAnswerBlock(word, index);
                   }}
                 >
                   <MdReplay />
                 </span>
               </Alert>
             ) : (
-              <Alert variant="dark">
+              <Alert variant="dark" key={`generated-question-${index}`}>
                 <span
                   style={{ cursor: "context-menu" }}
                   data-class="tool-tip"
@@ -272,37 +203,35 @@ class GenerationModule extends Component {
                 />
                 <span
                   className="del-answer"
-                  onClick={(e) => {
-                    this.delAnswerBlock(e, word, index);
+                  onClick={(event) => {
+                    event.preventDefault();
+                    this.delAnswerBlock(word, index);
                   }}
                 >
                   <MdClose />
                 </span>
-                <Distractor
-                  firstInit={!this.hasK1(index)}
-                  index={index}
-                  article={fullContext}
-                  answer={tag}
-                  answer_start={word.start_at}
-                  answer_end={word.end_at}
-                  question={this.getSelectQuestion(
-                    index,
-                    this.getK2UnderK1(index)
-                  )}
-                />
+                {typeof selectRadios[index] === "number" && (
+                  <Distractor
+                    firstInit={!this.hasK1(index)}
+                    apiError={this.state.apiError}
+                    index={index}
+                    answer={tag}
+                  />
+                )}
                 <hr />
-                {questions.map((q, i) => {
+                {questions.map((question, questionIndex) => {
                   return (
                     <EditableComponent
-                      onClick={(e) =>
-                        this.radioOnClick(e, selectRadios, index, i)
-                      }
-                      radioOnSelect={this.radioOnselectEvent(index, i)}
+                      key={`generated-${index}-${questionIndex}`}
+                      checked={Boolean(selectRadios[index] === questionIndex)}
+                      onChange={(event) => {
+                        event.preventDefault();
+                        this.radioOnClick(index, questionIndex);
+                      }}
                       initEditable={false}
-                      q={q}
-                      key={i}
+                      q={question}
                       k1={index}
-                      k2={i}
+                      k2={questionIndex}
                     />
                   );
                 })}
@@ -323,12 +252,10 @@ class GenerationModule extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(
   connect(mapStateToProps),
   withTranslation()
-)(GenerationModule);
+)(QuestionGenerator);

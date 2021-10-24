@@ -1,14 +1,14 @@
-#QA-context .qa-context {
+#Pick-Answer .qa-context {
   font-size: 20px;
   min-height: 100px;
   white-space: pre-wrap;
 }
 
-#QA-context .btn-group {
+#Pick-Answer .btn-group {
   margin-bottom: 10px;
 }
 
-#QA-context .help-btn {
+#Pick-Answer .help-btn {
   font-size: 18px;
   position: relative;
   left: 6px;
@@ -16,15 +16,15 @@
   cursor: pointer;
 }
 
-#QA-context .btn-group button {
+#Pick-Answer .btn-group button {
   margin-left: 0px;
 }
 
-/* #QA-context .selected-block-container{
+/* #Pick-Answer .selected-block-container{
     position: relative;
 } */
 
-#QA-context .selected-block {
+#Pick-Answer .selected-block {
   overflow: hidden;
   background-color: #333;
   position: fixed;
@@ -39,13 +39,13 @@
   z-index: 1;
 }
 
-#QA-context .center {
+#Pick-Answer .center {
   margin: auto;
   width: 50%;
   margin-top: -30px;
   margin-bottom: 8px;
 }
 
-#QA-context .small-text {
+#Pick-Answer .small-text {
   padding-left: 3px;
 }

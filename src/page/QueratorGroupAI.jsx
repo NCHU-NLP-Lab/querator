@@ -1,5 +1,9 @@
-import "./index.css";
+import GenerateButton from "module/Button/Generate";
+import ContextInput from "module/Input/Context";
+import QuestionDisplay from "module/Question/display";
 
+import ExportButtons from "component/Export";
+import config from "config";
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -7,10 +11,6 @@ import Collapse from "react-bootstrap/Collapse";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-
-import config from "../../config";
-import ExportButtons from "../../module/Export/buttons";
-import QuestionDisplay from "../../module/Question/display";
 
 const axios = require("axios");
 
@@ -57,9 +57,8 @@ function QueratorGroupAI() {
     let questionIndex = event.target.dataset.questionIndex;
     let optionIndex = event.target.dataset.optionIndex;
     let newExportChecks = [...exportChecks];
-    newExportChecks[questionIndex][optionIndex] = !newExportChecks[
-      questionIndex
-    ][optionIndex];
+    newExportChecks[questionIndex][optionIndex] =
+      !newExportChecks[questionIndex][optionIndex];
     setExportChecks(newExportChecks);
   };
 
@@ -192,15 +191,14 @@ function QueratorGroupAI() {
   };
 
   return (
-    <Container className="App pt-3 mb-5">
+    <Container id="querator-group-ai">
       <h1 className="text-center mb-3">Querator Group AI</h1>
-      <Form.Control
-        as="textarea"
-        value={context}
-        onChange={(e) => {
-          setContext(e.target.value);
+      <ContextInput
+        label="Context"
+        context={context}
+        onChange={(event) => {
+          setContext(event.target.value);
         }}
-        rows={5}
       />
 
       <Button
@@ -232,51 +230,47 @@ function QueratorGroupAI() {
         </Form.Group>
       </Collapse>
 
-      <Button
-        variant="success"
-        disabled={disableGenBtn}
-        className="mt-2 w-100"
-        onClick={() => genQuestionGroup(context, questionNum, questionNum * 2)}
-      >
-        {disableGenBtn ? "Generating..." : "Generate Question Group"}
-      </Button>
+      <Row>
+        <GenerateButton
+          onClick={() =>
+            genQuestionGroup(context, questionNum, questionNum * 2)
+          }
+          disabled={disableGenBtn}
+        />
+      </Row>
 
       <hr />
 
-      <div
-        className="displayQuesitonGroup"
-        style={{ minHeight: 80, width: "100%" }}
-      >
-        {questions.map((question, questionIndex) => {
-          return (
-            <QuestionDisplay
-              key={`question-display-${questionIndex}`}
-              question={question}
-              questionIndex={questionIndex}
-              questionChecked={Boolean(exportChecks[questionIndex])}
-              questionCheckboxOnChange={toggleQuestionExport}
-              answer={answers[questionIndex]}
-              answerIsInput
-              answerInputOnChange={answerInputOnChange}
-              options={options[questionIndex]}
-              optionsChecked={exportChecks[questionIndex]}
-              optionCheckboxOnChange={toggleOptionExport}
-            />
-          );
-        })}
-      </div>
-      {Boolean(options.length) && (
-        <ExportButtons getQuestionSets={getQuestionSets} />
-      )}
+      <Row>
+        <Col>
+          {questions.map((question, questionIndex) => {
+            return (
+              <QuestionDisplay
+                key={`question-display-${questionIndex}`}
+                question={question}
+                questionIndex={questionIndex}
+                questionChecked={Boolean(exportChecks[questionIndex])}
+                questionCheckboxOnChange={toggleQuestionExport}
+                answer={answers[questionIndex]}
+                answerIsInput
+                answerInputOnChange={answerInputOnChange}
+                options={options[questionIndex]}
+                optionsChecked={exportChecks[questionIndex]}
+                optionCheckboxOnChange={toggleOptionExport}
+              />
+            );
+          })}
+        </Col>
+      </Row>
       {Boolean(questions.length) && (
-        <Button
-          variant="success"
-          disabled={disableGenBtn}
-          className="mt-2 w-100"
-          onClick={genOptions}
-        >
-          {disableGenBtn ? "Generating..." : "Generate Distractor"}
-        </Button>
+        <Row>
+          <GenerateButton onClick={genOptions} disabled={disableGenBtn} />
+        </Row>
+      )}
+      {Boolean(options.length) && (
+        <Row>
+          <ExportButtons getQuestionSets={getQuestionSets} />
+        </Row>
       )}
     </Container>
   );

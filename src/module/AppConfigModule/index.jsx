@@ -1,5 +1,7 @@
 import "./index.css";
 
+import { settingLngAndModel, showSetting } from "module/action";
+
 import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -7,8 +9,6 @@ import { withTranslation } from "react-i18next";
 import { MdClose } from "react-icons/md";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
-import { settingLngAndModel, showSetting } from "../action";
 
 class AppConfig extends Component {
   constructor(props) {

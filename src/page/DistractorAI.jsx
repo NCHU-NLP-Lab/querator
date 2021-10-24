@@ -1,3 +1,10 @@
+import { pureGenDistractors } from "module/action";
+import GenerateButton from "module/Button/Generate";
+import ContextInput from "module/Input/Context";
+import QuestionDisplay from "module/Question/display";
+import QuestionAnswerPair from "module/QuestionAnswerPair";
+
+import ExportButtons from "component/Export";
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -7,12 +14,6 @@ import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
-import { pureGenDistractors } from "../../module/action";
-import ContextInput from "../../module/Context/input";
-import ExportButtons from "../../module/Export/buttons";
-import QuestionDisplay from "../../module/Question/display";
-import QuestionAnswerPair from "../../module/QuestionAnswerPair";
 
 class DistractorAI extends React.Component {
   constructor(props) {
@@ -48,6 +49,7 @@ class DistractorAI extends React.Component {
         },
       ],
       generated: false,
+      generating: false,
     };
     this.createSet = this.createSet.bind(this);
     this.deleteSet = this.deleteSet.bind(this);
@@ -61,6 +63,7 @@ class DistractorAI extends React.Component {
 
   getDistractors = async (event) => {
     event.preventDefault();
+    this.setState({ generating: true });
     let questionSets = [...this.state.questionSets];
     for (let setIndex = 0; setIndex < questionSets.length; setIndex++) {
       const questionSet = questionSets[setIndex];
@@ -81,7 +84,7 @@ class DistractorAI extends React.Component {
         pair.options = options;
       }
     }
-    this.setState({ questionSets, generated: true });
+    this.setState({ questionSets, generated: true, generating: false });
   };
 
   emptySet_ = () => {
@@ -166,20 +169,22 @@ class DistractorAI extends React.Component {
         <h1 className="text-center">Distractor AI</h1>
         {[...Array(this.state.questionSets.length)].map((e, setIndex) => (
           <>
-            <Row>
-              <Container key={`set-container-${setIndex}`}>
+            <Row key={`set-container-${setIndex}`}>
+              <Container>
                 <Row>
                   <Col xs={6} className="p-3">
                     <ContextInput
-                      index={setIndex}
+                      label={`${t("Context")} ${setIndex + 1}`}
                       context={this.state.questionSets[setIndex].context}
-                      contextChange={this.contextChange}
+                      onChange={(event) => {
+                        this.contextChange(setIndex, event.target.value);
+                      }}
                     />
                   </Col>
                   <Col xs={6} className="p-3">
                     {this.state.questionSets[setIndex].question_pairs.map(
                       (pair, pairIndex) => (
-                        <Form>
+                        <Form key={`set-${setIndex}-qa-input-${pairIndex}`}>
                           <QuestionAnswerPair
                             pairIndex={pairIndex}
                             pair={pair}
@@ -246,7 +251,7 @@ class DistractorAI extends React.Component {
         <Row>
           <Button
             variant="success"
-            className="m-2"
+            className="mb-2"
             onClick={(event) => {
               event.preventDefault();
               this.createSet();
@@ -254,13 +259,11 @@ class DistractorAI extends React.Component {
           >
             {t("Add More Set")}
           </Button>
-          <Button
-            variant="primary"
+          <GenerateButton
             className="m-2"
             onClick={this.getDistractors}
-          >
-            {t("Generate")}
-          </Button>
+            disabled={this.state.generating}
+          />
         </Row>
         <hr />
         {this.state.generated && (

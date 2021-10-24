@@ -4,6 +4,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "./i18n.js";
 
+import AppRecuder from "module/reducer.js";
+
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
@@ -12,7 +14,6 @@ import logger from "redux-logger";
 import thunk from "redux-thunk";
 
 import App from "./App";
-import AppRecuder from "./module/reducer.js";
 import * as serviceWorker from "./serviceWorker";
 
 let store = createStore(AppRecuder, applyMiddleware(thunk, logger));

@@ -1,17 +1,18 @@
 import "./index.css";
 
+import { submitQs as SQs } from "module/action";
+import GenerateButton from "module/Button/Generate";
+import ContextInput from "module/Input/Context";
+import { showToastInfo } from "module/toast";
+
 import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
 import { MdHelp, MdLockOpen, MdLockOutline } from "react-icons/md";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
-import { submitQs as SQs } from "../action.js";
-import { showToastInfo } from "../toast.js";
 
 class PickAnswer extends Component {
   constructor(props) {
@@ -21,10 +22,8 @@ class PickAnswer extends Component {
       isEdit: true,
       inputContext: "",
     };
-    this.qaContext = React.createRef();
     this.showToastInfo = showToastInfo;
     this.addWords = this.addWords.bind(this);
-    this.submitBtn = React.createRef();
     this.submitQs = this.submitQs.bind(this);
   }
 
@@ -194,7 +193,7 @@ class PickAnswer extends Component {
     let { model, selectWordsSubmitting } = this.props.appState;
 
     return (
-      <Container id="QA-context">
+      <Container id="Pick-Answer">
         {/* Context area */}
         <Row>
           {isEdit ? (
@@ -210,23 +209,16 @@ class PickAnswer extends Component {
                   <MdHelp />
                 </span>
               </h3>
-              <Form.Group className="mb-3">
-                <Form.Label>
-                  {model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}
-                </Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={7}
-                  placeholder={t("Paste an Article here")}
-                  value={inputContext}
-                  onChange={(e) => {
-                    let txt = e.target.value;
-                    this.setState({
-                      inputContext: txt,
-                    });
-                  }}
-                />
-              </Form.Group>
+
+              <ContextInput
+                label={model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}
+                context={inputContext}
+                onChange={(event) => {
+                  this.setState({
+                    inputContext: event.target.value,
+                  });
+                }}
+              />
             </>
           ) : (
             <>
@@ -323,15 +315,10 @@ class PickAnswer extends Component {
                   );
                 })}
               </div>
-              <br />
-              <Button
-                variant="success"
-                ref={this.submitBtn}
+              <GenerateButton
                 onClick={this.submitQs}
                 disabled={selectWordsSubmitting}
-              >
-                {t("Generate")}
-              </Button>
+              />
             </>
           )}
         </Row>

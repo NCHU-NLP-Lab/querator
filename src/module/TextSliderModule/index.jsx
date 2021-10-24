@@ -1,4 +1,8 @@
+import "react-animated-slider/build/horizontal.css";
+
 import "./index.css";
+
+import { showTextSlider } from "module/action";
 
 import React, { Component } from "react";
 import Slider from "react-animated-slider";
@@ -7,7 +11,6 @@ import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import { showTextSlider } from "../action";
 import p0 from "./gifs/0.png";
 import step1Gif from "./gifs/step1.gif";
 import step2Gif from "./gifs/step2.gif";
@@ -27,42 +30,19 @@ class TutorialBox extends Component {
     const content = [
       {
         title: t("A Powerful AI to Assist Question Generation"),
-        description: (
-          <div>
-            <img width="95%" src={p0} alt="" srcSet="" />
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://nlpnchu.org/querator"
-            >
-              Learn more about Qureator AI
-            </a>
-          </div>
-        ),
+        image: p0,
       },
       {
         title: t("Step 1 - Paste an Article"),
-        description: (
-          <div style={{ paddingTop: "15px" }}>
-            <img width="90%" src={step1Gif} alt="" srcSet="" />
-          </div>
-        ),
+        image: step1Gif,
       },
       {
         title: t("Step 2 - Highlight Answers"),
-        description: (
-          <div style={{ paddingTop: "15px" }}>
-            <img width="90%" src={step2Gif} alt="" srcSet="" />
-          </div>
-        ),
+        image: step2Gif,
       },
       {
         title: t("Step 3 - Review Result"),
-        description: (
-          <div style={{ paddingTop: "15px" }}>
-            <img width="90%" src={step3Gif} alt="" srcSet="" />
-          </div>
-        ),
+        image: step3Gif,
       },
     ];
 
@@ -71,11 +51,25 @@ class TutorialBox extends Component {
     return (
       <div id="T-Slider">
         <div className="slider-container text-center">
-          <Slider slideIndex={sliderIndex} infinite={false} duration={1000}>
-            {content.map((article, index) => (
+          <Slider
+            key={sliderIndex}
+            slideIndex={sliderIndex}
+            infinite={false}
+            duration={1000}
+          >
+            {content.map((slide, index) => (
               <div key={index}>
-                <h2>{article.title}</h2>
-                <div>{article.description}</div>
+                <h2>{slide.title}</h2>
+                <div>
+                  <img width="90%" src={slide.image} alt="" srcSet="" />
+                </div>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://nlpnchu.org/querator"
+                >
+                  Learn more about Qureator AI
+                </a>
               </div>
             ))}
           </Slider>
@@ -92,7 +86,7 @@ class TutorialBox extends Component {
                   );
                   return { sliderIndex: 0 };
                 }
-                return { sliderIndex: sliderIndex + 1 };
+                return { sliderIndex: state.sliderIndex + 1 };
               });
             }}
           >

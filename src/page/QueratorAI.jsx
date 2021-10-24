@@ -1,12 +1,11 @@
+import PA from "module/PickAnswer";
+import QG from "module/QuestionGenerator";
+
 import React from "react";
 import Container from "react-bootstrap/Container";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
-import PA from "../../module/PickAnsModule";
-import QG from "../../module/QGeneratorModule";
-import Setting from "../../module/Setting";
 
 const isMobile = () => {
   var check = false;
@@ -40,7 +39,6 @@ function QueratorAI(props) {
       ) : (
         <>
           <h1 className="text-center">Querator AI</h1>
-          <Setting />
           <PA />
           <hr />
           <QG />
