@@ -2,7 +2,7 @@ import "react-animated-slider/build/horizontal.css";
 
 import "./index.css";
 
-import { showTextSlider } from "module/action";
+import { showTextSlider } from "util/action";
 
 import React, { Component } from "react";
 import Slider from "react-animated-slider";
@@ -16,7 +16,7 @@ import step1Gif from "./gifs/step1.gif";
 import step2Gif from "./gifs/step2.gif";
 import step3Gif from "./gifs/step3.gif";
 
-class TutorialBox extends Component {
+class TutorialModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -100,4 +100,4 @@ class TutorialBox extends Component {
   }
 }
 
-export default compose(withTranslation(), connect())(TutorialBox);
+export default compose(withTranslation(), connect())(TutorialModal);

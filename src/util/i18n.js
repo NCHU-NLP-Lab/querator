@@ -3,8 +3,6 @@ import i18n from "i18next";
 import langData from "langdata.json";
 import { initReactI18next } from "react-i18next";
 
-const resources = langData;
-
 let langOptions = {
   // order and from where user language should be detected
   order: [
@@ -41,7 +39,7 @@ i18n
   // .use(LanguageDetector)
   .init({
     detection: langOptions,
-    resources,
+    resources: langData,
     lng: "en-US",
     fallbackLng: "en-US",
     keySeparator: false, // we do not use keys in form messages.welcome

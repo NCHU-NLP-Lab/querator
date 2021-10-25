@@ -1,11 +1,11 @@
 import "./App.css";
 
-import { settingLngAndModel, showTextSlider } from "module/action.js";
-import AppSetting from "module/AppConfigModule";
-import Footer from "module/FooterModule";
-import TextSlider from "module/TextSliderModule";
+import { settingLngAndModel, showTextSlider } from "util/action";
 
+import Footer from "component/Footer";
 import ModeNavBar from "component/ModeNavBar";
+import AppSetting from "component/SettingModal";
+import TextSlider from "component/TutorialModal";
 import DistractorAI from "page/DistractorAI";
 import QueratorAI from "page/QueratorAI";
 import QueratorGroupAI from "page/QueratorGroupAI";

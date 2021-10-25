@@ -1,7 +1,7 @@
-import { showToastInfo } from "module/toast";
+import config from "util/config";
+import { showToastInfo } from "util/toast";
 
 import axios from "axios";
-import config from "config";
 
 const { API_ENDPOINT } = config;
 const axios_client = axios.create({
@@ -88,8 +88,7 @@ export const genDistractors = (
           distractors,
         });
         if (distractors.length === 0) {
-          // eslint-disable-next-line
-          throw "no suitable distractor avaliable";
+          throw new Error("no suitable distractor avaliable");
         }
       })
       .catch((e) => {

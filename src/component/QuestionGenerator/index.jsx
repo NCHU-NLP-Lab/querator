@@ -1,7 +1,7 @@
 import "./index.css";
 
-import { delAnswer, genDistractors } from "module/action";
-import { showToastInfo } from "module/toast";
+import { delAnswer, genDistractors } from "util/action";
+import { showToastInfo } from "util/toast";
 
 import ExportButtons from "component/Export";
 import React, { Component } from "react";

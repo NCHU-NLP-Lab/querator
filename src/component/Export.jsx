@@ -1,4 +1,5 @@
-import config from "config";
+import config from "util/config";
+
 import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";

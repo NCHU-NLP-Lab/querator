@@ -1,4 +1,4 @@
-import { updateQuestion } from "module/action";
+import { updateQuestion } from "util/action";
 
 import React, { useRef, useState } from "react";
 import { MdCheck, MdModeEdit, MdReplay } from "react-icons/md";
@@ -115,9 +115,7 @@ function EComponent(props) {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default connect(mapStateToProps)(EComponent);

@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { settingLngAndModel, showSetting } from "module/action";
+import { settingLngAndModel, showSetting } from "util/action";
 
 import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
@@ -97,9 +97,7 @@ class AppConfig extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(withTranslation(), connect(mapStateToProps))(AppConfig);

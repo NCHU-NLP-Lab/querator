@@ -86,9 +86,7 @@ class QuestionDisplay extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(

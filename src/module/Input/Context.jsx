@@ -10,7 +10,7 @@ function ContextInput(props) {
   return (
     <Form.Group className="context-inputs mb-3">
       <Form.Label htmlFor={`context-input-${props.id}`}>
-        {props.label}
+        {props.label ? props.label : props.t("Context")}
       </Form.Label>
       <Form.Control
         as="textarea"

@@ -24,9 +24,7 @@ function QuestionAnswerPair(props) {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(

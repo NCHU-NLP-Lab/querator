@@ -1,9 +1,9 @@
 import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
 import QuestionDisplay from "module/Question/display";
+import config from "util/config";
 
 import ExportButtons from "component/Export";
-import config from "config";
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";

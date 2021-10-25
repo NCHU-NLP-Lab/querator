@@ -1,10 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
+import "util/i18n";
 
 import "./index.css";
-import "./i18n.js";
 
-import AppRecuder from "module/reducer.js";
+import AppRecuder from "util/reducer";
 
 import React from "react";
 import ReactDOM from "react-dom";

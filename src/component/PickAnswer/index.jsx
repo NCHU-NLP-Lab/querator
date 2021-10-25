@@ -1,9 +1,9 @@
 import "./index.css";
 
-import { submitQs as SQs } from "module/action";
 import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
-import { showToastInfo } from "module/toast";
+import { submitQs as SQs } from "util/action";
+import { showToastInfo } from "util/toast";
 
 import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
@@ -328,9 +328,7 @@ class PickAnswer extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(connect(mapStateToProps), withTranslation())(PickAnswer);

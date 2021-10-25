@@ -1,6 +1,5 @@
-import PA from "module/PickAnswer";
-import QG from "module/QuestionGenerator";
-
+import PA from "component/PickAnswer";
+import QG from "component/QuestionGenerator";
 import React from "react";
 import Container from "react-bootstrap/Container";
 import { withTranslation } from "react-i18next";

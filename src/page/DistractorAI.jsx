@@ -1,8 +1,8 @@
-import { pureGenDistractors } from "module/action";
 import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
 import QuestionDisplay from "module/Question/display";
 import QuestionAnswerPair from "module/QuestionAnswerPair";
+import { pureGenDistractors } from "util/action";
 
 import ExportButtons from "component/Export";
 import React from "react";
@@ -294,9 +294,7 @@ class DistractorAI extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-    appState: state,
-  };
+  return { appState: state };
 };
 
 export default compose(
