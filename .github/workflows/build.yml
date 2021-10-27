@@ -16,7 +16,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ github.repository }}
+            nchunlplab/querator
           tags: |
             type=sha
           flavor: |
