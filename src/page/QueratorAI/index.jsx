@@ -52,3 +52,4 @@ const mapStateToProps = (state) => {
 };
 
 export default compose(withTranslation(), connect(mapStateToProps))(QueratorAI);
+export { default as tutorial } from "./tutorial";

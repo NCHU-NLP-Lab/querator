@@ -47,7 +47,6 @@ function Distractor(props) {
         ""
       )}
       {options.length === 0 && !firstInit ? (
-        // <LoadingMask loading={true} text={"loading..."}>
         <div style={{ width: "100%", height: 25 }}>
           {props.apiError ? (
             <span className="text-danger">
@@ -58,7 +57,6 @@ function Distractor(props) {
           )}
         </div>
       ) : (
-        // </LoadingMask>
         ""
       )}
       {shuffle(options).map((option, i) => {

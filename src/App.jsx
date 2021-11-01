@@ -5,9 +5,9 @@ import { settingLngAndModel, showTextSlider } from "util/action";
 import Footer from "component/Footer";
 import ModeNavBar from "component/ModeNavBar";
 import AppSetting from "component/SettingModal";
-import TextSlider from "component/TutorialModal";
+import TutorialModal from "component/TutorialModal";
 import DistractorAI from "page/DistractorAI";
-import QueratorAI from "page/QueratorAI";
+import QueratorAI, { tutorial as queratorTutorial } from "page/QueratorAI";
 import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
@@ -36,14 +36,12 @@ class App extends Component {
   }
 
   render() {
-    let { appState } = this.props;
-    let { showTextSlider: needShowTextSlider } = appState;
+    let { appState, dispatch } = this.props;
 
     return (
       <BrowserRouter>
         <ModeNavBar />
         <main id="QG-App" className="flex-shrink-0 mb-5">
-          {needShowTextSlider && <TextSlider />}
           <ToastContainer
             position="bottom-center"
             autoClose={2000}
@@ -71,6 +69,11 @@ class App extends Component {
               </Route>
             </Switch>
           </div>
+          <TutorialModal
+            content={queratorTutorial}
+            show={appState.showTextSlider}
+            onHide={() => dispatch(showTextSlider(false))}
+          />
         </main>
         <Footer />
       </BrowserRouter>
