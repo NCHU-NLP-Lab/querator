@@ -17,15 +17,15 @@ function ModeNavbar(props) {
     <Navbar bg="light">
       <Container>
         <Nav className="mx-auto">
-          <Nav.Link as={Link} to="/">
-            Querator AI
-          </Nav.Link>
-          <Nav.Link as={Link} to="/group-mode">
-            Querator Group AI
-          </Nav.Link>
-          <Nav.Link as={Link} to="/distractor-mode">
-            Distractor AI
-          </Nav.Link>
+          {props.routes.map((route, index) => {
+            return (
+              route.name && (
+                <Nav.Link key={index} as={Link} to={route.path}>
+                  {route.name}
+                </Nav.Link>
+              )
+            );
+          })}
           <Nav.Link onClick={() => dispatch(showSetting(true))}>
             <BsGear />
           </Nav.Link>

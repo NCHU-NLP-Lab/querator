@@ -12,9 +12,39 @@ import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { compose } from "redux";
+
+const routes = [
+  {
+    path: "/",
+    exact: true,
+    name: "Querator AI",
+    page: () => <QueratorAI />,
+    tutorial: queratorTutorial,
+  },
+  {
+    path: "/group-mode",
+    exact: true,
+    name: "Querator Group AI",
+    page: () => <QueratorGroupAI />,
+    tutorial: null,
+  },
+  {
+    path: "/distractor-mode",
+    exact: true,
+    name: "Distractor AI",
+    page: () => <DistractorAI />,
+    tutorial: null,
+  },
+  {
+    path: "*",
+    exact: false,
+    page: () => <Redirect to="/" />,
+    tutorial: null,
+  },
+];
 
 class App extends Component {
   constructor(props) {
@@ -40,7 +70,7 @@ class App extends Component {
 
     return (
       <BrowserRouter>
-        <ModeNavBar />
+        <ModeNavBar routes={routes} />
         <main id="QG-App" className="flex-shrink-0 mb-5">
           <ToastContainer
             position="bottom-center"
@@ -58,15 +88,11 @@ class App extends Component {
             <AppSetting show={appState.showSetting} />
             <br />
             <Switch>
-              <Route path="/distractor-mode">
-                <DistractorAI />
-              </Route>
-              <Route path="/group-mode">
-                <QueratorGroupAI />
-              </Route>
-              <Route path="/">
-                <QueratorAI />
-              </Route>
+              {routes.map((route, index) => (
+                <Route key={index} exact={route.exact} path={route.path}>
+                  {route.page}
+                </Route>
+              ))}
             </Switch>
           </div>
           <TutorialModal
