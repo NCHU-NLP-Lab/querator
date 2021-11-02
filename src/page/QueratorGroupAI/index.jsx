@@ -1,9 +1,11 @@
 import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
 import QuestionDisplay from "module/Question/display";
+import { showTextSlider } from "util/action";
 import config from "util/config";
 
 import ExportButtons from "component/Export";
+import TutorialModal from "component/TutorialModal";
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -11,6 +13,11 @@ import Collapse from "react-bootstrap/Collapse";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { compose } from "redux";
+
+import tutorial from "./tutorial";
 
 const axios = require("axios");
 
@@ -27,7 +34,7 @@ const EXAMPLE_CONTEXTS = [
   "Facebook is an American online social media and social networking service based in Menlo Park, California, and a flagship service of the namesake company Facebook, Inc. It was founded by Mark Zuckerberg, along with fellow Harvard College students and roommates Eduardo Saverin, Andrew McCollum, Dustin Moskovitz, and Chris Hughes. The founders of Facebook initially limited membership to Harvard students. Membership was expanded to Columbia, Stanford, and Yale before being expanded to the rest of the Ivy League, MIT, NYU, Boston University, then various other universities in the United States and Canada, and lastly high school students. Since 2006, anyone who claims to be at least 13 years old has been allowed to become a registered user of Facebook, though this may vary depending on local laws. The name comes from the face book directories often given to American university students.",
 ];
 
-function QueratorGroupAI() {
+function QueratorGroupAI(props) {
   const [settingOpen, setSettingOpen] = useState(false);
   let [context, setContext] = useState(getRandomItem(EXAMPLE_CONTEXTS));
   let [questionNum, setQuestionNum] = useState(5);
@@ -272,8 +279,20 @@ function QueratorGroupAI() {
           <ExportButtons getQuestionSets={getQuestionSets} />
         </Row>
       )}
+      <TutorialModal
+        content={tutorial}
+        show={props.appState.showTextSlider}
+        onHide={() => props.dispatch(showTextSlider(false))}
+      />
     </Container>
   );
 }
 
-export default QueratorGroupAI;
+const mapStateToProps = (state) => {
+  return { appState: state };
+};
+
+export default compose(
+  withTranslation(),
+  connect(mapStateToProps)
+)(QueratorGroupAI);

@@ -1,10 +1,15 @@
+import { showTextSlider } from "util/action";
+
 import PA from "component/PickAnswer";
 import QG from "component/QuestionGenerator";
+import TutorialModal from "component/TutorialModal";
 import React from "react";
 import Container from "react-bootstrap/Container";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
+
+import tutorial from "./tutorial";
 
 const isMobile = () => {
   var check = false;
@@ -43,6 +48,11 @@ function QueratorAI(props) {
           <QG />
         </>
       )}
+      <TutorialModal
+        content={tutorial}
+        show={props.appState.showTextSlider}
+        onHide={() => props.dispatch(showTextSlider(false))}
+      />
     </Container>
   );
 }
@@ -52,4 +62,3 @@ const mapStateToProps = (state) => {
 };
 
 export default compose(withTranslation(), connect(mapStateToProps))(QueratorAI);
-export { default as tutorial } from "./tutorial";

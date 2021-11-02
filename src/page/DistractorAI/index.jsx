@@ -2,9 +2,11 @@ import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
 import QuestionDisplay from "module/Question/display";
 import QuestionAnswerPair from "module/QuestionAnswerPair";
+import { showTextSlider } from "util/action";
 import { pureGenDistractors } from "util/action";
 
 import ExportButtons from "component/Export";
+import TutorialModal from "component/TutorialModal";
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
@@ -14,6 +16,8 @@ import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
+
+import tutorial from "./tutorial";
 
 class DistractorAI extends React.Component {
   constructor(props) {
@@ -288,6 +292,11 @@ class DistractorAI extends React.Component {
             <ExportButtons getQuestionSets={this.generateDataForExport} />
           </div>
         )}
+        <TutorialModal
+          content={tutorial}
+          show={this.props.appState.showTextSlider}
+          onHide={() => this.props.dispatch(showTextSlider(false))}
+        />
       </Container>
     );
   }

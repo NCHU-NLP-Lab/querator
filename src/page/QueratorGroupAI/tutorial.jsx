@@ -1,6 +1,6 @@
-import step1 from "img/querator-tutorial/step1.gif";
-import step2 from "img/querator-tutorial/step2.gif";
-import step3 from "img/querator-tutorial/step3.gif";
+import step1 from "img/group-tutorial/step1.gif";
+import step2 from "img/group-tutorial/step2.gif";
+import step3 from "img/group-tutorial/step3.gif";
 
 export default [
   {
