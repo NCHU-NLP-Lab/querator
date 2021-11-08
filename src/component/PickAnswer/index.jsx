@@ -2,12 +2,15 @@ import "./index.css";
 
 import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
-import { submitQs as SQs } from "util/action";
+import { submitQs } from "util/action";
 import { showToastInfo } from "util/toast";
 
 import React, { Component } from "react";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
 import { MdHelp, MdLockOpen, MdLockOutline } from "react-icons/md";
@@ -21,10 +24,11 @@ class PickAnswer extends Component {
       selectWords: [],
       isEdit: true,
       inputContext: "",
+      language: "en-US",
     };
     this.showToastInfo = showToastInfo;
     this.addWords = this.addWords.bind(this);
-    this.submitQs = this.submitQs.bind(this);
+    this.triggerQG = this.triggerQG.bind(this);
   }
 
   pasteTo() {
@@ -167,14 +171,14 @@ class PickAnswer extends Component {
     });
   }
 
-  submitQs() {
+  triggerQG() {
     if (this.state.selectWords.length > 0) {
       this.showToastInfo(this.props.t("Generating"));
       this.props.dispatch(
-        SQs(
+        submitQs(
           this.state.selectWords,
           this.state.inputContext,
-          this.props.appState.model
+          this.state.language
         )
       );
     } else {
@@ -190,36 +194,21 @@ class PickAnswer extends Component {
       oneClickDisable = false,
     } = this.state;
     let { t } = this.props;
-    let { model, selectWordsSubmitting } = this.props.appState;
+    let { selectWordsSubmitting } = this.props.appState;
 
     return (
       <Container id="Pick-Answer">
         {/* Context area */}
         <Row>
           {isEdit ? (
-            <>
-              <h3>
-                {t("Paste an article")}
-                <span
-                  onClick={() => {
-                    showToastInfo(t("Drag to select word"));
-                  }}
-                  className="help-btn"
-                >
-                  <MdHelp />
-                </span>
-              </h3>
-
-              <ContextInput
-                label={model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}
-                context={inputContext}
-                onChange={(event) => {
-                  this.setState({
-                    inputContext: event.target.value,
-                  });
-                }}
-              />
-            </>
+            <ContextInput
+              context={inputContext}
+              onChange={(event) => {
+                this.setState({
+                  inputContext: event.target.value,
+                });
+              }}
+            />
           ) : (
             <>
               <h3>
@@ -233,14 +222,39 @@ class PickAnswer extends Component {
                   <MdHelp />
                 </span>
               </h3>
-              <small className="small-text">
-                <b>{model === "zh-TW" ? t("Model-zhTW") : t("Model-enUS")}</b>
-              </small>
               <pre className="qa-context" onMouseUp={(e) => this.addWords(e)}>
                 {this.state.inputContext}
               </pre>
             </>
           )}
+
+          {/* Model language buttons */}
+          <Form.Group className="mb-3">
+            <Form.Label>{t("Model-Language")}</Form.Label>
+            <Col>
+              <ButtonGroup aria-label="Model language setting button">
+                <Button
+                  variant="outline-primary"
+                  active={this.state.language === "en-US"}
+                  onClick={() => {
+                    this.setState({ language: "en-US" });
+                  }}
+                >
+                  {t("Model-enUS")}
+                </Button>
+                <Button
+                  variant="outline-primary"
+                  active={this.state.language === "zh-TW"}
+                  disabled={true}
+                  onClick={() => {
+                    this.setState({ language: "zh-TW" });
+                  }}
+                >
+                  {t("Model-zhTW")}
+                </Button>
+              </ButtonGroup>
+            </Col>
+          </Form.Group>
 
           {/* Edit / Confirm Button */}
           <Button
@@ -316,7 +330,7 @@ class PickAnswer extends Component {
                 })}
               </div>
               <GenerateButton
-                onClick={this.submitQs}
+                onClick={this.triggerQG}
                 disabled={selectWordsSubmitting}
               />
             </>

@@ -1,64 +1,43 @@
 let defaultState = {
-  appToken: window.localStorage.getItem("appToken") || "",
-  isLoging: false,
   selectWords: [],
   selectWordsRaw: [],
   selectWordsSubmitting: false,
   showSetting: false,
-  lng: "en-US",
-  model: "en-US",
+  language: "en-US",
   lastSubmitArticle: "",
   pickAnsRaw: [],
   fullContext: "",
-  submitCount: 0,
   submitTotal: 0,
   showTextSlider: false,
   distractor: {},
 };
 
-const AppState = (state = defaultState, action) => {
+export default (state = defaultState, action) => {
   console.log(action);
   switch (action.type) {
     case "CLEAN_DISTRACTORS":
       state.distractor[action.save_index.toString()] = [];
-      return Object.assign({}, state);
+      return { ...state };
 
     case "SAVE_DISTRACTORS":
       state.distractor[action.save_index.toString()] =
         action.distractors.slice(); // 將save_index轉換為字串作為key
-      return Object.assign({}, state);
+      return { ...state };
 
     case "SHOW_TEXT_SLIDER":
-      return Object.assign({}, state, {
-        showTextSlider: action.show,
-      });
-    case "USER_LOGIN":
-      return Object.assign({}, state, {
-        appToken: action.token,
-      });
-    case "USER_LOGINING":
-      return Object.assign({}, state, {
-        isLoging: action.loging,
-      });
-    case "SETTING_LNG_AND_MODEL":
-      if (action.lng === "NULL") action.lng = state.lng;
-      if (action.model === "NULL") action.model = state.model;
-      return Object.assign({}, state, {
-        lng: action.lng,
-        model: action.model,
-      });
+      return { ...state, showTextSlider: action.show };
+
+    case "SETTING_LANGUAGE":
+      return {
+        ...state,
+        language: action.language ? action.language : state.language,
+      };
 
     case "SUBMIT_START":
       return Object.assign({}, state, {
         selectWordsSubmitting: true,
         fullContext: action.fullContext,
-        submitCount: 0,
         submitTotal: action.submitTotal,
-      });
-
-    case "SUBMIT_ADD_COUNT":
-      return Object.assign({}, state, {
-        submitCount: state.submitCount + 1,
       });
 
     case "SUBMIT_QUESTIONS":
@@ -113,5 +92,3 @@ const AppState = (state = defaultState, action) => {
       return state;
   }
 };
-
-export default AppState;

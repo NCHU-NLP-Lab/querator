@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { settingLngAndModel, showTextSlider } from "util/action";
+import { settingLanguage, showTextSlider } from "util/action";
 
 import Footer from "component/Footer";
 import ModeNavBar from "component/ModeNavBar";
@@ -10,10 +10,9 @@ import QueratorAI from "page/QueratorAI";
 import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { compose } from "redux";
 
 const routes = [
   {
@@ -38,7 +37,9 @@ const routes = [
 ];
 
 function App(props) {
-  const { appState, dispatch, i18n } = props;
+  const { i18n } = props;
+  const appState = useSelector((state) => state);
+  const dispatch = useDispatch();
 
   const mounted = useRef();
   useEffect(() => {
@@ -46,7 +47,7 @@ function App(props) {
       mounted.current = true;
       const language = window.localStorage.i18nextLng || i18n.language;
       i18n.changeLanguage(language);
-      dispatch(settingLngAndModel(language, language));
+      dispatch(settingLanguage(language));
       let isShowTextSlider = window.localStorage.getItem(
         "already_see_text_slider"
       );
@@ -73,7 +74,7 @@ function App(props) {
         />
 
         <div className="App container">
-          <AppSetting show={appState.showSetting} />
+          <AppSetting />
           <br />
           <Routes>
             {routes.map((route, index) => (
@@ -87,8 +88,4 @@ function App(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(withTranslation(), connect(mapStateToProps))(App);
+export default withTranslation()(App);

@@ -75,7 +75,7 @@ class QuestionGenerator extends Component {
         selectWords[index].end_at,
         this.getSelectQuestion(index, selectRadios[index]),
         3,
-        appState.lng,
+        appState.language,
         index,
         () => {
           this.setState({ apiError: true });

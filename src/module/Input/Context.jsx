@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 
 function ContextInput(props) {
-  let { disabled = false } = props;
+  let { disabled = false, helpText = "" } = props;
 
   return (
     <Form.Group className="context-inputs mb-3">
@@ -21,6 +21,11 @@ function ContextInput(props) {
         onChange={props.onChange}
         disabled={disabled}
       />
+      {helpText && (
+        <Form.Text id={`context-input-${props.id}`} muted>
+          {helpText}
+        </Form.Text>
+      )}
     </Form.Group>
   );
 }

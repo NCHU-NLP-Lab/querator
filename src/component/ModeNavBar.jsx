@@ -6,12 +6,11 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { withTranslation } from "react-i18next";
 import { BsGear, BsQuestionCircleFill } from "react-icons/bs";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { compose } from "redux";
 
 function ModeNavbar(props) {
-  let { dispatch } = props;
+  const dispatch = useDispatch();
 
   return (
     <Navbar bg="light">
@@ -38,8 +37,4 @@ function ModeNavbar(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(withTranslation(), connect(mapStateToProps))(ModeNavbar);
+export default withTranslation()(ModeNavbar);

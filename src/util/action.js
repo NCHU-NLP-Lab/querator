@@ -1,3 +1,4 @@
+import { question_generate } from "util/api";
 import config from "util/config";
 import { showToastInfo } from "util/toast";
 
@@ -15,16 +16,11 @@ export const showTextSlider = (show) => {
   };
 };
 
-export const settingLngAndModel = (lng = "NULL", model = "NULL") => {
-  if (lng !== "NULL" && model !== "NULL" && window) {
-    if (lng === model) {
-      window.localStorage.setItem("i18nextLng", lng);
-    }
-  }
+export const settingLanguage = (language = "NULL") => {
+  window.localStorage.setItem("i18nextLng", language);
   return {
-    type: "SETTING_LNG_AND_MODEL",
-    lng,
-    model,
+    type: "SETTING_LANGUAGE",
+    language,
   };
 };
 
@@ -98,59 +94,22 @@ export const genDistractors = (
   };
 };
 
-export const submitQs = (q, fullContext, lng = "zh-TW") => {
-  let apiReq = (reqData) => {
-    return axios_client.post(
-      `${API_ENDPOINT}/${lng}/generate-question`,
-      {
-        answer: {
-          tag: reqData.tag,
-          start_at: reqData.start_at,
-          end_at: reqData.end_at,
-        },
-        article: reqData.context,
-      },
-      { headers: { "Content-Type": "application/json; charset=utf-8" } }
-    );
-  };
-
-  return (dispatch) => {
+export const submitQs = (q, fullContext, language = "zh-TW") => {
+  return async (dispatch) => {
     dispatch({
       type: "SUBMIT_START",
       fullContext,
       submitTotal: q.length,
     });
 
-    let responses = [];
-    let onLoading = async () => {
-      for (var i = 0; i < q.length; i++) {
-        console.log("REQ ON:", i);
-        let res = await apiReq(q[i]);
-        responses = responses.concat(res.data);
-        dispatch({ type: "SUBMIT_ADD_COUNT" });
-      }
-      if (i === q.length) {
-        return Promise.resolve(responses);
-      }
-      return Promise.reject("API REQ FAIL");
-    };
-    onLoading()
-      .then((data) => {
-        console.log(data);
-        dispatch({
-          type: "SUBMIT_QUESTIONS",
-          questions: data,
-          pickAnsRaw: q,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        showToastInfo("Oops! Some error happened.", "error");
-        dispatch({
-          type: "SUBMIT_QUESTIONS_FAIL",
-          questions: [],
-        });
+    const [results, error] = await question_generate(q, language);
+    if (!error) {
+      dispatch({
+        type: "SUBMIT_QUESTIONS",
+        questions: results,
+        pickAnsRaw: q,
       });
+    }
   };
 };
 

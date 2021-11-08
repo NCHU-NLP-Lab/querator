@@ -7,68 +7,56 @@ import { pureGenDistractors } from "util/action";
 
 import ExportButtons from "component/Export";
 import TutorialModal from "component/TutorialModal";
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import tutorial from "./tutorial";
 
-class DistractorAI extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      questionSets: [
+function DistractorAI(props) {
+  const [questionSets, setQuestionSets] = useState([
+    {
+      context: `Humanity needs to "grow up" and deal with the issue of climate change, British Prime Minister Boris Johnson told world leaders at the United Nations General Assembly in New York on Wednesday. Johnson, a last-minute addition to the speakers' list that day, slammed the world's inadequate response to the climate crisis and urged humanity to "listen to the warnings of the scientists," pointing to the Covid-19 pandemic as "an example of gloomy scientists being proved right."`,
+      question_pairs: [
         {
-          context: `Humanity needs to "grow up" and deal with the issue of climate change, British Prime Minister Boris Johnson told world leaders at the United Nations General Assembly in New York on Wednesday. Johnson, a last-minute addition to the speakers' list that day, slammed the world's inadequate response to the climate crisis and urged humanity to "listen to the warnings of the scientists," pointing to the Covid-19 pandemic as "an example of gloomy scientists being proved right."`,
-          question_pairs: [
-            {
-              question: "Who is the prime minister of United Kingdom?",
-              answer: "Boris Johnson",
-              options: [],
-            },
-            {
-              question: "Who is the prime minister of United Kingdom?",
-              answer: "Boris Johnson",
-              options: [],
-            },
-          ],
+          question: "Who is the prime minister of United Kingdom?",
+          answer: "Boris Johnson",
+          options: [],
         },
         {
-          context:
-            "Two real-world studies published Wednesday confirm that the immune protection offered by two doses of Pfizer's Covid-19 vaccine drops off after two months or so, although protection against severe disease, hospitalization and death remains strong.\n\nThe studies, from Israel and from Qatar and published in the New England Journal of Medicine, support arguments that even fully vaccinated people need to maintain precautions against infection.\nOne study from Israel covered 4,800 health care workers a...",
-          question_pairs: [
-            {
-              question:
-                "How many doses of Pfizer's Covid-19 vaccine drops off after two months?",
-              answer: "Two doses",
-              options: [],
-            },
-          ],
+          question: "Who is the prime minister of United Kingdom?",
+          answer: "Boris Johnson",
+          options: [],
         },
       ],
-      generated: false,
-      generating: false,
-    };
-    this.createSet = this.createSet.bind(this);
-    this.deleteSet = this.deleteSet.bind(this);
-    this.getDistractors = this.getDistractors.bind(this);
-    this.generateDataForExport = this.generateDataForExport.bind(this);
-  }
+    },
+    {
+      context:
+        "Two real-world studies published Wednesday confirm that the immune protection offered by two doses of Pfizer's Covid-19 vaccine drops off after two months or so, although protection against severe disease, hospitalization and death remains strong.\n\nThe studies, from Israel and from Qatar and published in the New England Journal of Medicine, support arguments that even fully vaccinated people need to maintain precautions against infection.\nOne study from Israel covered 4,800 health care workers a...",
+      question_pairs: [
+        {
+          question:
+            "How many doses of Pfizer's Covid-19 vaccine drops off after two months?",
+          answer: "Two doses",
+          options: [],
+        },
+      ],
+    },
+  ]);
+  const [generated, setGenerated] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const appState = useSelector((state) => state);
+  const dispatch = useDispatch();
+  let { t } = props;
 
-  componentDidMount() {}
-
-  componentWillUnmount() {}
-
-  getDistractors = async (event) => {
+  const getDistractors = async (event) => {
     event.preventDefault();
-    this.setState({ generating: true });
-    let questionSets = [...this.state.questionSets];
+    setGenerating(true);
     for (let setIndex = 0; setIndex < questionSets.length; setIndex++) {
       const questionSet = questionSets[setIndex];
       for (
@@ -88,17 +76,18 @@ class DistractorAI extends React.Component {
         pair.options = options;
       }
     }
-    this.setState({ questionSets, generated: true, generating: false });
+    setGenerating(false);
+    setGenerated(true);
   };
 
-  emptySet_ = () => {
+  const emptySet_ = () => {
     return {
       context: "",
-      question_pairs: [this.emptyPair_()],
+      question_pairs: [emptyPair_()],
     };
   };
 
-  emptyPair_ = () => {
+  const emptyPair_ = () => {
     return {
       question: "",
       answer: "",
@@ -106,50 +95,50 @@ class DistractorAI extends React.Component {
     };
   };
 
-  createSet = () => {
-    let questionSets = [...this.state.questionSets];
-    questionSets.push(this.emptySet_());
-    this.setState({ questionSets });
+  const createSet = () => {
+    let newSets = [...questionSets];
+    newSets.push(emptySet_());
+    setQuestionSets(newSets);
   };
 
-  deleteSet = (setIndex) => {
-    let questionSets = [...this.state.questionSets];
-    questionSets.splice(setIndex, 1);
-    this.setState({ questionSets });
+  const deleteSet = (setIndex) => {
+    let newSets = [...questionSets];
+    newSets.splice(setIndex, 1);
+    setQuestionSets(newSets);
   };
 
-  createPair = (setIndex) => {
-    let questionSets = [...this.state.questionSets];
-    questionSets[setIndex].question_pairs.push(this.emptyPair_());
-    this.setState({ questionSets });
+  const createPair = (setIndex) => {
+    let newSets = [...questionSets];
+    newSets[setIndex].question_pairs.push(emptyPair_());
+    setQuestionSets(newSets);
   };
 
-  deletePair = (setIndex, pairIndex) => {
-    let questionSets = [...this.state.questionSets];
-    questionSets[setIndex].question_pairs.splice(pairIndex, 1);
-    this.setState({ questionSets });
+  const deletePair = (setIndex, pairIndex) => {
+    let newSets = [...questionSets];
+    newSets[setIndex].question_pairs.splice(pairIndex, 1);
+    setQuestionSets(newSets);
   };
 
-  contextChange = (index, value) => {
-    let questionSets = [...this.state.questionSets];
-    questionSets[index].context = value;
-    this.setState({ questionSets });
+  const contextChange = (index, value) => {
+    let newSets = [...questionSets];
+    newSets[index].context = value;
+    setQuestionSets(newSets);
   };
 
-  questionChange = (setIndex, pairIndex, value) => {
-    let questionSets = [...this.state.questionSets];
-    questionSets[setIndex].question_pairs[pairIndex].question = value;
-    this.setState({ questionSets });
+  const questionChange = (setIndex, pairIndex, value) => {
+    let newSets = [...questionSets];
+    newSets[setIndex].question_pairs[pairIndex].question = value;
+    setQuestionSets(newSets);
   };
 
-  answerChange = (setIndex, pairIndex, value) => {
-    let questionSets = [...this.state.questionSets];
-    questionSets[setIndex].question_pairs[pairIndex].answer = value;
-    this.setState({ questionSets });
+  const answerChange = (setIndex, pairIndex, value) => {
+    let newSets = [...questionSets];
+    newSets[setIndex].question_pairs[pairIndex].answer = value;
+    setQuestionSets(newSets);
   };
 
-  generateDataForExport = () => {
-    return this.state.questionSets.map((questionSet) => {
+  const generateDataForExport = () => {
+    return questionSets.map((questionSet) => {
       return {
         context: questionSet.context,
         question_pairs: questionSet.question_pairs.map((pair) => {
@@ -166,147 +155,135 @@ class DistractorAI extends React.Component {
     });
   };
 
-  render() {
-    let { t } = this.props;
-    return (
-      <Container id="distractor-ai">
-        <h1 className="text-center">Distractor AI</h1>
-        {[...Array(this.state.questionSets.length)].map((e, setIndex) => (
-          <>
-            <Row key={`set-container-${setIndex}`}>
-              <Container>
-                <Row>
-                  <Col xs={6} className="p-3">
-                    <ContextInput
-                      label={`${t("Context")} ${setIndex + 1}`}
-                      context={this.state.questionSets[setIndex].context}
-                      onChange={(event) => {
-                        this.contextChange(setIndex, event.target.value);
-                      }}
-                    />
-                  </Col>
-                  <Col xs={6} className="p-3">
-                    {this.state.questionSets[setIndex].question_pairs.map(
-                      (pair, pairIndex) => (
-                        <Form key={`set-${setIndex}-qa-input-${pairIndex}`}>
-                          <QuestionAnswerPair
-                            pairIndex={pairIndex}
-                            pair={pair}
-                            questionChange={(event) => {
-                              event.preventDefault();
-                              this.questionChange(
-                                setIndex,
-                                pairIndex,
-                                event.target.value
-                              );
-                            }}
-                            answerChange={(event) => {
-                              event.preventDefault();
-                              this.answerChange(
-                                setIndex,
-                                pairIndex,
-                                event.target.value
-                              );
-                            }}
-                          />
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={(event) => {
-                              event.preventDefault();
-                              this.deletePair(setIndex, pairIndex);
-                            }}
-                          >
-                            Remove this pair
-                          </Button>
-                          <hr />
-                        </Form>
-                      )
-                    )}
-                    <Button
-                      variant="success"
-                      size="sm"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        this.createPair(setIndex);
-                      }}
-                    >
-                      Add QA Pair
-                    </Button>
-                  </Col>
-                </Row>
-                <Row className="justify-content-end">
+  return (
+    <Container id="distractor-ai">
+      <h1 className="text-center">Distractor AI</h1>
+      {[...Array(questionSets.length)].map((e, setIndex) => (
+        <div key={setIndex}>
+          <Row>
+            <Container>
+              <Row>
+                <Col xs={6} className="p-3">
+                  <ContextInput
+                    label={`${t("Context")} ${setIndex + 1}`}
+                    context={questionSets[setIndex].context}
+                    onChange={(event) => {
+                      contextChange(setIndex, event.target.value);
+                    }}
+                  />
+                </Col>
+                <Col xs={6} className="p-3">
+                  {questionSets[setIndex].question_pairs.map(
+                    (pair, pairIndex) => (
+                      <Form key={`set-${setIndex}-qa-input-${pairIndex}`}>
+                        <QuestionAnswerPair
+                          pairIndex={pairIndex}
+                          pair={pair}
+                          questionChange={(event) => {
+                            event.preventDefault();
+                            questionChange(
+                              setIndex,
+                              pairIndex,
+                              event.target.value
+                            );
+                          }}
+                          answerChange={(event) => {
+                            event.preventDefault();
+                            answerChange(
+                              setIndex,
+                              pairIndex,
+                              event.target.value
+                            );
+                          }}
+                        />
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            deletePair(setIndex, pairIndex);
+                          }}
+                        >
+                          Remove this pair
+                        </Button>
+                        <hr />
+                      </Form>
+                    )
+                  )}
                   <Button
-                    variant="danger"
+                    variant="success"
                     size="sm"
                     onClick={(event) => {
                       event.preventDefault();
-                      this.deleteSet(setIndex);
+                      createPair(setIndex);
                     }}
                   >
-                    {t("Remove This Set")}
+                    Add QA Pair
                   </Button>
-                </Row>
-              </Container>
-            </Row>
-            <hr key={`set-seperator-${setIndex}`} />
-          </>
-        ))}
-        <Row>
-          <Button
-            variant="success"
-            className="mb-2"
-            onClick={(event) => {
-              event.preventDefault();
-              this.createSet();
-            }}
-          >
-            {t("Add More Set")}
-          </Button>
-          <GenerateButton
-            className="m-2"
-            onClick={this.getDistractors}
-            disabled={this.state.generating}
-          />
-        </Row>
-        <hr />
-        {this.state.generated && (
-          <div>
-            {Object.keys(this.state.questionSets).map((setIndex) => {
-              let questionSet = this.state.questionSets[setIndex];
-              return Object.keys(questionSet.question_pairs).map(
-                (pairIndex) => {
-                  let pair = questionSet.question_pairs[pairIndex];
-                  return (
-                    <QuestionDisplay
-                      context={questionSet.context}
-                      question={pair.question}
-                      answer={pair.answer}
-                      options={pair.options}
-                      key={`question-display-${setIndex}-${pairIndex}`}
-                    />
-                  );
-                }
-              );
-            })}
-            <ExportButtons getQuestionSets={this.generateDataForExport} />
-          </div>
-        )}
-        <TutorialModal
-          content={tutorial}
-          show={this.props.appState.showTextSlider}
-          onHide={() => this.props.dispatch(showTextSlider(false))}
+                </Col>
+              </Row>
+              <Row className="justify-content-end">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    deleteSet(setIndex);
+                  }}
+                >
+                  {t("Remove This Set")}
+                </Button>
+              </Row>
+            </Container>
+          </Row>
+          <hr />
+        </div>
+      ))}
+      <Row>
+        <Button
+          variant="success"
+          className="mb-2"
+          onClick={(event) => {
+            event.preventDefault();
+            createSet();
+          }}
+        >
+          {t("Add More Set")}
+        </Button>
+        <GenerateButton
+          className="m-2"
+          onClick={getDistractors}
+          disabled={generating}
         />
-      </Container>
-    );
-  }
+      </Row>
+      <hr />
+      {generated && (
+        <div>
+          {Object.keys(questionSets).map((setIndex) => {
+            let questionSet = questionSets[setIndex];
+            return Object.keys(questionSet.question_pairs).map((pairIndex) => {
+              let pair = questionSet.question_pairs[pairIndex];
+              return (
+                <QuestionDisplay
+                  context={questionSet.context}
+                  question={pair.question}
+                  answer={pair.answer}
+                  options={pair.options}
+                  key={`question-display-${setIndex}-${pairIndex}`}
+                />
+              );
+            });
+          })}
+          <ExportButtons getQuestionSets={generateDataForExport} />
+        </div>
+      )}
+      <TutorialModal
+        content={tutorial}
+        show={appState.showTextSlider}
+        onHide={() => dispatch(showTextSlider(false))}
+      />
+    </Container>
+  );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(
-  withTranslation(),
-  connect(mapStateToProps)
-)(DistractorAI);
+export default withTranslation()(DistractorAI);
