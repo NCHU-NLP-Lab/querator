@@ -32,7 +32,7 @@ services:
 
 ### Setup
 
-Run this on first time, make user to use mode v12 or above
+Run this on first time, make sure to use node v16
 
 - Clone Repository
 

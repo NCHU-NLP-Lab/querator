@@ -11,33 +11,29 @@ import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { compose } from "redux";
 
 const routes = [
   {
     path: "/",
-    exact: true,
     name: "Querator AI",
-    page: () => <QueratorAI />,
+    element: <QueratorAI />,
   },
   {
     path: "/group-mode",
-    exact: true,
     name: "Querator Group AI",
-    page: () => <QueratorGroupAI />,
+    element: <QueratorGroupAI />,
   },
   {
-    path: "/distractor-mode",
-    exact: true,
+    path: "distractor-mode",
     name: "Distractor AI",
-    page: () => <DistractorAI />,
+    element: <DistractorAI />,
   },
   {
     path: "*",
-    exact: false,
-    page: () => <Redirect to="/" />,
+    element: <Navigate to="/" />,
   },
 ];
 
@@ -79,20 +75,11 @@ function App(props) {
         <div className="App container">
           <AppSetting show={appState.showSetting} />
           <br />
-          <Switch>
+          <Routes>
             {routes.map((route, index) => (
-              <Route key={index} exact={route.exact} path={route.path}>
-                {route.page}
-                {/* {route.tutorial && (
-                  <TutorialModal
-                    content={route.tutorial}
-                    show={appState.showTextSlider}
-                    onHide={() => dispatch(showTextSlider(false))}
-                  />
-                )} */}
-              </Route>
+              <Route key={index} path={route.path} element={route.element} />
             ))}
-          </Switch>
+          </Routes>
         </div>
       </main>
       <Footer />
