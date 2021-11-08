@@ -1,4 +1,4 @@
-# Maintenance
+# CONTRIBUTING
 
 Please follow the guides listed below on developing new component / feature / bugfix.
 
