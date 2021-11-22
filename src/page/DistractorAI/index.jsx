@@ -50,9 +50,25 @@ function DistractorAI(props) {
   ]);
   const [generated, setGenerated] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [exportChecks, setExportChecks] = useState([]);
   const appState = useSelector((state) => state);
   const dispatch = useDispatch();
   let { t } = props;
+
+  const toggleQuestionExportFuncGenerator = (setIndex, pairIndex) => {
+    return (event) => {
+      let newExportChecks = [...exportChecks];
+      newExportChecks[setIndex][pairIndex] = Boolean(
+        newExportChecks[setIndex][pairIndex]
+      )
+        ? false
+        : Array(
+            questionSets[setIndex].question_pairs[pairIndex].options.length + 1
+          ).fill(true);
+      // +1 for the answer
+      setExportChecks(newExportChecks);
+    };
+  };
 
   const getDistractors = async (event) => {
     event.preventDefault();
@@ -76,6 +92,13 @@ function DistractorAI(props) {
         pair.options = options;
       }
     }
+    setExportChecks(
+      questionSets.map((questionSet) => {
+        return questionSet.question_pairs.map((pair) => {
+          return Array(pair.options.length + 1).fill(true);
+        });
+      })
+    );
     setGenerating(false);
     setGenerated(true);
   };
@@ -138,21 +161,25 @@ function DistractorAI(props) {
   };
 
   const generateDataForExport = () => {
-    return questionSets.map((questionSet) => {
-      return {
-        context: questionSet.context,
-        question_pairs: questionSet.question_pairs.map((pair) => {
-          let options = pair.options.map((option) => {
-            return { text: option, is_answer: false };
+    let datas = [];
+    questionSets.forEach((questionSet, setIndex) => {
+      let data = { context: questionSet.context, question_pairs: [] };
+      questionSet.question_pairs.forEach((pair, pairIndex) => {
+        if (Boolean(exportChecks[setIndex][pairIndex])) {
+          let options = [{ text: pair.answer, is_answer: true }];
+          pair.options.forEach((option, optionIndex) => {
+            if (Boolean(exportChecks[setIndex][pairIndex][optionIndex])) {
+              options.push({ text: option, is_answer: false });
+            }
           });
-          options.push({ text: pair.answer, is_answer: true });
-          return {
-            question: pair.question,
-            options,
-          };
-        }),
-      };
+          data.question_pairs.push({ question: pair.question, options });
+        }
+      });
+      if (Boolean(data.question_pairs.length)) {
+        datas.push(data);
+      }
     });
+    return datas;
   };
 
   return (
@@ -259,17 +286,47 @@ function DistractorAI(props) {
       <hr />
       {generated && (
         <div>
-          {Object.keys(questionSets).map((setIndex) => {
-            let questionSet = questionSets[setIndex];
-            return Object.keys(questionSet.question_pairs).map((pairIndex) => {
-              let pair = questionSet.question_pairs[pairIndex];
+          {questionSets.map((questionSet, setIndex) => {
+            return questionSet.question_pairs.map((pair, pairIndex) => {
+              // Process options for QuestionDisplay
+              let pairChecks = exportChecks[setIndex][pairIndex];
+              let QDoption = [
+                {
+                  text: pair.answer,
+                  textBold: true,
+                  checkType: "checkbox",
+                  isChecked: pairChecks && pairChecks[0], // Ideally, this should always be true
+                  checkDisabled: !Boolean(pairChecks),
+                },
+              ];
+              pair.options.forEach((option, optionIndex) => {
+                QDoption.push({
+                  text: option,
+                  textBold: false,
+                  checkType: "checkbox",
+                  // +1 for the answer
+                  isChecked: pairChecks && pairChecks[optionIndex + 1],
+                  checkDisabled: !Boolean(pairChecks),
+                  checkboxOnChange: (event) => {
+                    let newExportChecks = [...exportChecks];
+                    newExportChecks[setIndex][pairIndex][optionIndex + 1] =
+                      !newExportChecks[setIndex][pairIndex][optionIndex + 1];
+                    setExportChecks(newExportChecks);
+                  },
+                });
+              });
+
               return (
                 <QuestionDisplay
-                  context={questionSet.context}
-                  question={pair.question}
-                  answer={pair.answer}
-                  options={pair.options}
                   key={`question-display-${setIndex}-${pairIndex}`}
+                  listings={QDoption}
+                  preTitle={questionSet.context}
+                  title={pair.question}
+                  titleChecked={Boolean(exportChecks[setIndex][pairIndex])}
+                  titleCheckboxOnChange={toggleQuestionExportFuncGenerator(
+                    setIndex,
+                    pairIndex
+                  )}
                 />
               );
             });

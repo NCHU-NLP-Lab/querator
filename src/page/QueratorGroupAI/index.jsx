@@ -36,37 +36,23 @@ const EXAMPLE_CONTEXTS = [
 
 function QueratorGroupAI(props) {
   const [settingOpen, setSettingOpen] = useState(false);
-  let [context, setContext] = useState(getRandomItem(EXAMPLE_CONTEXTS));
-  let [questionNum, setQuestionNum] = useState(5);
-  let [questions, setQuestions] = useState([]);
-  let [disableGenBtn, setDisableGenBtn] = useState(false);
-  let [answers, setAnswers] = useState([]);
-  let [options, setOptions] = useState([]);
-  let [exportChecks, setExportChecks] = useState([]);
+  const [questionNum, setQuestionNum] = useState(5);
+  const [context, setContext] = useState(getRandomItem(EXAMPLE_CONTEXTS));
+  const [disableGenBtn, setDisableGenBtn] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [exportChecks, setExportChecks] = useState([]);
 
-  let answerInputOnChange = (event) => {
-    let newAnswers = [...answers];
-    newAnswers[event.target.dataset.questionIndex] = event.target.value;
-    setAnswers(newAnswers);
-  };
-
-  let toggleQuestionExport = (event) => {
-    let index = event.target.dataset.questionIndex;
-    let newExportChecks = [...exportChecks];
-    newExportChecks[index] = Boolean(newExportChecks[index])
-      ? false
-      : Array(options[index].length + 1).fill(true);
-    // +1 for the answer
-    setExportChecks(newExportChecks);
-  };
-
-  let toggleOptionExport = (event) => {
-    let questionIndex = event.target.dataset.questionIndex;
-    let optionIndex = event.target.dataset.optionIndex;
-    let newExportChecks = [...exportChecks];
-    newExportChecks[questionIndex][optionIndex] =
-      !newExportChecks[questionIndex][optionIndex];
-    setExportChecks(newExportChecks);
+  const toggleQuestionExportFuncGenerator = (questionIndex) => {
+    return (event) => {
+      let newExportChecks = [...exportChecks];
+      newExportChecks[questionIndex] = Boolean(newExportChecks[questionIndex])
+        ? false
+        : Array(options[questionIndex].length + 1).fill(true);
+      // +1 for the answer
+      setExportChecks(newExportChecks);
+    };
   };
 
   let genQuestionGroup = (
@@ -75,8 +61,7 @@ function QueratorGroupAI(props) {
     candidate_pool_size
   ) => {
     console.log(context, question_group_size, candidate_pool_size);
-    setAnswers([]); // reset
-    setQuestions([]);
+    setAnswers(Array(questionNum).fill("")); // reset
     setDisableGenBtn(true);
     axios
       .post(`${API_ENDPOINT}/en-US/generate-question-group`, {
@@ -251,19 +236,56 @@ function QueratorGroupAI(props) {
       <Row>
         <Col>
           {questions.map((question, questionIndex) => {
+            // Process options for QuestionDisplay
+            let QDoptions = questions.map((question, questionIndex) => {
+              let questionChecks = exportChecks[questionIndex];
+              let QDoption = [
+                {
+                  text: answers[questionIndex],
+                  textBold: true,
+                  checkType: "checkbox",
+                  isChecked: questionChecks && questionChecks[0], // Ideally, this should always be true
+                  checkDisabled: !Boolean(questionChecks),
+                  textInputLabel: "Answer",
+                  textOnChange: (event) => {
+                    let newAnswers = [...answers];
+                    newAnswers[questionIndex] = event.target.value;
+                    setAnswers(newAnswers);
+                  },
+                },
+              ];
+              if (options[questionIndex]) {
+                options[questionIndex].forEach((option, optionIndex) => {
+                  QDoption.push({
+                    text: option,
+                    textBold: false,
+                    checkType: "checkbox",
+                    // +1 for the answer
+                    isChecked:
+                      questionChecks && questionChecks[optionIndex + 1],
+                    checkDisabled: !Boolean(questionChecks),
+                    checkboxOnChange: (event) => {
+                      let newExportChecks = [...exportChecks];
+                      newExportChecks[questionIndex][optionIndex + 1] =
+                        !newExportChecks[questionIndex][optionIndex + 1];
+                      setExportChecks(newExportChecks);
+                    },
+                  });
+                });
+              }
+              return QDoption;
+            });
+
             return (
               <QuestionDisplay
                 key={`question-display-${questionIndex}`}
-                question={question}
-                questionIndex={questionIndex}
-                questionChecked={Boolean(exportChecks[questionIndex])}
-                questionCheckboxOnChange={toggleQuestionExport}
-                answer={answers[questionIndex]}
-                answerIsInput
-                answerInputOnChange={answerInputOnChange}
-                options={options[questionIndex]}
-                optionsChecked={exportChecks[questionIndex]}
-                optionCheckboxOnChange={toggleOptionExport}
+                listings={QDoptions[questionIndex]}
+                title={question}
+                titleChecked={Boolean(exportChecks[questionIndex])}
+                titleCheckboxOnChange={
+                  Boolean(options.length) &&
+                  toggleQuestionExportFuncGenerator(questionIndex)
+                }
               />
             );
           })}
