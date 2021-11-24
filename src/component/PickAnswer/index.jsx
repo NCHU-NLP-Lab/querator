@@ -224,7 +224,10 @@ class PickAnswer extends Component {
                   <MdHelp />
                 </span>
               </h3>
-              <pre className="qa-context" onMouseUp={(e) => this.addWords(e)}>
+              <pre
+                className="qa-context"
+                onMouseUp={(event) => this.addWords(event)}
+              >
                 {this.state.inputContext}
               </pre>
             </>

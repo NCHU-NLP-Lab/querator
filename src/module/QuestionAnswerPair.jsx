@@ -2,9 +2,6 @@ import AnswerInput from "module/Input/Answer";
 import QuestionInput from "module/Input/Question";
 
 import React from "react";
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
 
 function QuestionAnswerPair(props) {
   return (
@@ -23,11 +20,4 @@ function QuestionAnswerPair(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(
-  withTranslation(),
-  connect(mapStateToProps)
-)(QuestionAnswerPair);
+export default QuestionAnswerPair;

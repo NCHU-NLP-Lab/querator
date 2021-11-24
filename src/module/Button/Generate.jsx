@@ -1,9 +1,11 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function GenerateButton(props) {
+  const { t } = useTranslation();
+
   return (
     <Button
       variant={props.variant || "primary"}
@@ -12,7 +14,7 @@ function GenerateButton(props) {
     >
       {props.disabled ? (
         <>
-          {props.t("Generating")}
+          {t("Generating")}
           <Spinner
             as="span"
             animation="border"
@@ -22,10 +24,10 @@ function GenerateButton(props) {
           />
         </>
       ) : (
-        props.t("Generate")
+        t("Generate")
       )}
     </Button>
   );
 }
 
-export default withTranslation()(GenerateButton);
+export default GenerateButton;

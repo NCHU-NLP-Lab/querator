@@ -1,6 +1,5 @@
 import { question_generate } from "util/api";
 import config from "util/config";
-import { showToastInfo } from "util/toast";
 
 import axios from "axios";
 
@@ -24,13 +23,6 @@ export const settingLanguage = (language = "NULL") => {
   };
 };
 
-export const cleanDistractor = (save_index) => {
-  return {
-    type: "CLEAN_DISTRACTORS",
-    save_index,
-  };
-};
-
 export const pureGenDistractors = async (params) => {
   let { lng } = params;
   lng = "en-US"; // Only English is support for now
@@ -49,49 +41,6 @@ export const pureGenDistractors = async (params) => {
       let { distractors = [] } = response.data;
       return distractors;
     });
-};
-
-export const genDistractors = (
-  article,
-  answer,
-  answer_start,
-  answer_end,
-  question,
-  gen_quantity,
-  lng = "zh-TW",
-  save_index = 0,
-  onFailCallback = () => {}
-) => {
-  lng = "en-US"; // Only English is support for now
-  return (dispatch) => {
-    axios_client
-      .post(`${API_ENDPOINT}/${lng}/generate-distractor`, {
-        article,
-        answer: {
-          tag: answer,
-          start_at: answer_start,
-          end_at: answer_end,
-        },
-        question,
-        gen_quantity,
-      })
-      .then((reqData) => {
-        console.log(reqData);
-        let { distractors = [] } = reqData.data;
-        dispatch({
-          type: "SAVE_DISTRACTORS",
-          save_index,
-          distractors,
-        });
-        if (distractors.length === 0) {
-          throw new Error("no suitable distractor avaliable");
-        }
-      })
-      .catch((e) => {
-        showToastInfo(JSON.stringify(e), "error");
-        onFailCallback();
-      });
-  };
 };
 
 export const submitQs = (q, fullContext, language = "zh-TW") => {
@@ -117,14 +66,6 @@ export const updateQuestion = (alreadyUpdateQuestions) => {
   return {
     type: "UPDATE_QUESTION",
     questions: alreadyUpdateQuestions,
-  };
-};
-
-export const delAnswer = (targetInfo, k1Index) => {
-  return {
-    type: "DEL_OR_RECOVERY_ANSWER",
-    targetInfo,
-    k1Index,
   };
 };
 

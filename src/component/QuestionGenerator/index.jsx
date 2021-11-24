@@ -1,5 +1,3 @@
-import "./index.css";
-
 import GenerateButton from "module/Button/Generate";
 import QuestionDisplay from "module/Question/display";
 import { pureGenDistractors, updateQuestion } from "util/action";
@@ -12,7 +10,7 @@ import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
-import { BsCheck, BsCommand, BsPencilFill } from "react-icons/bs";
+import { BsCheck, BsPencilFill } from "react-icons/bs";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
@@ -21,7 +19,6 @@ class QuestionGenerator extends Component {
     super(props);
     this.state = {
       editingQuestion: [],
-      selectRadios: [],
       distractors: [],
       exportChecks: [],
       distractorGenerating: false,
@@ -91,15 +88,6 @@ class QuestionGenerator extends Component {
     ];
   };
 
-  getSelectQuestion = (k1, k2) => {
-    let { selectWords } = this.props.appState;
-    try {
-      return selectWords[k1].questions[k2];
-    } catch (error) {
-      return "";
-    }
-  };
-
   toogleExport = (index, questionIndex) => {
     let newExportChecks = [...this.state.exportChecks];
     if (!newExportChecks[index]) {
@@ -144,6 +132,7 @@ class QuestionGenerator extends Component {
                 disabled: !editing,
                 inputBeginAddOn: [
                   <InputGroup.Checkbox
+                    key={`question-display-${index}-${questionIndex}-checkbox`}
                     disabled={
                       !Boolean(
                         !editing &&

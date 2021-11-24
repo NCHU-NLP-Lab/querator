@@ -13,7 +13,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import tutorial from "./tutorial";
@@ -51,9 +51,9 @@ function DistractorAI(props) {
   const [generated, setGenerated] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [exportChecks, setExportChecks] = useState([]);
-  const appState = useSelector((state) => state);
+  const showTutorialModal = useSelector((state) => state.showTextSlider);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
-  let { t } = props;
 
   const toggleQuestionExportFuncGenerator = (setIndex, pairIndex) => {
     return (event) => {
@@ -338,11 +338,11 @@ function DistractorAI(props) {
       )}
       <TutorialModal
         content={tutorial}
-        show={appState.showTextSlider}
+        show={showTutorialModal}
         onHide={() => dispatch(showTextSlider(false))}
       />
     </Container>
   );
 }
 
-export default withTranslation()(DistractorAI);
+export default DistractorAI;

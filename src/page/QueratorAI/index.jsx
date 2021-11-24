@@ -1,13 +1,11 @@
-import { showTextSlider } from "util/action";
+import { resetGeneratedContent, showTextSlider } from "util/action";
 
 import PA from "component/PickAnswer";
 import QG from "component/QuestionGenerator";
 import TutorialModal from "component/TutorialModal";
 import React from "react";
 import Container from "react-bootstrap/Container";
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import tutorial from "./tutorial";
 
@@ -28,6 +26,9 @@ const isMobile = () => {
 };
 
 function QueratorAI(props) {
+  const showTutorialModal = useSelector((state) => state.showTextSlider);
+  const dispatch = useDispatch();
+
   return (
     <Container id="querator-ai">
       {isMobile() ? (
@@ -50,15 +51,11 @@ function QueratorAI(props) {
       )}
       <TutorialModal
         content={tutorial}
-        show={props.appState.showTextSlider}
-        onHide={() => props.dispatch(showTextSlider(false))}
+        show={showTutorialModal}
+        onHide={() => dispatch(showTextSlider(false))}
       />
     </Container>
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(withTranslation(), connect(mapStateToProps))(QueratorAI);
+export default QueratorAI;

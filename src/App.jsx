@@ -9,8 +9,8 @@ import DistractorAI from "page/DistractorAI";
 import QueratorAI from "page/QueratorAI";
 import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { useEffect, useRef } from "react";
-import { withTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -37,8 +37,7 @@ const routes = [
 ];
 
 function App(props) {
-  const { i18n } = props;
-  const appState = useSelector((state) => state);
+  const { i18n } = useTranslation();
   const dispatch = useDispatch();
 
   const mounted = useRef();
@@ -88,4 +87,4 @@ function App(props) {
   );
 }
 
-export default withTranslation()(App);
+export default App;

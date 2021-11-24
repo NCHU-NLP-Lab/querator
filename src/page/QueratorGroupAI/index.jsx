@@ -13,9 +13,7 @@ import Collapse from "react-bootstrap/Collapse";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import tutorial from "./tutorial";
 
@@ -43,6 +41,8 @@ function QueratorGroupAI(props) {
   const [answers, setAnswers] = useState([]);
   const [options, setOptions] = useState([]);
   const [exportChecks, setExportChecks] = useState([]);
+  const showTutorialModal = useSelector((state) => state.showTextSlider);
+  const dispatch = useDispatch();
 
   const toggleQuestionExportFuncGenerator = (questionIndex) => {
     return (event) => {
@@ -164,21 +164,6 @@ function QueratorGroupAI(props) {
       }
       data[0].question_pairs.push({ question, options: exportOptions });
     }
-    // data = [
-    //   {
-    //     context,
-    //     question_pairs: [...Array(questions.length)].map((e, questionIndex) => {
-    //       let exportOptions = options[questionIndex].map((option) => {
-    //         return { text: option, is_answer: false };
-    //       });
-    //       exportOptions.push({ text: answers[questionIndex], is_answer: true });
-    //       return {
-    //         question,
-    //         options: exportOptions,
-    //       };
-    //     }),
-    //   },
-    // ];
     return data;
   };
 
@@ -301,18 +286,11 @@ function QueratorGroupAI(props) {
       )}
       <TutorialModal
         content={tutorial}
-        show={props.appState.showTextSlider}
-        onHide={() => props.dispatch(showTextSlider(false))}
+        show={showTutorialModal}
+        onHide={() => dispatch(showTextSlider(false))}
       />
     </Container>
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(
-  withTranslation(),
-  connect(mapStateToProps)
-)(QueratorGroupAI);
+export default QueratorGroupAI;

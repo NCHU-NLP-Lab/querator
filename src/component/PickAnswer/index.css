@@ -4,48 +4,10 @@
   white-space: pre-wrap;
 }
 
-#Pick-Answer .btn-group {
-  margin-bottom: 10px;
-}
-
 #Pick-Answer .help-btn {
   font-size: 18px;
   position: relative;
   left: 6px;
   top: -3px;
   cursor: pointer;
-}
-
-#Pick-Answer .btn-group button {
-  margin-left: 0px;
-}
-
-/* #Pick-Answer .selected-block-container{
-    position: relative;
-} */
-
-#Pick-Answer .selected-block {
-  overflow: hidden;
-  background-color: #333;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding-left: 5%;
-  padding-right: 5%;
-  max-height: 35%;
-  overflow-y: scroll;
-  color: white;
-  z-index: 1;
-}
-
-#Pick-Answer .center {
-  margin: auto;
-  width: 50%;
-  margin-top: -30px;
-  margin-bottom: 8px;
-}
-
-#Pick-Answer .small-text {
-  padding-left: 3px;
 }

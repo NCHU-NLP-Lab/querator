@@ -4,7 +4,6 @@ import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import ListGroup from "react-bootstrap/ListGroup";
-import { withTranslation } from "react-i18next";
 
 function QuestionDisplay(props) {
   return (
@@ -84,4 +83,4 @@ function QuestionDisplay(props) {
   );
 }
 
-export default withTranslation()(QuestionDisplay);
+export default QuestionDisplay;

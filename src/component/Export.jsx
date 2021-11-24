@@ -3,7 +3,7 @@ import { export_qa_pairs } from "util/api";
 import React from "react";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 // Expected props
 // question_sets: [<set>, <set>, ...]
@@ -21,7 +21,7 @@ import { withTranslation } from "react-i18next";
 // }
 
 function ExportButtons(props) {
-  let { t } = props;
+  const { t } = useTranslation();
 
   const download_export = (event, format) => {
     event.preventDefault();
@@ -63,4 +63,4 @@ function ExportButtons(props) {
   );
 }
 
-export default withTranslation()(ExportButtons);
+export default ExportButtons;

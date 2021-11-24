@@ -1,12 +1,9 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { useTranslation } from "react-i18next";
 
 function AnswerInput(props) {
-  let { t } = props;
-
+  const { t } = useTranslation();
   return (
     <Form.Group className="answer-inputs mb-3">
       <Form.Label htmlFor={`answer-input-${props.id}`}>{`${t("Answer")} ${
@@ -22,11 +19,4 @@ function AnswerInput(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(
-  withTranslation(),
-  connect(mapStateToProps)
-)(AnswerInput);
+export default AnswerInput;

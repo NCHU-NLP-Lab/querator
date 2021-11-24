@@ -4,7 +4,6 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { withTranslation } from "react-i18next";
 import { BsGear, BsQuestionCircleFill } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -37,4 +36,4 @@ function ModeNavbar(props) {
   );
 }
 
-export default withTranslation()(ModeNavbar);
+export default ModeNavbar;

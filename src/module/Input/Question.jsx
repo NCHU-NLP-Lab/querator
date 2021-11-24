@@ -1,11 +1,9 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { useTranslation } from "react-i18next";
 
 function QuestionInput(props) {
-  let { t } = props;
+  const { t } = useTranslation();
 
   return (
     <Form.Group className="question-inputs mb-3">
@@ -22,11 +20,4 @@ function QuestionInput(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(
-  withTranslation(),
-  connect(mapStateToProps)
-)(QuestionInput);
+export default QuestionInput;

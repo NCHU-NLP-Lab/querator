@@ -1,15 +1,16 @@
 import React from "react";
 import Form from "react-bootstrap/Form";
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import { useTranslation } from "react-i18next";
 
 function ContextInput(props) {
+  const { t } = useTranslation();
+
   const context_length = props.context.split(" ").length;
+
   return (
     <Form.Group className="context-inputs mb-3">
       <Form.Label htmlFor={`context-input-${props.id}`}>
-        {props.label ? props.label : props.t("Context")}
+        {props.label ? props.label : t("Context")}
       </Form.Label>
       <Form.Control
         as="textarea"
@@ -34,11 +35,4 @@ function ContextInput(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return { appState: state };
-};
-
-export default compose(
-  withTranslation(),
-  connect(mapStateToProps)
-)(ContextInput);
+export default ContextInput;

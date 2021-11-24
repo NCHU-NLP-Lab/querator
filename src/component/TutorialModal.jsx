@@ -3,12 +3,13 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Carousel from "react-bootstrap/Carousel";
 import Modal from "react-bootstrap/Modal";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { BsCaretLeftFill, BsCaretRightFill } from "react-icons/bs";
 
 function TutorialModal(props) {
   const [index, setIndex] = useState(0);
-  const { t, content } = props;
+  const { content } = props;
+  const { t } = useTranslation();
 
   const handleSelect = (selectedIndex, e) => {
     setIndex(selectedIndex);
@@ -77,4 +78,4 @@ function TutorialModal(props) {
   );
 }
 
-export default withTranslation()(TutorialModal);
+export default TutorialModal;
