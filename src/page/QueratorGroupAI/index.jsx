@@ -242,12 +242,9 @@ function QueratorGroupAI(props) {
               let QDoption = [
                 {
                   text: answers[questionIndex],
-                  textBold: true,
-                  checkType: "checkbox",
-                  isChecked: questionChecks && questionChecks[0], // Ideally, this should always be true
-                  checkDisabled: !Boolean(questionChecks),
-                  textInputLabel: "Answer",
-                  textOnChange: (event) => {
+                  type: "input",
+                  inputLabel: "Answer",
+                  onChange: (event) => {
                     let newAnswers = [...answers];
                     newAnswers[questionIndex] = event.target.value;
                     setAnswers(newAnswers);
@@ -258,13 +255,14 @@ function QueratorGroupAI(props) {
                 options[questionIndex].forEach((option, optionIndex) => {
                   QDoption.push({
                     text: option,
-                    textBold: false,
+                    type: "check",
                     checkType: "checkbox",
+                    textBold: false,
                     // +1 for the answer
                     isChecked:
                       questionChecks && questionChecks[optionIndex + 1],
-                    checkDisabled: !Boolean(questionChecks),
-                    checkboxOnChange: (event) => {
+                    disabled: !Boolean(questionChecks),
+                    onCheck: (event) => {
                       let newExportChecks = [...exportChecks];
                       newExportChecks[questionIndex][optionIndex + 1] =
                         !newExportChecks[questionIndex][optionIndex + 1];

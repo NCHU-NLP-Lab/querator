@@ -1,109 +1,84 @@
 import "./index.css";
 
-import { delAnswer, genDistractors } from "util/action";
+import GenerateButton from "module/Button/Generate";
+import QuestionDisplay from "module/Question/display";
+import { pureGenDistractors, updateQuestion } from "util/action";
 import { showToastInfo } from "util/toast";
 
 import ExportButtons from "component/Export";
 import React, { Component } from "react";
-import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
+import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import { withTranslation } from "react-i18next";
-import { MdClose, MdReplay } from "react-icons/md";
+import { BsCheck, BsCommand, BsPencilFill } from "react-icons/bs";
 import { connect } from "react-redux";
-import ReactTooltip from "react-tooltip";
 import { compose } from "redux";
-
-import Distractor from "./distractor";
-import EditableComponent from "./editableComponent";
 
 class QuestionGenerator extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      editingQuestion: [],
       selectRadios: [],
+      distractors: [],
+      exportChecks: [],
+      distractorGenerating: false,
       apiError: false,
     };
-    this.QGBlock = React.createRef();
-    this.srollToBlock = this.srollToBlock.bind(this);
-    this.radioOnClick = this.radioOnClick.bind(this);
-    this.delAnswerBlock = this.delAnswerBlock.bind(this);
+    this.generateDistractor = this.generateDistractor.bind(this);
     this.generateDataForExport = this.generateDataForExport.bind(this);
+    this.toggleEditingQuestion = this.toggleEditingQuestion.bind(this);
+    this.readEditingQuestion = this.readEditingQuestion.bind(this);
   }
 
-  componentDidUpdate() {
-    let { appState } = this.props;
-    let { selectWordsSubmitting } = appState;
-    if (selectWordsSubmitting) {
-      this.srollToBlock(this.QGBlock);
+  generateDistractor = async (index, questionIndex) => {
+    this.setState({ distractorGenerating: true });
+    let { selectWords, fullContext } = this.props.appState;
+    let options = await pureGenDistractors({
+      context: fullContext,
+      answer: selectWords[index].tag,
+      answerStart: selectWords[index].start_at,
+      answerEnd: selectWords[index].end_at,
+      question: selectWords[index].questions[questionIndex],
+      quantity: 3,
+    });
+
+    let newDistractors = [...this.state.distractors];
+    if (!newDistractors[index]) {
+      newDistractors[index] = [];
     }
-  }
-
-  delAnswerBlock = (word, index) => {
-    /*
-     * 軟刪除
-     */
-    let selectRadios = [...this.state.selectRadios];
-    selectRadios[index] = null;
-    this.setState({ selectRadios });
-    this.props.dispatch(delAnswer(word, index));
-  };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let { appState } = nextProps;
-    if (appState.selectWordsSubmitting) {
-      return { selectRadios: [] };
-    }
-    return null;
-  }
-
-  radioOnClick = (index, questionIndex) => {
-    /*
-     * radio點擊事件
-     * 移除同樣的index(同層的點擊)，加入選擇的radio
-     */
-    let selectRadios = [...this.state.selectRadios];
-    let { appState, dispatch } = this.props;
-    let { selectWords, fullContext } = appState;
-    selectRadios[index] = questionIndex;
-    this.setState({ selectRadios });
-    dispatch(
-      genDistractors(
-        fullContext,
-        selectWords[index].tag,
-        selectWords[index].start_at,
-        selectWords[index].end_at,
-        this.getSelectQuestion(index, selectRadios[index]),
-        3,
-        appState.language,
-        index,
-        () => {
-          this.setState({ apiError: true });
-        }
-      )
-    );
+    newDistractors[index][questionIndex] = options;
+    this.setState({
+      distractorGenerating: false,
+      distractors: newDistractors,
+    });
   };
 
   generateDataForExport = () => {
-    let { fullContext, distractor, selectWordsRaw } = this.props.appState;
+    let { fullContext, selectWordsRaw } = this.props.appState;
     let pairs = [];
-    for (let index = 0; index < this.state.selectRadios.length; index++) {
-      const questionIndex = this.state.selectRadios[index];
-      if (questionIndex === null || distractor[index].length === 0) {
-        continue;
-      }
-      let options = distractor[index].map((option) => {
-        return { text: option, is_answer: false };
+    this.state.exportChecks.forEach((questionsChecked, index) => {
+      questionsChecked.forEach((checked, questionIndex) => {
+        if (
+          checked &&
+          this.state.distractors[index] &&
+          this.state.distractors[index][questionIndex]
+        ) {
+          pairs.push({
+            question: selectWordsRaw[index].questions[questionIndex],
+            options: [
+              { text: selectWordsRaw[index].tag, is_answer: true },
+            ].concat(
+              this.state.distractors[index][questionIndex].map((distractor) => {
+                return { text: distractor, is_answer: false };
+              })
+            ),
+          });
+        }
       });
-      options.push({
-        text: selectWordsRaw[index].tag,
-        is_answer: true,
-      });
-      pairs.push({
-        question: selectWordsRaw[index].questions[questionIndex],
-        options,
-      });
-    }
+    });
     if (!pairs.length) {
       showToastInfo("No valid ouput group");
       return;
@@ -116,11 +91,6 @@ class QuestionGenerator extends Component {
     ];
   };
 
-  srollToBlock = (ref) => {
-    // scorll to
-    window.scrollTo(0, ref.current.offsetTop);
-  };
-
   getSelectQuestion = (k1, k2) => {
     let { selectWords } = this.props.appState;
     try {
@@ -130,122 +100,133 @@ class QuestionGenerator extends Component {
     }
   };
 
-  hasK1 = (index) => {
-    return !(this.state.selectRadios[index] === null);
+  toogleExport = (index, questionIndex) => {
+    let newExportChecks = [...this.state.exportChecks];
+    if (!newExportChecks[index]) {
+      newExportChecks[index] = [];
+    }
+    newExportChecks[index][questionIndex] =
+      !newExportChecks[index][questionIndex];
+    this.setState({ exportChecks: newExportChecks });
+  };
+
+  toggleEditingQuestion = (index, questionIndex) => {
+    let newEditingQuestion = [...this.state.editingQuestion];
+    if (!newEditingQuestion[index]) {
+      newEditingQuestion[index] = [];
+    }
+    newEditingQuestion[index][questionIndex] =
+      !newEditingQuestion[index][questionIndex];
+    this.setState({ editingQuestion: newEditingQuestion });
+  };
+
+  readEditingQuestion = (index, questionIndex) => {
+    let { editingQuestion } = this.state;
+    return editingQuestion[index] && editingQuestion[index][questionIndex];
   };
 
   render() {
-    let { t } = this.props;
-    let { selectWords, pickAnsRaw } = this.props.appState;
-    let { selectRadios } = this.state;
-    let selectWordsAfterDel = selectWords.filter((s) => {
-      let { softDel = false } = s;
-      return !softDel;
-    });
+    let { dispatch } = this.props;
+    let { distractors, distractorGenerating } = this.state;
+    let { selectWords } = this.props.appState;
 
     return (
-      <Container ref={this.QGBlock} id="QG-Module">
+      <Container id="QG-Module">
         {/* Generated question sets */}
         <Row>
           {selectWords.map((word, index) => {
-            let { tag, questions, softDel = false } = word;
-            return softDel ? (
-              <Alert
-                variant="light"
-                className="text-decoration-line-through"
-                key={`generated-question-${index}`}
+            // Process options for QuestionDisplay
+            let QDlisting = word.questions.map((question, questionIndex) => {
+              const editing = this.readEditingQuestion(index, questionIndex);
+              return {
+                type: "input",
+                text: question,
+                disabled: !editing,
+                inputBeginAddOn: [
+                  <InputGroup.Checkbox
+                    disabled={
+                      !Boolean(
+                        !editing &&
+                          distractors[index] &&
+                          distractors[index][questionIndex]
+                      )
+                    }
+                    onClick={() => {
+                      this.toogleExport(index, questionIndex);
+                    }}
+                  />,
+                ],
+                inputEndAddOn: editing
+                  ? [
+                      <Button
+                        key={`question-display-${index}-${questionIndex}-done`}
+                        variant="outline-secondary"
+                        onClick={() => {
+                          this.toggleEditingQuestion(index, questionIndex);
+                        }}
+                      >
+                        Done <BsCheck />
+                      </Button>,
+                    ]
+                  : [
+                      <Button
+                        key={`question-display-${index}-${questionIndex}-edit`}
+                        variant="outline-secondary"
+                        onClick={() => {
+                          this.toggleEditingQuestion(index, questionIndex);
+                        }}
+                      >
+                        Edit <BsPencilFill />
+                      </Button>,
+                      <GenerateButton
+                        key={`question-display-${index}-${questionIndex}-generate`}
+                        variant="outline-secondary"
+                        onClick={() => {
+                          this.generateDistractor(index, questionIndex);
+                        }}
+                        disabled={distractorGenerating}
+                      />,
+                    ],
+                onChange: (event) => {
+                  selectWords[index].questions[questionIndex] =
+                    event.target.value;
+                  dispatch(updateQuestion(selectWords));
+                },
+                nestedList:
+                  !editing &&
+                  distractors[index] &&
+                  distractors[index][questionIndex],
+              };
+            });
+
+            let context = this.props.appState.pickAnsRaw[index].context;
+            let hightlightedContext = [
+              context.slice(0, word.start_at),
+              <span
+                key={`question-display-${index}-span`}
+                className="text-success fw-bolder"
               >
-                <b>
-                  {index + 1}. {t("Answer")}:
-                </b>
-                {tag}
-                <span
-                  className="del-answer"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    this.delAnswerBlock(word, index);
-                  }}
-                >
-                  <MdReplay />
-                </span>
-              </Alert>
-            ) : (
-              <Alert variant="dark" key={`generated-question-${index}`}>
-                <span
-                  style={{ cursor: "context-menu" }}
-                  data-class="tool-tip"
-                  data-tip={(() => {
-                    var frontContext = pickAnsRaw[index].context.slice(
-                      0,
-                      word.start_at
-                    );
-                    var endContext = pickAnsRaw[index].context.slice(
-                      word.end_at + 1
-                    );
-                    return (
-                      frontContext +
-                      `<span class="tool-tip-hl">${tag}</span>` +
-                      endContext
-                    );
-                  })()}
-                >
-                  <b>
-                    {index + 1}. {t("Answer")}:
-                  </b>
-                  {tag}
-                </span>
-                <ReactTooltip
-                  place="right"
-                  getContent={(dataTip) => (
-                    <div dangerouslySetInnerHTML={{ __html: dataTip }} />
-                  )}
-                  multiline={true}
+                {word.tag}
+              </span>,
+              context.slice(word.end_at + 1),
+            ];
+
+            return (
+              <div key={`generated-question-${index}`}>
+                <QuestionDisplay
+                  listings={QDlisting}
+                  preTitle={hightlightedContext}
+                  title={`Answer: ${word.tag}`}
                 />
-                <span
-                  className="del-answer"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    this.delAnswerBlock(word, index);
-                  }}
-                >
-                  <MdClose />
-                </span>
-                {typeof selectRadios[index] === "number" && (
-                  <Distractor
-                    firstInit={!this.hasK1(index)}
-                    apiError={this.state.apiError}
-                    index={index}
-                    answer={tag}
-                  />
-                )}
-                <hr />
-                {questions.map((question, questionIndex) => {
-                  return (
-                    <EditableComponent
-                      key={`generated-${index}-${questionIndex}`}
-                      checked={Boolean(selectRadios[index] === questionIndex)}
-                      onChange={(event) => {
-                        event.preventDefault();
-                        this.radioOnClick(index, questionIndex);
-                      }}
-                      initEditable={false}
-                      q={question}
-                      k1={index}
-                      k2={questionIndex}
-                    />
-                  );
-                })}
-              </Alert>
+              </div>
             );
           })}
         </Row>
 
         {/* Export Buttons */}
-        {Boolean(selectWordsAfterDel.length) && (
-          <Row>
-            <ExportButtons getQuestionSets={this.generateDataForExport} />
-          </Row>
-        )}
+        <Row>
+          <ExportButtons getQuestionSets={this.generateDataForExport} />
+        </Row>
       </Container>
     );
   }

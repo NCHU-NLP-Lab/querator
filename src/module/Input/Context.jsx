@@ -5,8 +5,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 
 function ContextInput(props) {
-  let { disabled = false, helpText = "" } = props;
-
+  const context_length = props.context.split(" ").length;
   return (
     <Form.Group className="context-inputs mb-3">
       <Form.Label htmlFor={`context-input-${props.id}`}>
@@ -19,13 +18,18 @@ function ContextInput(props) {
         value={props.context}
         placeholder="Input context/paragraph here"
         onChange={props.onChange}
-        disabled={disabled}
+        disabled={props.disabled}
       />
-      {helpText && (
-        <Form.Text id={`context-input-${props.id}`} muted>
-          {helpText}
-        </Form.Text>
-      )}
+      {props.helpText && <Form.Text muted>{props.helpText}</Form.Text>}
+      <br />
+      {props.textCount &&
+        (context_length >= 512 ? (
+          <Form.Text className="text-danger fw-bolder">
+            {context_length} / 512
+          </Form.Text>
+        ) : (
+          <Form.Text muted>{context_length} / 512</Form.Text>
+        ))}
     </Form.Group>
   );
 }

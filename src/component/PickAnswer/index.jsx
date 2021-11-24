@@ -203,6 +203,8 @@ class PickAnswer extends Component {
           {isEdit ? (
             <ContextInput
               context={inputContext}
+              textCount={true}
+              helpText={t("Context-Hint")}
               onChange={(event) => {
                 this.setState({
                   inputContext: event.target.value,
@@ -229,7 +231,8 @@ class PickAnswer extends Component {
           )}
 
           {/* Model language buttons */}
-          <Form.Group className="mb-3">
+          {/* UNCOMMENT THIS WHEN CHINESE MODELS ARE READY */}
+          {/* <Form.Group className="mb-3">
             <Form.Label>{t("Model-Language")}</Form.Label>
             <Col>
               <ButtonGroup aria-label="Model language setting button">
@@ -254,7 +257,7 @@ class PickAnswer extends Component {
                 </Button>
               </ButtonGroup>
             </Col>
-          </Form.Group>
+          </Form.Group> */}
 
           {/* Edit / Confirm Button */}
           <Button

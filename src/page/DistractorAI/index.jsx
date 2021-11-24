@@ -293,21 +293,23 @@ function DistractorAI(props) {
               let QDoption = [
                 {
                   text: pair.answer,
-                  textBold: true,
+                  type: "check",
                   checkType: "checkbox",
+                  textBold: true,
                   isChecked: pairChecks && pairChecks[0], // Ideally, this should always be true
-                  checkDisabled: !Boolean(pairChecks),
+                  disabled: !Boolean(pairChecks),
                 },
               ];
               pair.options.forEach((option, optionIndex) => {
                 QDoption.push({
                   text: option,
-                  textBold: false,
+                  type: "check",
                   checkType: "checkbox",
+                  textBold: false,
                   // +1 for the answer
                   isChecked: pairChecks && pairChecks[optionIndex + 1],
-                  checkDisabled: !Boolean(pairChecks),
-                  checkboxOnChange: (event) => {
+                  disabled: !Boolean(pairChecks),
+                  onCheck: (event) => {
                     let newExportChecks = [...exportChecks];
                     newExportChecks[setIndex][pairIndex][optionIndex + 1] =
                       !newExportChecks[setIndex][pairIndex][optionIndex + 1];
