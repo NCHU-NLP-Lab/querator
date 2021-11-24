@@ -3,7 +3,7 @@ import { resetGeneratedContent, showTextSlider } from "util/action";
 import PA from "component/PickAnswer";
 import QG from "component/QuestionGenerator";
 import TutorialModal from "component/TutorialModal";
-import React from "react";
+import React, { useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -28,6 +28,10 @@ const isMobile = () => {
 function QueratorAI(props) {
   const showTutorialModal = useSelector((state) => state.showTextSlider);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(resetGeneratedContent());
+  });
 
   return (
     <Container id="querator-ai">

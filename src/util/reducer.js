@@ -13,6 +13,16 @@ let defaultState = {
 export default (state = defaultState, action) => {
   console.log(action);
   switch (action.type) {
+    case "TEMP_RESET_GENERATED_CONTENT":
+      return {
+        ...state,
+        selectWords: [],
+        selectWordsRaw: [],
+        selectWordsSubmitting: false,
+        pickAnsRaw: [],
+        fullContext: "",
+        submitTotal: 0,
+      };
 
     case "SHOW_TEXT_SLIDER":
       return { ...state, showTextSlider: action.show };

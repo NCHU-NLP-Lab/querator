@@ -8,6 +8,12 @@ const axios_client = axios.create({
   headers: { AppName: "Querator" },
 });
 
+export const resetGeneratedContent = () => {
+  return {
+    type: "TEMP_RESET_GENERATED_CONTENT",
+  };
+};
+
 export const showTextSlider = (show) => {
   return {
     type: "SHOW_TEXT_SLIDER",

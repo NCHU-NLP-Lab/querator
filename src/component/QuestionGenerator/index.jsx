@@ -213,9 +213,17 @@ class QuestionGenerator extends Component {
         </Row>
 
         {/* Export Buttons */}
-        <Row>
-          <ExportButtons getQuestionSets={this.generateDataForExport} />
-        </Row>
+        {Boolean(
+          // Any one of the questions is checked for export
+          this.state.exportChecks.length &&
+            this.state.exportChecks.some((set) =>
+              set.some((questionCheck) => questionCheck)
+            )
+        ) && (
+          <Row>
+            <ExportButtons getQuestionSets={this.generateDataForExport} />
+          </Row>
+        )}
       </Container>
     );
   }
