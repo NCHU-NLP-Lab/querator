@@ -1,0 +1,31 @@
+{
+  "files": {
+    "main.css": "./static/css/main.3114ff08.chunk.css",
+    "main.js": "./static/js/main.d084d2a9.chunk.js",
+    "main.js.map": "./static/js/main.d084d2a9.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.391228d7.js",
+    "runtime-main.js.map": "./static/js/runtime-main.391228d7.js.map",
+    "static/css/2.dc692443.chunk.css": "./static/css/2.dc692443.chunk.css",
+    "static/js/2.e916061d.chunk.js": "./static/js/2.e916061d.chunk.js",
+    "static/js/2.e916061d.chunk.js.map": "./static/js/2.e916061d.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.dc692443.chunk.css.map": "./static/css/2.dc692443.chunk.css.map",
+    "static/css/main.3114ff08.chunk.css.map": "./static/css/main.3114ff08.chunk.css.map",
+    "static/js/2.e916061d.chunk.js.LICENSE.txt": "./static/js/2.e916061d.chunk.js.LICENSE.txt",
+    "static/media/step1.00044173.gif": "./static/media/step1.00044173.gif",
+    "static/media/step1.0b516fe3.gif": "./static/media/step1.0b516fe3.gif",
+    "static/media/step1.187c5874.gif": "./static/media/step1.187c5874.gif",
+    "static/media/step2.45b7d1c3.gif": "./static/media/step2.45b7d1c3.gif",
+    "static/media/step2.6d988967.gif": "./static/media/step2.6d988967.gif",
+    "static/media/step2.b1e90134.gif": "./static/media/step2.b1e90134.gif",
+    "static/media/step3.55595882.gif": "./static/media/step3.55595882.gif",
+    "static/media/step3.56db50bc.gif": "./static/media/step3.56db50bc.gif"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.391228d7.js",
+    "static/css/2.dc692443.chunk.css",
+    "static/js/2.e916061d.chunk.js",
+    "static/css/main.3114ff08.chunk.css",
+    "static/js/main.d084d2a9.chunk.js"
+  ]
+}
