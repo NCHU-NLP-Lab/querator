@@ -11,7 +11,7 @@ import QueratorGroupAI from "page/QueratorGroupAI";
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 const routes = [
@@ -57,7 +57,7 @@ function App(props) {
   });
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ModeNavBar routes={routes} />
       <main id="QG-App" className="flex-shrink-0 mb-5">
         <ToastContainer
@@ -83,7 +83,7 @@ function App(props) {
         </div>
       </main>
       <Footer />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
