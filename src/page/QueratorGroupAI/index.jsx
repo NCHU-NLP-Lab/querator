@@ -2,7 +2,10 @@ import GenerateButton from "module/Button/Generate";
 import ContextInput from "module/Input/Context";
 import QuestionDisplay from "module/Question/display";
 import { showTextSlider } from "util/action";
-import config from "util/config";
+import {
+  questionGroupDistractorGenerate,
+  questionGroupGenerate,
+} from "util/api";
 
 import ExportButtons from "component/Export";
 import TutorialModal from "component/TutorialModal";
@@ -16,10 +19,6 @@ import Row from "react-bootstrap/Row";
 import { useDispatch, useSelector } from "react-redux";
 
 import tutorial from "./tutorial";
-
-const axios = require("axios");
-
-let { API_ENDPOINT } = config;
 
 function getRandomItem(array) {
   let index = Math.floor(Math.random() * array.length);
@@ -55,38 +54,33 @@ function QueratorGroupAI(props) {
     };
   };
 
-  let genQuestionGroup = (
+  let genQuestionGroup = async (
     context,
-    question_group_size,
-    candidate_pool_size
+    questionGroupSize,
+    candidatePoolSize
   ) => {
-    console.log(context, question_group_size, candidate_pool_size);
     setAnswers(Array(questionNum).fill("")); // reset
     setDisableGenBtn(true);
-    axios
-      .post(`${API_ENDPOINT}/en-US/generate-question-group`, {
-        context,
-        question_group_size,
-        candidate_pool_size,
-      })
-      .then(function (response) {
-        let { question_group = [] } = response.data;
-        setQuestions(question_group);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .then(() => {
-        setDisableGenBtn(false);
-      });
+
+    const [result, error] = await questionGroupGenerate(
+      context,
+      questionGroupSize,
+      candidatePoolSize,
+      "en-US"
+    );
+
+    if (!error) {
+      setQuestions(result.question_group);
+    } else {
+      console.log(error);
+    }
+    setDisableGenBtn(false);
   };
 
-  let genOptions = () => {
-    console.log(questions);
-    console.log(answers);
+  let genOptions = async () => {
     // combine question and answer
     let allAnsIsNull = true;
-    let question_and_answers = questions.map((question, i) => {
+    let questionAndAnswers = questions.map((question, i) => {
       let answer = answers[i] || "";
       if (answer !== "") {
         allAnsIsNull = false;
@@ -99,46 +93,41 @@ function QueratorGroupAI(props) {
       return;
     }
 
-    console.log(context);
-    console.log(question_and_answers);
     setDisableGenBtn(true);
-    axios
-      .post(`${API_ENDPOINT}/en-US/generate-group-distractor`, {
-        context,
-        question_and_answers,
-      })
-      .then((res) => {
-        console.log(res.data);
-        let { distractors = [] } = res.data;
-        let question_answer_and_options = question_and_answers.map((qa) => {
-          // get distractor
-          let distractor = undefined;
-          distractors.forEach((d) => {
-            if (d.question === qa.question) {
-              distractor = d;
-            }
-          });
-          // merge with qa
-          qa.options = distractor.options || [];
-          return qa;
+
+    const [result, error] = await questionGroupDistractorGenerate(
+      context,
+      questionAndAnswers,
+      "en-US"
+    );
+
+    if (!error) {
+      let question_answer_and_options = questionAndAnswers.map((qa) => {
+        // get distractor
+        let distractor = undefined;
+        result.distractors.forEach((d) => {
+          if (d.question === qa.question) {
+            distractor = d;
+          }
         });
-        // change state
-        let newOptionValue = [...options];
-        question_answer_and_options.forEach((qac, i) => {
-          newOptionValue[i] = qac.options;
-        });
-        setOptions(newOptionValue);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .then(() => {
-        setDisableGenBtn(false);
-        // setAnswers([]) // reset
+        // merge with qa
+        qa.options = distractor.options || [];
+        return qa;
       });
+      // change state
+      let newOptionValue = [...options];
+      question_answer_and_options.forEach((qac, i) => {
+        newOptionValue[i] = qac.options;
+      });
+      setOptions(newOptionValue);
+    } else {
+      console.log(error);
+    }
+
+    setDisableGenBtn(false);
   };
 
-  let getQuestionSets = () => {
+  let generateSetsForExport = () => {
     let data = [{ context, question_pairs: [] }];
     for (
       let questionIndex = 0;
@@ -281,7 +270,7 @@ function QueratorGroupAI(props) {
       )}
       {Boolean(options.length) && (
         <Row>
-          <ExportButtons getQuestionSets={getQuestionSets} />
+          <ExportButtons getQuestionSets={generateSetsForExport} />
         </Row>
       )}
       <TutorialModal

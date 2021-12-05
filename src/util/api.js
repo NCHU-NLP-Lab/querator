@@ -5,22 +5,22 @@ const DEFAULT_HEADERS = new Headers({
   "Content-Type": "application/json; charset=UTF-8",
 });
 
-const _handle_error = (error) => {
+const _handleError = (error) => {
   console.error(error);
   showToastInfo(error.toString(), "error");
 };
 
-const _normalize_promises = async (promises) => {
+const _normalizePromises = async (promises) => {
   try {
     const data = await Promise.all(promises);
     return [data, null];
   } catch (error) {
-    _handle_error(error);
+    _handleError(error);
     return [null, error];
   }
 };
 
-export const export_qa_pairs = async (data, format) => {
+export const exportQAPairs = async (data, format) => {
   fetch(`${CONFIG.API_ENDPOINT}/export-qa-pairs/${format}`, {
     method: "POST",
     body: JSON.stringify(data),
@@ -38,10 +38,10 @@ export const export_qa_pairs = async (data, format) => {
         a.click();
       });
     })
-    .catch(_handle_error);
+    .catch(_handleError);
 };
 
-export const question_generate = async (sets, language = "en-US") => {
+export const questionGenerate = async (sets, language = "en-US") => {
   let requests = sets.map(async (set) => {
     return fetch(`${CONFIG.API_ENDPOINT}/${language}/generate-question`, {
       method: "POST",
@@ -58,5 +58,80 @@ export const question_generate = async (sets, language = "en-US") => {
   });
 
   // Wait for all requests to complete
-  return await _normalize_promises(requests);
+  return await _normalizePromises(requests);
+};
+
+export const questionGroupGenerate = async (
+  context,
+  questionGroupSize,
+  candidatePoolSize,
+  language = "en-US"
+) => {
+  let request = fetch(
+    `${CONFIG.API_ENDPOINT}/${language}/generate-question-group`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        context,
+        question_group_size: questionGroupSize,
+        candidate_pool_size: candidatePoolSize,
+      }),
+      headers: DEFAULT_HEADERS,
+    }
+  ).then((response) => response.json());
+
+  // Wait for all requests to complete
+  return (await _normalizePromises([request]))[0];
+};
+
+export const questionGroupDistractorGenerate = async (
+  context,
+  questionAndAnswers,
+  language = "en-US"
+) => {
+  let request = fetch(
+    `${CONFIG.API_ENDPOINT}/${language}/generate-group-distractor`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        context,
+        question_and_answers: questionAndAnswers,
+      }),
+      headers: DEFAULT_HEADERS,
+    }
+  ).then((response) => response.json());
+
+  // Wait for all requests to complete
+  return (await _normalizePromises([request]))[0];
+};
+
+export const distractorGenerate = async (
+  context,
+  answer,
+  answerStart,
+  answerEnd,
+  question,
+  quantity,
+  language = "en-US"
+) => {
+  let request = fetch(
+    `${CONFIG.API_ENDPOINT}/${language}/generate-distractor`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        article: context,
+        answer: {
+          tag: answer,
+          start_at: answerStart,
+          end_at: answerEnd,
+        },
+        question,
+        gen_quantity: quantity,
+      }),
+      headers: DEFAULT_HEADERS,
+    }
+  ).then((response) => response.json());
+
+  // Wait for all requests to complete
+  return (await _normalizePromises([request]))[0];
 };

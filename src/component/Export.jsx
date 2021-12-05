@@ -1,4 +1,4 @@
-import { export_qa_pairs } from "util/api";
+import { exportQAPairs } from "util/api";
 
 import React from "react";
 import Button from "react-bootstrap/Button";
@@ -32,7 +32,7 @@ function ExportButtons(props) {
       return;
     }
 
-    export_qa_pairs(data, format);
+    exportQAPairs(data, format);
   };
 
   return (

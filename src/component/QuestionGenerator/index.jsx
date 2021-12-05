@@ -1,6 +1,7 @@
 import GenerateButton from "module/Button/Generate";
 import QuestionDisplay from "module/Question/display";
-import { pureGenDistractors, updateQuestion } from "util/action";
+import { updateQuestion } from "util/action";
+import { distractorGenerate } from "util/api";
 import { showToastInfo } from "util/toast";
 
 import ExportButtons from "component/Export";
@@ -33,24 +34,30 @@ class QuestionGenerator extends Component {
   generateDistractor = async (index, questionIndex) => {
     this.setState({ distractorGenerating: true });
     let { selectWords, fullContext } = this.props.appState;
-    let options = await pureGenDistractors({
-      context: fullContext,
-      answer: selectWords[index].tag,
-      answerStart: selectWords[index].start_at,
-      answerEnd: selectWords[index].end_at,
-      question: selectWords[index].questions[questionIndex],
-      quantity: 3,
-    });
 
-    let newDistractors = [...this.state.distractors];
-    if (!newDistractors[index]) {
-      newDistractors[index] = [];
+    const [result, error] = await distractorGenerate(
+      fullContext,
+      selectWords[index].tag,
+      selectWords[index].start_at,
+      selectWords[index].end_at,
+      selectWords[index].questions[questionIndex],
+      3,
+      "en-US"
+    );
+
+    if (!error) {
+      let newDistractors = [...this.state.distractors];
+      if (!newDistractors[index]) {
+        newDistractors[index] = [];
+      }
+      newDistractors[index][questionIndex] = result.distractors;
+      this.setState({
+        distractorGenerating: false,
+        distractors: newDistractors,
+      });
+    } else {
+      console.log(error);
     }
-    newDistractors[index][questionIndex] = options;
-    this.setState({
-      distractorGenerating: false,
-      distractors: newDistractors,
-    });
   };
 
   generateDataForExport = () => {

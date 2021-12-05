@@ -3,7 +3,7 @@ import ContextInput from "module/Input/Context";
 import QuestionDisplay from "module/Question/display";
 import QuestionAnswerPair from "module/QuestionAnswerPair";
 import { showTextSlider } from "util/action";
-import { pureGenDistractors } from "util/action";
+import { distractorGenerate } from "util/api";
 
 import ExportButtons from "component/Export";
 import TutorialModal from "component/TutorialModal";
@@ -81,15 +81,21 @@ function DistractorAI(props) {
         pairIndex++
       ) {
         const pair = questionSet.question_pairs[pairIndex];
-        let options = await pureGenDistractors({
-          context: questionSet.context,
-          answer: pair.answer,
-          answerStart: 0,
-          answerEnd: 0,
-          question: pair.question,
-          quantity: 3,
-        });
-        pair.options = options;
+        const [result, error] = await distractorGenerate(
+          questionSet.context,
+          pair.answer,
+          0,
+          0,
+          pair.question,
+          3,
+          "en-US"
+        );
+
+        if (!error) {
+          pair.options = result.distractors;
+        } else {
+          console.log(error);
+        }
       }
     }
     setExportChecks(

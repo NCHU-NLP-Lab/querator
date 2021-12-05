@@ -1,12 +1,4 @@
-import { question_generate } from "util/api";
-import config from "util/config";
-
-import axios from "axios";
-
-const { API_ENDPOINT } = config;
-const axios_client = axios.create({
-  headers: { AppName: "Querator" },
-});
+import { questionGenerate } from "util/api";
 
 export const resetGeneratedContent = () => {
   return {
@@ -29,26 +21,6 @@ export const settingLanguage = (language = "NULL") => {
   };
 };
 
-export const pureGenDistractors = async (params) => {
-  let { lng } = params;
-  lng = "en-US"; // Only English is support for now
-  return await axios_client
-    .post(`${API_ENDPOINT}/${lng}/generate-distractor`, {
-      article: params.context,
-      answer: {
-        tag: params.answer,
-        start_at: params.answerStart,
-        end_at: params.answerEnd,
-      },
-      question: params.question,
-      gen_quantity: params.quantity,
-    })
-    .then((response) => {
-      let { distractors = [] } = response.data;
-      return distractors;
-    });
-};
-
 export const submitQs = (q, fullContext, language = "zh-TW") => {
   return async (dispatch) => {
     dispatch({
@@ -57,7 +29,7 @@ export const submitQs = (q, fullContext, language = "zh-TW") => {
       submitTotal: q.length,
     });
 
-    const [results, error] = await question_generate(q, language);
+    const [results, error] = await questionGenerate(q, language);
     if (!error) {
       dispatch({
         type: "SUBMIT_QUESTIONS",
